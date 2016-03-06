@@ -1,0 +1,12 @@
+package gui;
+
+import javax.swing.JFrame;
+
+public class GuiFrame extends JFrame {
+	public GuiFrame(String title) {
+		super(title);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		pack();
+	}
+}
