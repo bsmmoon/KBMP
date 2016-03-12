@@ -7,30 +7,38 @@ import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class GuiFrame extends JFrame {
 	private JPanel cards;	//a panel that uses CardLayout
 	private int currentStep = 1;
+	String[] selections = {"CS1101","CS2101","CS2102","CS3342"};
+	
 	public GuiFrame(String title) {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		setSize(500,500);
 		
-		SelectionPanel selection1 = new SelectionPanel(this);
+		SelectionStep selection1 = new SelectionStep(this);
 		selection1.setQuestion("Please select modules that you have already taken.");
+		selection1.setDropdownItems(selections);
 		
-		SelectionPanel selection2 = new SelectionPanel(this);
+		SelectionStep selection2 = new SelectionStep(this);
 		selection2.setQuestion("Please select modules that you want to take.");
-		
-		SelectionPanel selection3 = new SelectionPanel(this);
+		selection2.setDropdownItems(selections);
+
+		SelectionStep selection3 = new SelectionStep(this);
 		selection3.setQuestion("Please select modules that you don't want to take.");
-		
-		SelectionPanel selection4 = new SelectionPanel(this);
+		selection3.setDropdownItems(selections);
+
+		SelectionStep selection4 = new SelectionStep(this);
 		selection4.setQuestion("Please select your focus area.");
-		
-		SelectionPanel selection5 = new SelectionPanel(this);
+		selection4.setDropdownItems(selections);
+
+		SelectionStep selection5 = new SelectionStep(this);
 		selection5.setQuestion("Please select your program.");
-		
+		selection5.setDropdownItems(selections);
+
 		cards = new JPanel(new CardLayout());
 		cards.add(selection1);
 		cards.add(selection2);
