@@ -7,13 +7,14 @@ import java.util.Stack;
 import javax.swing.JPanel;
 
 public class SelectedItemsPanel extends JPanel {
+	private boolean hasDate;
 	private ArrayList<SelectedItem> selectedItems;
 	private Stack<SelectedItem> removedItems;
 	
-	public SelectedItemsPanel() {
+	public SelectedItemsPanel(boolean hasDate) {
 		selectedItems = new ArrayList<SelectedItem>();
 		removedItems = new Stack<SelectedItem> ();
-		
+		this.hasDate = hasDate;
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		setOpaque(false);
 	}
@@ -24,7 +25,7 @@ public class SelectedItemsPanel extends JPanel {
 			remove(toBeRemoved);
 		}
 		
-		SelectedItem item = new SelectedItem(this,text,false);
+		SelectedItem item = new SelectedItem(this,text,hasDate);
 		selectedItems.add(item);
 		
 		item.setAlignmentX(LEFT_ALIGNMENT);

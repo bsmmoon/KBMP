@@ -25,13 +25,13 @@ public class SelectionStep extends JPanel implements ItemListener {
 	
 	private GuiFrame frame;
 	
-	public SelectionStep(GuiFrame frame) {
+	public SelectionStep(GuiFrame frame, boolean hasDate) {
 		this.frame = frame;
 		question = new JLabel();
 		dropdownList = new JComboBox<String>();
 		//dropdownList.setEditable(true);
 		
-		selected = new SelectedItemsPanel();
+		selected = new SelectedItemsPanel(hasDate);
 		
 		next = new JButton(new AbstractAction("Next"){
 			@Override

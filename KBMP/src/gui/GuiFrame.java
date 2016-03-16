@@ -19,23 +19,23 @@ public class GuiFrame extends JFrame {
 		
 		setSize(500,500);
 		
-		SelectionStep selection1 = new SelectionStep(this);
+		SelectionStep selection1 = new SelectionStep(this, false);
 		selection1.setQuestion("Please select modules that you have already taken.");
 		selection1.setDropdownItems(selections);
 		
-		SelectionStep selection2 = new SelectionStep(this);
+		SelectionStep selection2 = new SelectionStep(this, true);
 		selection2.setQuestion("Please select modules that you want to take.");
 		selection2.setDropdownItems(selections);
 
-		SelectionStep selection3 = new SelectionStep(this);
+		SelectionStep selection3 = new SelectionStep(this, false);
 		selection3.setQuestion("Please select modules that you don't want to take.");
 		selection3.setDropdownItems(selections);
 
-		SelectionStep selection4 = new SelectionStep(this);
+		SelectionStep selection4 = new SelectionStep(this, false);
 		selection4.setQuestion("Please select your focus area.");
 		selection4.setDropdownItems(selections);
 
-		SelectionStep selection5 = new SelectionStep(this);
+		SelectionStep selection5 = new SelectionStep(this, false);
 		selection5.setQuestion("Please select your program.");
 		selection5.setDropdownItems(selections);
 
