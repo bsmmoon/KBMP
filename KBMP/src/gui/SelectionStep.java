@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -25,7 +24,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 	
 	private GuiFrame frame;
 	
-	public SelectionStep(GuiFrame frame, boolean hasDate) {
+	public SelectionStep(final GuiFrame frame, boolean hasDate) {
 		this.frame = frame;
 		question = new JLabel();
 		dropdownList = new JComboBox<String>();
