@@ -64,6 +64,7 @@ public class SelectedItem extends JPanel {
 	}
 	public void paint(Graphics g) {
 		Point pos = label.getLocation();
+		pos.x -= 5;
 		int width = label.getWidth() + remove.getWidth() + 12;
 		int height = label.getHeight();
 		if (semester != null) {
@@ -72,7 +73,7 @@ public class SelectedItem extends JPanel {
 			pos.y = semester.getLocation().y;
 		}
 		g.setColor(Color.lightGray);
-		g.fillRoundRect(pos.x-5, pos.y, width, height, 10, 10);
+		g.fillRoundRect(pos.x, pos.y, width, height, 10, 10);
 		
 		super.paint(g);
 	}
