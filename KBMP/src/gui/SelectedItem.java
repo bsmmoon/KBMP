@@ -1,23 +1,18 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
 
 public class SelectedItem extends JPanel {
 	private SelectedItemsPanel panel;
@@ -28,7 +23,7 @@ public class SelectedItem extends JPanel {
 	
 	private String[] semesters = {"optional","2016/2017, Semester 1", "2016/2017, Semester 2"};
 	
-	public SelectedItem(SelectedItemsPanel panel, String text, boolean hasDate) {
+	public SelectedItem(final SelectedItemsPanel panel, String text, boolean hasDate) {
 		item = this;
 		setName(text);
 		this.panel = panel;
