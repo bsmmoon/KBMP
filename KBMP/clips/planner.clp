@@ -38,7 +38,8 @@
 ; ; RULES
 
 (defrule mark-available "mark modules without prerequisites as available"
-    ?module <- (module (prerequisites none) (status none))
+    ?module <- (module (code ?code) (prerequisites none) (status none))
 =>
+    (printout t "Marked as available: " ?code crlf)
     (modify ?module (status available))
 )
