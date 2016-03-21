@@ -3,9 +3,13 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import common.Module;
+import common.ModulePlan;
 
 @SuppressWarnings("serial")
 public class GuiFrame extends JFrame {
@@ -39,13 +43,22 @@ public class GuiFrame extends JFrame {
 		selection5.setQuestion("Please select your program.");
 		selection5.setDropdownItems(selections);
 
+		ModulePlan plan = new ModulePlan();
+		plan.createNewSemester();
+		plan.createNewSemester();
+		plan.addNewModule(new Module("CS1010","Programming Methodology"), 1);
+		plan.addNewModule(new Module("CS2020","Data XXX"), 1);
+		plan.addNewModule(new Module("CS1231","Discrete Maths"), 2);
+		plan.addNewModule(new Module("CS3245","Information Retrieval"), 2);
+		PlanPanel planPanel = new PlanPanel(plan);
+		
 		cards = new JPanel(new CardLayout());
 		cards.add(selection1);
 		cards.add(selection2);
 		cards.add(selection3);
 		cards.add(selection4);
 		cards.add(selection5);
-		
+		cards.add(planPanel);
 		add(cards,BorderLayout.CENTER);
 		
 		getContentPane().setBackground(Color.WHITE);
@@ -53,7 +66,7 @@ public class GuiFrame extends JFrame {
 	
 	public void nextStep() {
 		CardLayout c = (CardLayout)(cards.getLayout());
-		if (currentStep != 5) {
+		if (currentStep != 6) {
 			c.next(cards);
 			currentStep++;
 		}

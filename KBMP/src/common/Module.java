@@ -12,7 +12,7 @@ public class Module {
 	
 	public Module(String code,String name) {
 		this.code = code;
-		this.code = name;
+		this.name = name;
 	}
 	
 	public String getCode() {
