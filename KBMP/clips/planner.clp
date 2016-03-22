@@ -4,10 +4,18 @@
 ; ; Module
 (deftemplate  module    "Module Information"
     (slot code
-        (type SYMBOL))  
+        (type SYMBOL))
     (slot title
-        (type STRING)   
-        (default ?DERIVE))  
+        (type STRING)
+        (default ?DERIVE))
+    (slot prefix
+        (type STRING))
+    (slot level
+        (type INTEGER))
+    (slot rest
+        (type SYMBOL))
+    (slot classification
+        (type SYMBOL))
     (slot MC
         (type INTEGER)  
         (default 4))
