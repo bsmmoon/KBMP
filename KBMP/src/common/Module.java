@@ -22,4 +22,8 @@ public class Module {
 	public String getName() {
 		return name;
 	}
+	
+	public String toString() {
+		return "[" + this.code + ", " + this.name + "]";
+	}
 }

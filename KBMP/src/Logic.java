@@ -8,25 +8,21 @@
  */
 public class Logic {
 	private Storage storage;
-	private ClipsParser parser;
 	private ClipsWrapper clips;
 	
 	private Model model;
 	
 	public Logic() {
 		this.storage = new Storage();
-		this.parser = new ClipsParser();
 		this.clips = new ClipsWrapper();
-		this.model = new Model();
+		this.model = new Model(this.clips);
 		
 		String condition = this.storage.readCondition();
 		this.clips.reset(condition);
 	}
 	
 	public void execute(String command) {
-		command = this.parser.parseStringIntoClips(command);
 		this.clips.run(command);
-		this.clips.getStatus();
 		this.model.update();
 		
 		return;

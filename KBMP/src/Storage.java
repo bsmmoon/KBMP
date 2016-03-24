@@ -2,7 +2,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Storage {
-	private String CONDITION_DIR = "";
+	private String CONDITION_DIR = "clips/planner.clp";
 	
 	public String readCondition() {
 		String condition = "";

@@ -6,6 +6,7 @@ public class Main {
 		Logic logic = new Logic();
 		
 		frame.setVisible(true);
-		logic.execute("");
+//		logic.execute("(assert (flag (type test)))");
+		logic.execute("(run)");
 	}
 }
