@@ -5,6 +5,9 @@ import gui.GuiFrame;
 public class Main {
 	public static void main(String[] args) {
 		GuiFrame frame = new GuiFrame("KBMP");
+		Logic logic = new Logic();
+		
 		frame.setVisible(true);
+		logic.run();
 	}
 }
