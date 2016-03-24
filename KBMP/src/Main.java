@@ -8,6 +8,6 @@ public class Main {
 		Logic logic = new Logic();
 		
 		frame.setVisible(true);
-		logic.run();
+		logic.execute("");
 	}
 }
