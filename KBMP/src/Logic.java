@@ -17,8 +17,10 @@ public class Logic {
 		this.storage = new Storage();
 		this.parser = new ClipsParser();
 		this.clips = new ClipsWrapper();
-		this.clips.reset();
 		this.model = new Model();
+		
+		String condition = this.storage.readCondition();
+		this.clips.reset(condition);
 	}
 	
 	public void execute(String command) {
