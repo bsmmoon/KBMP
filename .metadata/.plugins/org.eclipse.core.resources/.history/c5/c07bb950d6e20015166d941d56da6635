@@ -1,7 +1,0 @@
-package gui;
-
-import JPanel;
-
-public class SelectionPanel extends JPanel {
-
-}
