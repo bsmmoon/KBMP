@@ -26,24 +26,29 @@ public class Lesson {
             return new Lesson(this);
         }
 
-        public void setName(String name) {
+        public Builder setName(String name) {
             this.name = name;
+            return this;
         }
 
-        public void setType(Type type) {
+        public Builder setType(Type type) {
             this.type = type;
+            return this;
         }
 
-        public void setFrequency(Frequency frequency) {
+        public Builder setFrequency(Frequency frequency) {
             this.frequency = frequency;
+            return this;
         }
 
-        public void setStart(Time start) {
+        public Builder setStart(Time start) {
             this.start = start;
+            return this;
         }
 
-        public void setDay(Day day) {
+        public Builder setDay(Day day) {
             this.day = day;
+            return this;
         }
     }
 
