@@ -105,6 +105,11 @@ public class Module {
 		this.exam = builder.exam;
 	}
 
+	public Module(String code, String name){
+		this.code = code;
+		this.name = name;
+	}
+
 	public String getCode() {
 		return code;
 	}
