@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -32,6 +31,7 @@ public class SelectedItem extends JPanel {
 		this.setOpaque(false);
 		
 		label = new JLabel(text);
+		label.setToolTipText("hello");
 		add(label);
 		
 		if (hasDate) {
@@ -57,6 +57,7 @@ public class SelectedItem extends JPanel {
 		add(remove);
 		setPreferredSize(getPreferredSize());
 	}
+	
 	public void paint(Graphics g) {
 		Point pos = label.getLocation();
 		pos.x -= 5;
