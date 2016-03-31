@@ -14,10 +14,12 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 @SuppressWarnings("serial")
 public class SelectionStep extends JPanel implements ItemListener {
 	private JLabel question;
+	private JScrollPane scroller;
 	JComboBox<String> dropdownList;
 	SelectedItemsPanel selected;
 	JButton next;
@@ -27,8 +29,9 @@ public class SelectionStep extends JPanel implements ItemListener {
 		dropdownList = new JComboBox<String>();
 		//dropdownList.setEditable(true);
 		
-		selected = new SelectedItemsPanel(hasDate);
-		
+		selected = new SelectedItemsPanel(frame, hasDate);
+		scroller = new JScrollPane(selected,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scroller.getViewport().setPreferredSize(new Dimension(200,200));
 		next = new JButton(new AbstractAction("Next"){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -43,7 +46,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 		dropdownList.setMaximumSize(new Dimension(300,20));
 		add(dropdownList);
 		selected.setAlignmentX(LEFT_ALIGNMENT);
-		add(selected);
+		add(scroller);
 		add(next);
 		
 		setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -70,5 +73,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 		if (event.getStateChange() == ItemEvent.SELECTED) {
 			selected.addItem(event.getItem().toString());
 		}
+
+		scroller.revalidate();
 	}
 }

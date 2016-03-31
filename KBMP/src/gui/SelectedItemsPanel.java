@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -11,11 +12,11 @@ public class SelectedItemsPanel extends JPanel {
 	private ArrayList<SelectedItem> selectedItems;
 	private Stack<SelectedItem> removedItems;
 	
-	public SelectedItemsPanel(boolean hasDate) {
+	public SelectedItemsPanel(final GuiFrame frame, boolean hasDate) {
 		selectedItems = new ArrayList<SelectedItem>();
 		removedItems = new Stack<SelectedItem> ();
 		this.hasDate = hasDate;
-		setLayout(new FlowLayout(FlowLayout.LEFT));
+		setLayout(new WrapLayout(WrapLayout.LEFT));
 		setOpaque(false);
 	}
 	
@@ -30,10 +31,11 @@ public class SelectedItemsPanel extends JPanel {
 		
 		item.setAlignmentX(LEFT_ALIGNMENT);
 		add(item);
-		setPreferredSize(getPreferredSize());
-		
+		setPreferredSize(getLayout().preferredLayoutSize(this));
+
 		validate();
 	}
+	
 	
 	public void removeItem(SelectedItem item) {
 		selectedItems.remove(item);

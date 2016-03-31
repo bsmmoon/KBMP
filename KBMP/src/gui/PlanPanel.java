@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -17,6 +18,7 @@ import common.ModulePlan;
 
 public class PlanPanel extends JPanel {
 	private ArrayList<ModulePanel> modules;
+	private Stack<ModulePanel> removedModules;
 	private JButton regenerateButton;
 	private JButton proceedButton;
 	private JButton confirmButton;
@@ -28,7 +30,8 @@ public class PlanPanel extends JPanel {
 		setBackground(Color.WHITE);
 		
 		modules = new ArrayList<ModulePanel>();
-				
+		removedModules = new Stack<ModulePanel>();
+		
 		addPlan(plan);
 		
 		regenerateButton = new JButton(new AbstractAction("Regenerate") {
@@ -55,7 +58,7 @@ public class PlanPanel extends JPanel {
 			add(semester);
 			ArrayList<Module> modules = semesters.get(i);
 			for (int j=0; j<modules.size(); j++) {
-				ModulePanel module = new ModulePanel(modules.get(j));
+				ModulePanel module = new ModulePanel(this,modules.get(j));
 				add(module);
 				this.modules.add(module);
 			}
@@ -69,4 +72,8 @@ public class PlanPanel extends JPanel {
 		}
 	}
 
+	public void removeItem(ModulePanel item) {
+		modules.remove(item);
+		removedModules.push(item);
+	}
 }

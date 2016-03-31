@@ -3,10 +3,12 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import common.Module;
 import common.ModulePlan;
@@ -20,7 +22,7 @@ public class GuiFrame extends JFrame {
 	public GuiFrame(String title) {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+		//setResizable(false);
 		setSize(500,500);
 		
 		SelectionStep selection1 = new SelectionStep(this, false);
@@ -59,7 +61,8 @@ public class GuiFrame extends JFrame {
 		cards.add(selection4);
 		cards.add(selection5);
 		cards.add(planPanel);
-		add(cards,BorderLayout.CENTER);
+		
+		add(cards);
 		
 		getContentPane().setBackground(Color.WHITE);
 	}
