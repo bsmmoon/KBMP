@@ -23,8 +23,7 @@ public class Logic {
 	
 	public void execute(String command) {
 		this.clips.run(command);
+		this.clips.printFactsOnConsole();
 		this.model.update();
-		
-		return;
 	}
 }

@@ -19,7 +19,7 @@ public class Model {
 	public void update() {
 		this.modules = this.clips.getAvailableModules();
 		
-		System.out.println("Modules Available: ");
+		System.out.println("Modules Available: (" + modules.size() + ")");
 		for (Module module : modules) {
 			System.out.println(module);
 		}

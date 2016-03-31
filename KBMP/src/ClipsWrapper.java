@@ -37,7 +37,7 @@ public class ClipsWrapper {
 				if (address.getFactSlot("status").toString().equals("available")) {
 					code = address.getFactSlot("code").toString();
 					name = address.getFactSlot("name").toString();
-					modules.add(new Module(code, name));
+					modules.add(new Module.Builder().setCode(code).setName(name).build());
 				}
 			} catch (Exception e) {
 				System.out.println("Something went wrong!");
@@ -45,6 +45,10 @@ public class ClipsWrapper {
 		}
 		
 		return modules;
+	}
+
+	public void printFactsOnConsole() {
+		clips.eval("(facts)");
 	}
 	
 	public void reset(String condition) {
