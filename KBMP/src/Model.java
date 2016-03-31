@@ -9,19 +9,17 @@ import common.Module;
 public class Model {
 	private ClipsWrapper clips;
 	
-	private ArrayList<Module> modules;
+	private ArrayList<Module> availableModules;
 
 	public Model(ClipsWrapper clips) {
 		this.clips = clips;
-		this.modules = new ArrayList<Module>();
+		this.availableModules = new ArrayList<Module>();
 	}
 	
 	public void update() {
-		this.modules = this.clips.getAvailableModules();
-		
-		System.out.println("Modules Available: (" + modules.size() + ")");
-		for (Module module : modules) {
-			System.out.println(module);
-		}
+		availableModules = clips.getAvailableModules();
+
+		System.out.println("Modules Available: (" + availableModules.size() + ")");
+		availableModules.forEach(System.out::println);
 	}
 }

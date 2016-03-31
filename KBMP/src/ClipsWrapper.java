@@ -9,16 +9,17 @@ public class ClipsWrapper {
 	private ClipsParser parser;
 	
 	private Environment clips;
-	private boolean initialised = false;
+	private boolean initialised;
 	
 	private static final String GET_ALL_AVAIABLE_MODULE = "(find-all-facts ((?f module)) TRUE)";
 	
 	public ClipsWrapper() {
+		this.initialised = false;
 		this.parser = new ClipsParser();
 	}
 	
-	public void run(String command) {
-		command = this.parser.parseStringIntoClips(command);
+	public void execute(String command) {
+		command = parser.parseStringIntoClips(command);
 		clips.eval(command);
 	}
 	
@@ -47,19 +48,19 @@ public class ClipsWrapper {
 		return modules;
 	}
 
-	public void printFactsOnConsole() {
-		clips.eval("(facts)");
-	}
+	public void printFactsOnConsole() { clips.eval("(facts)"); }
 	
-	public void reset(String condition) {
-		init();
+	public void reset() { clips.reset(); }
+
+	public void run() { clips.run(); }
+	
+	public void init(String condition) {
+		if (!initialised) {
+			clips = new Environment();
+			initialised = true;
+		} else {
+			clips.clear();
+		}
 		clips.loadFromString(condition);
-		clips.run();
-		clips.eval("(reset)");
-	}
-	
-	public void init() {
-		if (!initialised) clips = new Environment();
-		else clips.reset();
 	}
 }

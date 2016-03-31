@@ -16,14 +16,18 @@ public class Logic {
 		this.storage = new Storage();
 		this.clips = new ClipsWrapper();
 		this.model = new Model(this.clips);
-		
+	}
+
+	public void reset() {
 		String condition = this.storage.readCondition();
-		this.clips.reset(condition);
+		clips.init(condition);
+		clips.reset();
+		clips.run();
 	}
 	
 	public void execute(String command) {
-		this.clips.run(command);
-		this.clips.printFactsOnConsole();
-		this.model.update();
+		System.out.println("CLIPS>> " + command);
+		clips.execute(command);
+		model.update();
 	}
 }
