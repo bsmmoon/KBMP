@@ -10,6 +10,7 @@ import java.awt.event.ItemListener;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -20,16 +21,18 @@ import javax.swing.JScrollPane;
 public class SelectionStep extends JPanel implements ItemListener {
 	private JLabel question;
 	private JScrollPane scroller;
-	JComboBox<String> dropdownList;
-	SelectedItemsPanel selected;
-	JButton next;
+	private JComboBox<String> dropdownList;
+	private boolean isAddingOrRemovingItem = false;
+	private SelectedItemsPanel selected;
+	private JButton next;
+	
 	
 	public SelectionStep(final GuiFrame frame, boolean hasDate) {
 		question = new JLabel();
 		dropdownList = new JComboBox<String>();
 		//dropdownList.setEditable(true);
 		
-		selected = new SelectedItemsPanel(frame, hasDate);
+		selected = new SelectedItemsPanel(this, frame, hasDate);
 		scroller = new JScrollPane(selected,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroller.getViewport().setPreferredSize(new Dimension(200,200));
 		next = new JButton(new AbstractAction("Next"){
@@ -65,13 +68,55 @@ public class SelectionStep extends JPanel implements ItemListener {
 			dropdownList.addItem(item);
 		}
 		dropdownList.setSelectedItem(null);
+		//dropdownList.addListDataListener(this);
 		dropdownList.addItemListener(this);
+	}
+	
+	public void insertItem(String item) {
+		isAddingOrRemovingItem = true;
+		boolean added = false;
+		
+		for (int i=0; i<dropdownList.getItemCount(); i++) {
+			if (added) break;
+			
+			switch (dropdownList.getItemAt(i).compareTo(item)) {
+			case -1:	// item to be inserted is after the current item
+				added = false;
+				break;
+			case 0:		// item to be inserted = current item
+				added = true;
+				break;
+			case 1:		// item to be inserted is before the current item
+				dropdownList.insertItemAt(item, i);
+				added = true;
+				break;
+			}
+		}
+		
+		if (!added) {
+			dropdownList.addItem(item);
+		}
+		
+		dropdownList.setSelectedItem(null);
+		dropdownList.revalidate();
+		scroller.revalidate();
+		
+		isAddingOrRemovingItem = false;
 	}
 	
 	@Override
 	public void itemStateChanged(ItemEvent event) {
+		if (isAddingOrRemovingItem == true) {
+			return;
+		}
+		
 		if (event.getStateChange() == ItemEvent.SELECTED) {
 			selected.addItem(event.getItem().toString());
+			isAddingOrRemovingItem = true;
+			dropdownList.removeItem(event.getItem());
+			dropdownList.setSelectedItem(null);
+			isAddingOrRemovingItem = false;
+			dropdownList.revalidate();
 		}
 
 		scroller.revalidate();

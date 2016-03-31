@@ -8,11 +8,13 @@ import java.util.Stack;
 import javax.swing.JPanel;
 
 public class SelectedItemsPanel extends JPanel {
+	private SelectionStep selectionStep;
 	private boolean hasDate;
 	private ArrayList<SelectedItem> selectedItems;
 	private Stack<SelectedItem> removedItems;
 	
-	public SelectedItemsPanel(final GuiFrame frame, boolean hasDate) {
+	public SelectedItemsPanel(final SelectionStep selectionStep, final GuiFrame frame, boolean hasDate) {
+		this.selectionStep = selectionStep;
 		selectedItems = new ArrayList<SelectedItem>();
 		removedItems = new Stack<SelectedItem> ();
 		this.hasDate = hasDate;
@@ -40,5 +42,6 @@ public class SelectedItemsPanel extends JPanel {
 	public void removeItem(SelectedItem item) {
 		selectedItems.remove(item);
 		removedItems.push(item);
+		selectionStep.insertItem(item.toString());
 	}
 }

@@ -22,7 +22,7 @@ public class GuiFrame extends JFrame {
 	public GuiFrame(String title) {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//setResizable(false);
+		setResizable(false);
 		setSize(500,500);
 		
 		SelectionStep selection1 = new SelectionStep(this, false);

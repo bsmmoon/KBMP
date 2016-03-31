@@ -73,4 +73,9 @@ public class SelectedItem extends JPanel {
 		
 		super.paint(g);
 	}
+	
+	@Override
+	public String toString() {
+		return label.getText();
+	}
 }
