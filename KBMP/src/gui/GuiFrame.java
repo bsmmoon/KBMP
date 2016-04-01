@@ -18,7 +18,7 @@ public class GuiFrame extends JFrame {
 	private JPanel cards;	//a panel that uses CardLayout
 	private int currentStep = 1;
 	String[] selections = {"CS1101","CS2101","CS2102","CS3342"};
-	
+
 	public GuiFrame(String title) {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -1,10 +1,13 @@
+package backend;
+
 import gui.GuiFrame;
 
 public class Main {
 	public static void main(String[] args) {
-		GuiFrame frame = new GuiFrame("KBMP");
 		Logic logic = new Logic();
 		logic.reset();
+
+		GuiFrame frame = new GuiFrame("KBMP");
 		
 		frame.setVisible(true);
 //		logic.execute("(assert (flag (type test)))");

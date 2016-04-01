@@ -1,4 +1,4 @@
-/*
+package backend;/*
  * Facet
  */
 
@@ -15,7 +15,9 @@ public class Model {
 		this.clips = clips;
 		this.availableModules = new ArrayList<Module>();
 	}
-	
+
+	public ArrayList<Module> getAvailableModules() { return availableModules; }
+
 	public void update() {
 		availableModules = clips.getAvailableModules();
 

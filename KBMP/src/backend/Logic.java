@@ -1,9 +1,11 @@
+package backend;
+
 /*
  * Workflow:
  * 		1. Receives user command from view
- * 		2. Parse command into CLIPS command (ClipsParser)
- * 		3. Pass the command to the CLIPS (ClipsWrapper)
- * 		4. Fetch status from CLIPS (ClipsWrapper)
+ * 		2. Parse command into CLIPS command (backend.ClipsParser)
+ * 		3. Pass the command to the CLIPS (backend.ClipsWrapper)
+ * 		4. Fetch status from CLIPS (backend.ClipsWrapper)
  * 		5. Return status to view
  */
 public class Logic {

@@ -65,7 +65,6 @@
 (defrule RANK::mark-available "mark modules without prerequisites as available"
     ?module <- (module (code ?code) (prerequisites none) (status none))
     =>
-    (printout t "Marked as available: " ?code crlf)
     (modify ?module (status available)))
 
 (defrule SELECT::mark-planned "mark modules that the user plan to take"
@@ -76,14 +75,14 @@
     (printout t "Marking module " ?code1 " as planned" crlf)
     (modify ?module (status planned)))
 
-(defrule SELECT::init-mark-planned "initialize marking of modules that the user plan to take"
-    (module (status available) (code ?code))
-    =>
-    (printout t "Module " ?code " available. Enter a module from suggestions:" crlf)
-    (refresh init-mark-planned)
-    (bind ?userplanned (read))
-    (switch ?userplanned (case end then (pop-focus))
-	   (default then (assert(planned ?userplanned)))))
+; ; (defrule SELECT::init-mark-planned "initialize marking of modules that the user plan to take"
+; ;     (module (status available) (code ?code))
+; ;     =>
+; ;     (printout t "Module " ?code " available. Enter a module from suggestions:" crlf)
+; ;     (refresh init-mark-planned)
+; ;     (bind ?userplanned (read))
+; ;     (switch ?userplanned (case end then (pop-focus))
+; ; 	   (default then (assert(planned ?userplanned)))))
 
 ; ; TESTS
 (deffacts test-facts
