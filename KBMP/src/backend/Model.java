@@ -18,10 +18,5 @@ public class Model {
 
 	public ArrayList<Module> getAvailableModules() { return availableModules; }
 
-	public void update() {
-		availableModules = clips.getAvailableModules();
-
-		System.out.println("Modules Available: (" + availableModules.size() + ")");
-		availableModules.forEach(System.out::println);
-	}
+	public void update() { availableModules = clips.getAvailableModules(); }
 }

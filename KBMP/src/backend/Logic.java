@@ -32,4 +32,6 @@ public class Logic {
 		clips.execute(command);
 		model.update();
 	}
+
+	public Model getModel() { return model; }
 }
