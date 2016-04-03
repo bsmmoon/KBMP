@@ -1,7 +1,6 @@
 package common;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Hashtable;
 
 /**
@@ -14,24 +13,28 @@ public class Module {
 	private String name;
 	private int credits = -1;
 	private String department = "";
-	private Hashtable<String, Integer> workload = new Hashtable<String, Integer>();
-	private ArrayList<String> prerequisites = new ArrayList<String>();
-	private ArrayList<String> corequisites = new ArrayList<String>();
-	private ArrayList<String> exclusions = new ArrayList<String>();
-	private ArrayList<Lesson> timetable = new ArrayList<Lesson>();
-	private Calendar exam;
+	private String description = "";
+	private Hashtable<String, Integer> workload = new Hashtable<>();
+	private ArrayList<String> prerequisites = new ArrayList<>();
+	private ArrayList<String> corequisites = new ArrayList<>();
+	private ArrayList<String> preclusions = new ArrayList<>();
+	private ArrayList<Lesson> timetable = new ArrayList<>();
+	private Exam exam;
+	private ArrayList<String> types = new ArrayList<>();
 
 	public static class Builder {
 		private String code;
 		private String name;
 		private int credits = -1;
 		private String department = "";
-		private Hashtable<String, Integer> workload = new Hashtable<String, Integer>();
-		private ArrayList<String> prerequisites = new ArrayList<String>();
-		private ArrayList<String> corequisites = new ArrayList<String>();
-		private ArrayList<String> exclusions = new ArrayList<String>();
-		private ArrayList<Lesson> timetable = new ArrayList<Lesson>();
-		private Calendar exam;
+		private String description = "";
+		private Hashtable<String, Integer> workload = new Hashtable<>();
+		private ArrayList<String> prerequisites = new ArrayList<>();
+		private ArrayList<String> corequisites = new ArrayList<>();
+		private ArrayList<String> preclusions = new ArrayList<>();
+		private ArrayList<Lesson> timetable = new ArrayList<>();
+		private Exam exam;
+		private ArrayList<String> types = new ArrayList<>();
 
 		public Module build(){
 			return new Module(this);
@@ -57,6 +60,11 @@ public class Module {
 			return this;
 		}
 
+		public Builder setDescription(String description) {
+			this.description = description;
+			return this;
+		}
+
 		public Builder setWorkload(Hashtable<String, Integer> workload) {
 			this.workload = workload;
 			return this;
@@ -72,8 +80,8 @@ public class Module {
 			return this;
 		}
 
-		public Builder setExclusions(ArrayList<String> exclusions) {
-			this.exclusions = exclusions;
+		public Builder setPreclusions(ArrayList<String> preclusions) {
+			this.preclusions = preclusions;
 			return this;
 		}
 
@@ -82,8 +90,13 @@ public class Module {
 			return this;
 		}
 
-		public Builder setExam(Calendar exam) {
+		public Builder setExam(Exam exam) {
 			this.exam = exam;
+			return this;
+		}
+
+		public Builder setTypes(ArrayList<String> types) {
+			this.types = types;
 			return this;
 		}
 	}
@@ -97,12 +110,14 @@ public class Module {
 		this.name = builder.name;
 		this.credits = builder.credits;
 		this.department = builder.department;
+		this.description = builder.description;
 		this.workload = builder.workload;
 		this.prerequisites = builder.prerequisites;
 		this.corequisites = builder.corequisites;
-		this.exclusions = builder.exclusions;
+		this.preclusions = builder.preclusions;
 		this.timetable = builder.timetable;
 		this.exam = builder.exam;
+		this.types = builder.types;
 	}
 
 	public Module(String code, String name){
@@ -122,6 +137,10 @@ public class Module {
 		return department;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
 	public int getCredits() {
 		return credits;
 	}
@@ -130,7 +149,7 @@ public class Module {
 		return workload;
 	}
 
-	public Calendar getExam() {
+	public Exam getExam() {
 		return exam;
 	}
 
@@ -142,12 +161,12 @@ public class Module {
 		return corequisites;
 	}
 
-	public ArrayList<String> getExclusions() {
-		return exclusions;
-	}
-
 	public ArrayList<Lesson> getTimetable() {
 		return timetable;
+	}
+
+	public ArrayList<String> getTypes() {
+		return types;
 	}
 
 	public String toString() {
