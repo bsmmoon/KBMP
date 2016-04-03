@@ -1,0 +1,17 @@
+// Control file for white-listing modules
+// <Module prefix>: <Module number>
+// * refers to anything
+// Assumes CS student
+// Includes all required modules
+// Includes the following possible routes:
+// NOC, InfoSec specialisation
+
+CS: *
+CSX: * // Dummy modules
+CP: *
+IS: 1103, 4010, 4231, 4232
+ST: 2334, 2131, 2132
+MA: 130*, 1521, 1101R
+PC: 122*
+TR: 320* // NOC
+ES: 2660
