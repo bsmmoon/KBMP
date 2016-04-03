@@ -9,12 +9,14 @@ import java.util.Hashtable;
  *
  */
 public class Module {
+	public enum WorkloadTypes {LECTURE, TUTORIAL, LABORATORY, CONTINUOUS_ASSESSMENT, PREPARATORY_WORK};
+
 	private String code = "";
 	private String name = "";
 	private int credits = -1;
 	private String department = "";
 	private String description = "";
-	private Hashtable<String, Integer> workload = new Hashtable<>();
+	private Hashtable<Module.WorkloadTypes, Integer> workload = new Hashtable<>();
 	private ArrayList<String> prerequisites = new ArrayList<>();
 	private ArrayList<String> corequisites = new ArrayList<>();
 	private ArrayList<String> preclusions = new ArrayList<>();
@@ -28,7 +30,7 @@ public class Module {
 		private int credits = -1;
 		private String department = "";
 		private String description = "";
-		private Hashtable<String, Integer> workload = new Hashtable<>();
+		private Hashtable<Module.WorkloadTypes, Integer> workload = new Hashtable<>();
 		private ArrayList<String> prerequisites = new ArrayList<>();
 		private ArrayList<String> corequisites = new ArrayList<>();
 		private ArrayList<String> preclusions = new ArrayList<>();
@@ -65,7 +67,7 @@ public class Module {
 			return this;
 		}
 
-		public Builder setWorkload(Hashtable<String, Integer> workload) {
+		public Builder setWorkload(Hashtable<Module.WorkloadTypes, Integer> workload) {
 			this.workload = workload;
 			return this;
 		}
@@ -145,7 +147,7 @@ public class Module {
 		return credits;
 	}
 
-	public Hashtable<String, Integer> getWorkload() {
+	public Hashtable<Module.WorkloadTypes, Integer> getWorkload() {
 		return workload;
 	}
 
