@@ -12,14 +12,16 @@ public class NusmodsModule {
     public String Workload;
     public String Prerequisite;
     public String Corequisite;
+    public String Preclusion;
     public String ExamDate;
+    public String[] Types; // module types, e.g. UEM
     public String ExamDuration;
     public boolean ExamOpenBook;
     public String ExamVenue;
-    public NusmodsTimetable Timetable;
+    public NusmodsTimetable[] Timetable;
     public String[] LecturePeriods;
 
-    public class NusmodsTimetable {
+    public static class NusmodsTimetable {
         public String ClassNo;
         public String LessonType;
         public String WeekText;
