@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
  * Created by Joey on 3/4/16.
  */
 public class Exam {
-    private LocalDateTime date;
-    private boolean openBook;
-    private String venue;
-    private Duration duration;
+    private LocalDateTime date = LocalDateTime.MIN;
+    private boolean openBook = false;
+    private String venue = "";
+    private Duration duration = Duration.ZERO;
 
     public static class Builder {
         private LocalDateTime date;
@@ -45,6 +45,8 @@ public class Exam {
     public static Builder builder(){
         return new Builder();
     }
+
+    public Exam() {}
 
     private Exam (Builder builder){
         this.date = builder.date;

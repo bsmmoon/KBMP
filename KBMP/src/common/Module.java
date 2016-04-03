@@ -9,8 +9,8 @@ import java.util.Hashtable;
  *
  */
 public class Module {
-	private String code;
-	private String name;
+	private String code = "";
+	private String name = "";
 	private int credits = -1;
 	private String department = "";
 	private String description = "";
@@ -19,12 +19,12 @@ public class Module {
 	private ArrayList<String> corequisites = new ArrayList<>();
 	private ArrayList<String> preclusions = new ArrayList<>();
 	private ArrayList<Lesson> timetable = new ArrayList<>();
-	private Exam exam;
+	private Exam exam = new Exam();
 	private ArrayList<String> types = new ArrayList<>();
 
 	public static class Builder {
-		private String code;
-		private String name;
+		private String code = "";
+		private String name = "";
 		private int credits = -1;
 		private String department = "";
 		private String description = "";
@@ -33,7 +33,7 @@ public class Module {
 		private ArrayList<String> corequisites = new ArrayList<>();
 		private ArrayList<String> preclusions = new ArrayList<>();
 		private ArrayList<Lesson> timetable = new ArrayList<>();
-		private Exam exam;
+		private Exam exam = new Exam();
 		private ArrayList<String> types = new ArrayList<>();
 
 		public Module build(){
