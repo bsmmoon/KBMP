@@ -29,17 +29,19 @@ public class ModulesParser {
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
     private enum PatternTypes {ANY_ONE_MODULE};
     private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
+    private static Hashtable<String, Module> existingModules = null;
 
     public static void test(){
         Path modulesJson = Paths.get("data/AY1516_S1_modules.json");
         try {
-            getModulesFromPath(modulesJson);
+            updateModulesFromPath(modulesJson, new Hashtable<>());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static ArrayList<Module> getModulesFromPath(Path pathToFile) throws IOException {
+    public static ArrayList<Module> updateModulesFromPath(Path pathToFile, Hashtable<String, Module> existingModules) throws IOException {
+        ModulesParser.existingModules = existingModules;
         if (!Files.isReadable(pathToFile)) throw new IOException(ERROR_MESSAGE_MODULES_NOT_READABLE);
         ArrayList<NusmodsModule> allRawModules = getRawModules(pathToFile);
         ArrayList<NusmodsModule> relevantRawModules = filter(allRawModules, getRelevantPattern());
@@ -60,9 +62,16 @@ public class ModulesParser {
     private static ArrayList<NusmodsModule> filter(ArrayList<NusmodsModule> rawModules, Pattern pattern) {
         Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
         while (moduleIterator.hasNext()){
-            NusmodsModule currentModule = moduleIterator.next();
+            String currentModuleCode = moduleIterator.next().ModuleCode.trim();
             // remove modules if they do not match any of the whitelisted module codes as defined in pattern.
-            if (!pattern.matcher(currentModule.ModuleCode).matches()){
+            if (!pattern.matcher(currentModuleCode).matches()){
+                moduleIterator.remove();
+            }
+
+            // if module has already been parsed in the previous semester, just add that it's present in this
+            // semester and not parse the whole module again
+            if (ModulesParser.existingModules.containsKey(currentModuleCode)){
+                ModulesParser.existingModules.get(currentModuleCode).setSemesters(Module.Semester.BOTH);
                 moduleIterator.remove();
             }
         }
