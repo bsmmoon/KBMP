@@ -11,32 +11,32 @@ import java.util.Hashtable;
 public class Module {
 	public enum WorkloadTypes {LECTURE, TUTORIAL, LABORATORY, CONTINUOUS_ASSESSMENT, PREPARATORY_WORK};
 
-	private String code = "";
-	private String name = "";
-	private int credits = -1;
-	private String department = "";
-	private String description = "";
-	private Hashtable<WorkloadTypes, Float> workload = new Hashtable<>();
-	private ArrayList<String> prerequisites = new ArrayList<>();
-	private ArrayList<String> corequisites = new ArrayList<>();
-	private ArrayList<String> preclusions = new ArrayList<>();
-	private ArrayList<Lesson> timetable = new ArrayList<>();
-	private Exam exam = new Exam();
-	private ArrayList<String> types = new ArrayList<>();
+	private String code;
+	private String name;
+	private int credits;
+	private String department;
+	private String description;
+	private Hashtable<WorkloadTypes, Float> workload;
+	private ArrayList<String> prerequisites;
+	private ArrayList<String> corequisites;
+	private ArrayList<String> preclusions;
+	private ArrayList<Lesson> timetable;
+	private Exam exam;
+	private ArrayList<String> types;
 
 	public static class Builder {
-		private String code = "";
-		private String name = "";
+		private String code;
+		private String name;
 		private int credits = -1;
-		private String department = "";
-		private String description = "";
-		private Hashtable<Module.WorkloadTypes, Float> workload = new Hashtable<>();
-		private ArrayList<String> prerequisites = new ArrayList<>();
-		private ArrayList<String> corequisites = new ArrayList<>();
-		private ArrayList<String> preclusions = new ArrayList<>();
-		private ArrayList<Lesson> timetable = new ArrayList<>();
-		private Exam exam = new Exam();
-		private ArrayList<String> types = new ArrayList<>();
+		private String department;
+		private String description;
+		private Hashtable<Module.WorkloadTypes, Float> workload;
+		private ArrayList<String> prerequisites;
+		private ArrayList<String> corequisites;
+		private ArrayList<String> preclusions;
+		private ArrayList<Lesson> timetable;
+		private Exam exam;
+		private ArrayList<String> types;
 
 		public Module build(){
 			return new Module(this);
@@ -161,6 +161,10 @@ public class Module {
 
 	public ArrayList<String> getCorequisites() {
 		return corequisites;
+	}
+
+	public ArrayList<String> getPreclusions() {
+		return preclusions;
 	}
 
 	public ArrayList<Lesson> getTimetable() {

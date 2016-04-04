@@ -128,18 +128,14 @@ public class ModulesParser {
         moduleBuilder.setCode(rawModule.ModuleCode.trim()).setName(rawModule.ModuleTitle.trim()).setCredits(rawModule
                 .ModuleCredit).setDepartment(rawModule.Department.trim());
 
-        // if no exam, leave module.workload as null
         moduleBuilder.setWorkload(parseWorkload(rawModule));
 
         // prerequisites
         // corequisites
         // preclusions
-        // timetable
 
-        // if no timetable, leave as default empty arraylist of Lesson.
         moduleBuilder.setTimetable(parseTimetable(rawModule));
 
-        // exam
         // if no exam, leave module.exam as null.
         moduleBuilder.setExam(parseExam(rawModule));
 
@@ -148,7 +144,7 @@ public class ModulesParser {
 
     private static Hashtable<Module.WorkloadTypes, Float> parseWorkload(NusmodsModule rawModule) {
         if (rawModule.Workload == null) {
-            return null;
+            return new Hashtable<>();
         }
 
         String[] workloadTokens = rawModule.Workload.split("-");
