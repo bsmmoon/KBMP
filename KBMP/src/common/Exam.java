@@ -1,5 +1,6 @@
 package common;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -7,7 +8,7 @@ import java.time.OffsetDateTime;
 /**
  * Created by Joey on 3/4/16.
  */
-public class Exam {
+public class Exam implements Serializable {
     private OffsetDateTime date = null;
     private boolean openBook = false;
     private String venue = "";

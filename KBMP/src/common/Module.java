@@ -1,5 +1,6 @@
 package common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -8,7 +9,7 @@ import java.util.Hashtable;
  * @author Joey
  *
  */
-public class Module {
+public class Module implements Serializable {
 	public enum WorkloadTypes {LECTURE, TUTORIAL, LABORATORY, CONTINUOUS_ASSESSMENT, PREPARATORY_WORK};
 	public enum Semester {ONE, TWO, BOTH};
 

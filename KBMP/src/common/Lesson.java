@@ -1,11 +1,12 @@
 package common;
 
+import java.io.Serializable;
 import java.sql.Time;
 
 /**
  * Created by Joey on 28/3/16.
  */
-public class Lesson {
+public class Lesson implements Serializable {
     public enum Day {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
     public enum Type {LECTURE, TUTORIAL, LABORATORY, SECTIONAL, RECITATION}
     public enum Frequency {EVERY, ODD, EVEN}
