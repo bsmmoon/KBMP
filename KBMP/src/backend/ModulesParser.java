@@ -128,7 +128,8 @@ public class ModulesParser {
                 .ModuleCredit).setDepartment(rawModule.Department.trim());
 
         // workload
-        try {
+        // if no exam, leave module.workload as null
+        if (rawModule.Workload != null) {
             String[] workloadTokens = rawModule.Workload.split("-");
             Hashtable<Module.WorkloadTypes, Float> workload = new Hashtable<>();
             workload.put(Module.WorkloadTypes.LECTURE, new Float(workloadTokens[0]));
@@ -137,8 +138,6 @@ public class ModulesParser {
             workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Float(workloadTokens[3]));
             workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Float(workloadTokens[4]));
             moduleBuilder.setWorkload(workload);
-        } catch (NullPointerException e){
-            // no exam -> leave module.workload as null
         }
 
         // prerequisites
@@ -147,7 +146,8 @@ public class ModulesParser {
         // timetable
 
         // exam
-        try {
+        // if no exam, leave module.exam as null.
+        if (rawModule.ExamDate != null) {
             Exam.Builder examBuilder = Exam.builder();
 
             // format Nusmods' date, necessary for parsing
@@ -165,8 +165,6 @@ public class ModulesParser {
             examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
 
             moduleBuilder.setExam(examBuilder.build());
-        } catch (NullPointerException e) {
-            // no exam -> leave module.exam as null.
         }
 
         return moduleBuilder.build();
