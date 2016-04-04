@@ -32,15 +32,6 @@ public class ModulesParser {
     private static Hashtable<String, Module> existingModules = null;
     private static Module.Semester currentSemester;
 
-    public static void test(){
-        Path modulesJson = Paths.get("data/AY1516_S1_modules.json");
-        try {
-            updateModulesFromPath(modulesJson, new Hashtable<>(), Module.Semester.ONE);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     public static ArrayList<Module> updateModulesFromPath(Path pathToFile, Hashtable<String, Module> existingModules,
                                                           Module.Semester currentSemester) throws IOException {
         ModulesParser.existingModules = existingModules;
