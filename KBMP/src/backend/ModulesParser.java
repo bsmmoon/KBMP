@@ -128,14 +128,18 @@ public class ModulesParser {
                 .ModuleCredit).setDepartment(rawModule.Department.trim());
 
         // workload
-        String[] workloadTokens = rawModule.Workload.split("-");
-        Hashtable<Module.WorkloadTypes, Integer> workload = new Hashtable<>();
-        workload.put(Module.WorkloadTypes.LECTURE, new Integer(workloadTokens[0]));
-        workload.put(Module.WorkloadTypes.TUTORIAL, new Integer(workloadTokens[1]));
-        workload.put(Module.WorkloadTypes.LABORATORY, new Integer(workloadTokens[2]));
-        workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Integer(workloadTokens[3]));
-        workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Integer(workloadTokens[4]));
-        moduleBuilder.setWorkload(workload);
+        try {
+            String[] workloadTokens = rawModule.Workload.split("-");
+            Hashtable<Module.WorkloadTypes, Integer> workload = new Hashtable<>();
+            workload.put(Module.WorkloadTypes.LECTURE, new Integer(workloadTokens[0]));
+            workload.put(Module.WorkloadTypes.TUTORIAL, new Integer(workloadTokens[1]));
+            workload.put(Module.WorkloadTypes.LABORATORY, new Integer(workloadTokens[2]));
+            workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Integer(workloadTokens[3]));
+            workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Integer(workloadTokens[4]));
+            moduleBuilder.setWorkload(workload);
+        } catch (NullPointerException e){
+            // no exam -> leave module.workload as null
+        }
 
         // prerequisites
         // corequisites
@@ -143,11 +147,15 @@ public class ModulesParser {
         // timetable
 
         // exam
-        Exam.Builder examBuilder = Exam.builder();
-        examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
-        examBuilder.setDate(LocalDateTime.parse(rawModule.ExamDate));
-        examBuilder.setDuration(Duration.parse(rawModule.ExamDuration));
-        moduleBuilder.setExam(examBuilder.build());
+        try {
+            Exam.Builder examBuilder = Exam.builder();
+            examBuilder.setDate(LocalDateTime.parse(rawModule.ExamDate));
+            examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
+            examBuilder.setDuration(Duration.parse(rawModule.ExamDuration));
+            moduleBuilder.setExam(examBuilder.build());
+        } catch (NullPointerException e) {
+            // no exam -> leave module.exam as null.
+        }
 
         return moduleBuilder.build();
     }
