@@ -30,18 +30,22 @@ public class ModulesParser {
     private enum PatternTypes {ANY_ONE_MODULE};
     private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
     private static Hashtable<String, Module> existingModules = null;
+    private static Module.Semester currentSemester;
 
     public static void test(){
         Path modulesJson = Paths.get("data/AY1516_S1_modules.json");
         try {
-            updateModulesFromPath(modulesJson, new Hashtable<>());
+            updateModulesFromPath(modulesJson, new Hashtable<>(), Module.Semester.ONE);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static ArrayList<Module> updateModulesFromPath(Path pathToFile, Hashtable<String, Module> existingModules) throws IOException {
+    public static ArrayList<Module> updateModulesFromPath(Path pathToFile, Hashtable<String, Module> existingModules,
+                                                          Module.Semester currentSemester) throws IOException {
         ModulesParser.existingModules = existingModules;
+        ModulesParser.currentSemester = currentSemester;
+
         if (!Files.isReadable(pathToFile)) throw new IOException(ERROR_MESSAGE_MODULES_NOT_READABLE);
         ArrayList<NusmodsModule> allRawModules = getRawModules(pathToFile);
         ArrayList<NusmodsModule> relevantRawModules = filter(allRawModules, getRelevantPattern());
@@ -158,7 +162,9 @@ public class ModulesParser {
         // if no exam, leave module.exam as null.
         moduleBuilder.setExam(parseExam(rawModule));
 
-        return moduleBuilder.build();
+        Module newModule = moduleBuilder.build();
+        newModule.setSemesters(ModulesParser.currentSemester);
+        return newModule;
     }
 
     private static Hashtable<Module.WorkloadTypes, Float> parseWorkload(NusmodsModule rawModule) {
