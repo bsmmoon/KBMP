@@ -181,4 +181,12 @@ public class Module {
 	public String toString() {
 		return "[" + this.code + ", " + this.name + "]";
 	}
+
+	public void setSemesters(Semester semesters) {
+		this.semesters = semesters;
+	}
+
+	public void setTaken(boolean taken) {
+		this.taken = taken;
+	}
 }
