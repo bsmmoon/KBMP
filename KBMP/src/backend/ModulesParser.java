@@ -91,7 +91,7 @@ public class ModulesParser {
         String asterisk = "*";
         if (rest.contentEquals(asterisk)){
             // match prefix exactly once, followed by 4 digits, and 0-2 alphabets/numbers
-            regex = prefix + "(\\d){4}(\\w){0,2}";
+            regex = prefix + "(\\d){4}([a-zA-Z]){0,2}";
         } else {
             String[] restOfTokens = rest.split(",");
             ArrayList<String> regexTokens = new ArrayList<>();
