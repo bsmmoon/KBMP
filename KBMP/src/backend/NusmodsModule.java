@@ -29,5 +29,21 @@ public class NusmodsModule {
         public String StartTime;
         public String EndTime;
         public String Venue;
+
+        @Override
+        public String toString() {
+            return String.join(" ", this.ClassNo, this.LessonType, this.WeekText, this.DayText, this.StartTime, this
+                    .EndTime, this.Venue);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.ModuleCode + " " + this.ModuleTitle + " by " + this.Department + "\n" + this.ModuleDescription +
+                "\nModule credit: " + this.ModuleCredit + "\nWorkload: " + this.Workload + "\nPrequisite: " + this
+                .Prerequisite + "\nCorequisite: " + this.Corequisite + "\nPreclusion: " + this.Preclusion + "\nExam " +
+                "date: " + this.ExamDate + "\nExam duration: " + this.ExamDuration + "\nExam is open book: " + this
+                .ExamOpenBook + "\nExam venue: " + this.ExamVenue + "\n\nTimetable: " + this.Timetable +
+                "\n\nLecture periods: " + this.LecturePeriods;
     }
 }
