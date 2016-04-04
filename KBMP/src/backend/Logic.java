@@ -1,5 +1,10 @@
 package backend;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
+import common.Module;
+
 /*
  * Workflow:
  * 		1. Receives user command from view
@@ -13,12 +18,14 @@ public class Logic {
 	private ClipsWrapper clips;
 	
 	private Model model;
-	
+
 	public Logic() {
 		this.storage = new Storage();
 		this.clips = new ClipsWrapper();
 		this.model = new Model(this.clips);
 	}
+
+	public Model getModel() { return model; }
 
 	public void reset() {
 		String condition = this.storage.readCondition();
@@ -33,5 +40,16 @@ public class Logic {
 		model.update();
 	}
 
-	public Model getModel() { return model; }
+	public void setNumberOfSemesterLeft(int semester) { model.setNumberOfSemesterLeft(semester); }
+
+	public void assertTaken(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert (taken " + module.getCode() + "))")); }
+
+	public void assertWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert (want " + module.getCode() + "))")); }
+
+	public void assertDontWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert (dontwant " + module.getCode() + "))")); }
+
+	public void selectModules(ArrayList<Module> modules) {
+		modules.forEach((module) -> execute("(assert (selected " + module.getCode() + " " + model.getSemester() + "))"));
+		model.updatePlan(modules);
+	}
 }
