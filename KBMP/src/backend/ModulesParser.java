@@ -49,9 +49,9 @@ public class ModulesParser {
         if (!Files.isReadable(pathToFile)) throw new IOException(ERROR_MESSAGE_MODULES_NOT_READABLE);
         ArrayList<NusmodsModule> allRawModules = getRawModules(pathToFile);
         ArrayList<NusmodsModule> relevantRawModules = filter(allRawModules, getRelevantPattern());
-        //ArrayList<Module> modules = parseModules(relevantRawModules);
+        ArrayList<Module> modules = parseModules(relevantRawModules);
 
-        return new ArrayList<Module>();
+        return modules;
     }
 
     private static ArrayList<NusmodsModule> getRawModules(Path pathToFile) throws IOException {
