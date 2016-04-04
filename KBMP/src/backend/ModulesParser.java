@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -57,8 +58,15 @@ public class ModulesParser {
     }
 
     private static ArrayList<NusmodsModule> filter(ArrayList<NusmodsModule> rawModules, Pattern pattern) {
-        // remove modules if they do not match any of the whitelisted module codes as defined in pattern.
-        rawModules.removeIf(module -> !pattern.matcher(module.ModuleCode).matches());
+        Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
+        while (moduleIterator.hasNext()){
+            NusmodsModule currentModule = moduleIterator.next();
+            // remove modules if they do not match any of the whitelisted module codes as defined in pattern.
+            if (!pattern.matcher(currentModule.ModuleCode).matches()){
+                moduleIterator.remove();
+            }
+        }
+
         return rawModules;
     }
 
