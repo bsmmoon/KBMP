@@ -128,18 +128,8 @@ public class ModulesParser {
         moduleBuilder.setCode(rawModule.ModuleCode.trim()).setName(rawModule.ModuleTitle.trim()).setCredits(rawModule
                 .ModuleCredit).setDepartment(rawModule.Department.trim());
 
-        // workload
         // if no exam, leave module.workload as null
-        if (rawModule.Workload != null) {
-            String[] workloadTokens = rawModule.Workload.split("-");
-            Hashtable<Module.WorkloadTypes, Float> workload = new Hashtable<>();
-            workload.put(Module.WorkloadTypes.LECTURE, new Float(workloadTokens[0]));
-            workload.put(Module.WorkloadTypes.TUTORIAL, new Float(workloadTokens[1]));
-            workload.put(Module.WorkloadTypes.LABORATORY, new Float(workloadTokens[2]));
-            workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Float(workloadTokens[3]));
-            workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Float(workloadTokens[4]));
-            moduleBuilder.setWorkload(workload);
-        }
+        moduleBuilder.setWorkload(parseWorkload(rawModule));
 
         // prerequisites
         // corequisites
@@ -154,6 +144,21 @@ public class ModulesParser {
         moduleBuilder.setExam(parseExam(rawModule));
 
         return moduleBuilder.build();
+    }
+
+    private static Hashtable<Module.WorkloadTypes, Float> parseWorkload(NusmodsModule rawModule) {
+        if (rawModule.Workload == null) {
+            return null;
+        }
+
+        String[] workloadTokens = rawModule.Workload.split("-");
+        Hashtable<Module.WorkloadTypes, Float> workload = new Hashtable<>();
+        workload.put(Module.WorkloadTypes.LECTURE, new Float(workloadTokens[0]));
+        workload.put(Module.WorkloadTypes.TUTORIAL, new Float(workloadTokens[1]));
+        workload.put(Module.WorkloadTypes.LABORATORY, new Float(workloadTokens[2]));
+        workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Float(workloadTokens[3]));
+        workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Float(workloadTokens[4]));
+        return workload;
     }
 
     private static Exam parseExam(NusmodsModule rawModule) {
