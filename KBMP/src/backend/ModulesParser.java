@@ -147,26 +147,34 @@ public class ModulesParser {
 
         // exam
         // if no exam, leave module.exam as null.
-        if (rawModule.ExamDate != null) {
-            Exam.Builder examBuilder = Exam.builder();
-
-            // format Nusmods' date, necessary for parsing
-            String rawDate = rawModule.ExamDate;
-            String[] dateTokens = rawDate.split("\\+", 2);
-            dateTokens[1] = dateTokens[1].substring(0, 2) + ":" + dateTokens[1].substring(2, 4);
-            rawDate = dateTokens[0] + ":00+" + dateTokens[1];
-
-            // format Nusmods' duration, necessary for parsing
-            String rawDuration = rawModule.ExamDuration;
-            rawDuration =  rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
-            examBuilder.setDuration(Duration.parse(rawDuration));
-
-            examBuilder.setDate(OffsetDateTime.parse(rawDate));
-            examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
-
-            moduleBuilder.setExam(examBuilder.build());
-        }
+        moduleBuilder.setExam(parseExam(rawModule));
 
         return moduleBuilder.build();
     }
+
+    private static Exam parseExam(NusmodsModule rawModule) {
+        if (rawModule.ExamDate == null) {
+            return null;
+        }
+
+        Exam.Builder examBuilder = Exam.builder();
+
+        // format Nusmods' date, necessary for parsing
+        String rawDate = rawModule.ExamDate;
+        String[] dateTokens = rawDate.split("\\+", 2);
+        dateTokens[1] = dateTokens[1].substring(0, 2) + ":" + dateTokens[1].substring(2, 4);
+        rawDate = dateTokens[0] + ":00+" + dateTokens[1];
+
+        // format Nusmods' duration, necessary for parsing
+        String rawDuration = rawModule.ExamDuration;
+        rawDuration =  rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
+        examBuilder.setDuration(Duration.parse(rawDuration));
+
+        examBuilder.setDate(OffsetDateTime.parse(rawDate));
+        examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
+
+        return examBuilder.build();
+    }
+
+
 }
