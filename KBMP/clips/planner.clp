@@ -62,9 +62,17 @@
 (import MAIN ?ALL))
 
 ; ; RULES
-(defrule RANK::mark-available "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prequisite "mark modules without prerequisites as available"
     ?module <- (module (code ?code) (prerequisites none) (status none))
     =>
+    (modify ?module (status available)))
+
+(defrule RANK::mark-available-prequisite-met "mark modules with prerequisites met as available"
+    ?module <- (module (code ?code) (prerequisites ?prereq) (status none))
+    (module (status planned) (code ?plannedcode))
+    (test(eq ?prereq ?plannedcode))
+    =>
+    (printout t "Marking module " ?code " as available" crlf)
     (modify ?module (status available)))
 
 (defrule SELECT::mark-planned "mark modules that the user plan to take"
