@@ -2,18 +2,19 @@ package common;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * Created by Joey on 3/4/16.
  */
 public class Exam {
-    private LocalDateTime date = LocalDateTime.MIN;
+    private OffsetDateTime date = null;
     private boolean openBook = false;
     private String venue = "";
     private Duration duration = Duration.ZERO;
 
     public static class Builder {
-        private LocalDateTime date;
+        private OffsetDateTime date;
         private boolean openBook;
         private String venue;
         private Duration duration;
@@ -22,7 +23,7 @@ public class Exam {
             return new Exam(this);
         }
 
-        public Builder setDate(LocalDateTime date) {
+        public Builder setDate(OffsetDateTime date) {
             this.date = date;
             return this;
         }

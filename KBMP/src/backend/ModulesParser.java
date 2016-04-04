@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
@@ -149,9 +149,21 @@ public class ModulesParser {
         // exam
         try {
             Exam.Builder examBuilder = Exam.builder();
-            examBuilder.setDate(LocalDateTime.parse(rawModule.ExamDate));
+
+            // format Nusmods' date, necessary for parsing
+            String rawDate = rawModule.ExamDate;
+            String[] dateTokens = rawDate.split("\\+", 2);
+            dateTokens[1] = dateTokens[1].substring(0, 2) + ":" + dateTokens[1].substring(2, 4);
+            rawDate = dateTokens[0] + ":00+" + dateTokens[1];
+
+            // format Nusmods' duration, necessary for parsing
+            String rawDuration = rawModule.ExamDuration;
+            rawDuration =  rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
+            examBuilder.setDuration(Duration.parse(rawDuration));
+
+            examBuilder.setDate(OffsetDateTime.parse(rawDate));
             examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
-            examBuilder.setDuration(Duration.parse(rawModule.ExamDuration));
+
             moduleBuilder.setExam(examBuilder.build());
         } catch (NullPointerException e) {
             // no exam -> leave module.exam as null.
