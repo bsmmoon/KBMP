@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 public class ModulesParser {
     private static String ERROR_MESSAGE_MODULES_NOT_READABLE = "Path to module database is not readable";
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
+    private enum PatternTypes {ANY_ONE_MODULE};
+    private static Hashtable<PatternTypes, Pattern> patterns = new Hashtable<>();
+
 
     public static void test(){
         Path modulesJson = Paths.get("data/AY1516_S1_modules.json");
@@ -38,6 +41,8 @@ public class ModulesParser {
 
     public static ArrayList<Module> getModulesFromPath(Path pathToFile) throws IOException {
         if (!Files.isReadable(pathToFile)) throw new IOException(ERROR_MESSAGE_MODULES_NOT_READABLE);
+
+        generatePatterns();
 
         ArrayList<NusmodsModule> allRawModules = getRawModules(pathToFile);
         ArrayList<NusmodsModule> relevantRawModules = filter(allRawModules, getRelevantPattern());
@@ -130,9 +135,10 @@ public class ModulesParser {
 
         moduleBuilder.setWorkload(parseWorkload(rawModule));
 
-        // prerequisites
-        // corequisites
-        // preclusions
+        // if no prerequisites/corequisites/preclusions, leave as default empty arrayList.
+        moduleBuilder.setPrerequisites(parsePrerequisites(rawModule));
+        moduleBuilder.setCorequisites(parseCorequisites(rawModule));
+        moduleBuilder.setPreclusions(parsePreclusions(rawModule));
 
         moduleBuilder.setTimetable(parseTimetable(rawModule));
 
@@ -181,7 +187,72 @@ public class ModulesParser {
         return examBuilder.build();
     }
 
+    private static ArrayList<String> parsePrerequisites(NusmodsModule rawModule) {
+        ArrayList<String> prerequisites = new ArrayList<>();
+        if (rawModule.Prerequisite == null) {
+            return prerequisites;
+        }
+
+        String prerequisite = rawModule.Prerequisite.trim();
+
+        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE);
+        if (anyOneModule.matcher(prerequisite).matches()){
+            prerequisites.add(prerequisite);
+//            System.out.println("Matched: " + prerequisite);
+//        } else {
+//            System.out.println("Ignored: " + prerequisite);
+        }
+
+        return prerequisites;
+    }
+
+    private static ArrayList<String> parseCorequisites(NusmodsModule rawModule) {
+        ArrayList<String> corequisites = new ArrayList<>();
+        if (rawModule.Corequisite == null) {
+            return corequisites;
+        }
+
+        String corequisite = rawModule.Corequisite.trim();
+
+        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE);
+        if (anyOneModule.matcher(corequisite).matches()){
+            corequisites.add(corequisite);
+//            System.out.println("Matched: " + corequisite);
+//        } else {
+//            System.out.println("Ignored: " + corequisite);
+        }
+
+        // extract "co-read ..." from prerequisites
+
+        return corequisites;
+    }
+
+    private static ArrayList<String> parsePreclusions(NusmodsModule rawModule) {
+        ArrayList<String> preclusions = new ArrayList<>();
+        if (rawModule.Preclusion == null) {
+            return preclusions;
+        }
+
+        String preclusion = rawModule.Preclusion.trim();
+
+        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE);
+        if (anyOneModule.matcher(preclusion).matches()){
+            preclusions.add(preclusion);
+//            System.out.println("Matched: " + preclusion);
+//        } else {
+//            System.out.println("Ignored: " + preclusion);
+        }
+
+        return preclusions;
+    }
+
+    private static void generatePatterns() {
+        String regexAnyModule = "(([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2})[a-zA-Z_\\s_\\p{Punct}]*";
+        Pattern anyOne = Pattern.compile(regexAnyModule);
+        patterns.put(PatternTypes.ANY_ONE_MODULE, anyOne);
+    }
+
     private static ArrayList<Lesson> parseTimetable(NusmodsModule rawModule) {
-        return new ArrayList<Lesson>();
+        return new ArrayList<>();
     }
 }
