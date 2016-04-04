@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.Exam;
+import common.Lesson;
 import common.Module;
 
 import java.io.BufferedReader;
@@ -127,48 +128,60 @@ public class ModulesParser {
         moduleBuilder.setCode(rawModule.ModuleCode.trim()).setName(rawModule.ModuleTitle.trim()).setCredits(rawModule
                 .ModuleCredit).setDepartment(rawModule.Department.trim());
 
-        // workload
-        try {
-            String[] workloadTokens = rawModule.Workload.split("-");
-            Hashtable<Module.WorkloadTypes, Float> workload = new Hashtable<>();
-            workload.put(Module.WorkloadTypes.LECTURE, new Float(workloadTokens[0]));
-            workload.put(Module.WorkloadTypes.TUTORIAL, new Float(workloadTokens[1]));
-            workload.put(Module.WorkloadTypes.LABORATORY, new Float(workloadTokens[2]));
-            workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Float(workloadTokens[3]));
-            workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Float(workloadTokens[4]));
-            moduleBuilder.setWorkload(workload);
-        } catch (NullPointerException e){
-            // no exam -> leave module.workload as null
-        }
+        moduleBuilder.setWorkload(parseWorkload(rawModule));
 
         // prerequisites
         // corequisites
         // preclusions
-        // timetable
 
-        // exam
-        try {
-            Exam.Builder examBuilder = Exam.builder();
+        moduleBuilder.setTimetable(parseTimetable(rawModule));
 
-            // format Nusmods' date, necessary for parsing
-            String rawDate = rawModule.ExamDate;
-            String[] dateTokens = rawDate.split("\\+", 2);
-            dateTokens[1] = dateTokens[1].substring(0, 2) + ":" + dateTokens[1].substring(2, 4);
-            rawDate = dateTokens[0] + ":00+" + dateTokens[1];
-
-            // format Nusmods' duration, necessary for parsing
-            String rawDuration = rawModule.ExamDuration;
-            rawDuration =  rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
-            examBuilder.setDuration(Duration.parse(rawDuration));
-
-            examBuilder.setDate(OffsetDateTime.parse(rawDate));
-            examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
-
-            moduleBuilder.setExam(examBuilder.build());
-        } catch (NullPointerException e) {
-            // no exam -> leave module.exam as null.
-        }
+        // if no exam, leave module.exam as null.
+        moduleBuilder.setExam(parseExam(rawModule));
 
         return moduleBuilder.build();
+    }
+
+    private static Hashtable<Module.WorkloadTypes, Float> parseWorkload(NusmodsModule rawModule) {
+        if (rawModule.Workload == null) {
+            return new Hashtable<>();
+        }
+
+        String[] workloadTokens = rawModule.Workload.split("-");
+        Hashtable<Module.WorkloadTypes, Float> workload = new Hashtable<>();
+        workload.put(Module.WorkloadTypes.LECTURE, new Float(workloadTokens[0]));
+        workload.put(Module.WorkloadTypes.TUTORIAL, new Float(workloadTokens[1]));
+        workload.put(Module.WorkloadTypes.LABORATORY, new Float(workloadTokens[2]));
+        workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Float(workloadTokens[3]));
+        workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Float(workloadTokens[4]));
+        return workload;
+    }
+
+    private static Exam parseExam(NusmodsModule rawModule) {
+        if (rawModule.ExamDate == null) {
+            return null;
+        }
+
+        Exam.Builder examBuilder = Exam.builder();
+
+        // format Nusmods' date, necessary for parsing
+        String rawDate = rawModule.ExamDate;
+        String[] dateTokens = rawDate.split("\\+", 2);
+        dateTokens[1] = dateTokens[1].substring(0, 2) + ":" + dateTokens[1].substring(2, 4);
+        rawDate = dateTokens[0] + ":00+" + dateTokens[1];
+
+        // format Nusmods' duration, necessary for parsing
+        String rawDuration = rawModule.ExamDuration;
+        rawDuration =  rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
+        examBuilder.setDuration(Duration.parse(rawDuration));
+
+        examBuilder.setDate(OffsetDateTime.parse(rawDate));
+        examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
+
+        return examBuilder.build();
+    }
+
+    private static ArrayList<Lesson> parseTimetable(NusmodsModule rawModule) {
+        return new ArrayList<Lesson>();
     }
 }
