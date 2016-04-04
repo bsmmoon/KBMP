@@ -27,8 +27,7 @@ public class ModulesParser {
     private static String ERROR_MESSAGE_MODULES_NOT_READABLE = "Path to module database is not readable";
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
     private enum PatternTypes {ANY_ONE_MODULE};
-    private static Hashtable<PatternTypes, Pattern> patterns = new Hashtable<>();
-
+    private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
 
     public static void test(){
         Path modulesJson = Paths.get("data/AY1516_S1_modules.json");
@@ -41,9 +40,6 @@ public class ModulesParser {
 
     public static ArrayList<Module> getModulesFromPath(Path pathToFile) throws IOException {
         if (!Files.isReadable(pathToFile)) throw new IOException(ERROR_MESSAGE_MODULES_NOT_READABLE);
-
-        generatePatterns();
-
         ArrayList<NusmodsModule> allRawModules = getRawModules(pathToFile);
         ArrayList<NusmodsModule> relevantRawModules = filter(allRawModules, getRelevantPattern());
         //ArrayList<Module> modules = parseModules(relevantRawModules);
@@ -246,10 +242,12 @@ public class ModulesParser {
         return preclusions;
     }
 
-    private static void generatePatterns() {
+    private static Hashtable<PatternTypes, Pattern> generatePatterns() {
+        Hashtable<PatternTypes, Pattern> patterns = new Hashtable<>();
         String regexAnyModule = "(([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2})[a-zA-Z_\\s_\\p{Punct}]*";
         Pattern anyOne = Pattern.compile(regexAnyModule);
         patterns.put(PatternTypes.ANY_ONE_MODULE, anyOne);
+        return patterns;
     }
 
     private static ArrayList<Lesson> parseTimetable(NusmodsModule rawModule) {
