@@ -10,6 +10,7 @@ import java.util.Hashtable;
  */
 public class Module {
 	public enum WorkloadTypes {LECTURE, TUTORIAL, LABORATORY, CONTINUOUS_ASSESSMENT, PREPARATORY_WORK};
+	public enum Semester {ONE, TWO, BOTH};
 
 	private String code;
 	private String name;
@@ -23,6 +24,8 @@ public class Module {
 	private ArrayList<Lesson> timetable;
 	private Exam exam;
 	private ArrayList<String> types;
+	private Semester semesters;
+	private boolean taken = false;
 
 	public static class Builder {
 		private String code;
