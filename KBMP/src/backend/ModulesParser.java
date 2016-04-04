@@ -130,12 +130,12 @@ public class ModulesParser {
         // workload
         try {
             String[] workloadTokens = rawModule.Workload.split("-");
-            Hashtable<Module.WorkloadTypes, Integer> workload = new Hashtable<>();
-            workload.put(Module.WorkloadTypes.LECTURE, new Integer(workloadTokens[0]));
-            workload.put(Module.WorkloadTypes.TUTORIAL, new Integer(workloadTokens[1]));
-            workload.put(Module.WorkloadTypes.LABORATORY, new Integer(workloadTokens[2]));
-            workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Integer(workloadTokens[3]));
-            workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Integer(workloadTokens[4]));
+            Hashtable<Module.WorkloadTypes, Float> workload = new Hashtable<>();
+            workload.put(Module.WorkloadTypes.LECTURE, new Float(workloadTokens[0]));
+            workload.put(Module.WorkloadTypes.TUTORIAL, new Float(workloadTokens[1]));
+            workload.put(Module.WorkloadTypes.LABORATORY, new Float(workloadTokens[2]));
+            workload.put(Module.WorkloadTypes.CONTINUOUS_ASSESSMENT, new Float(workloadTokens[3]));
+            workload.put(Module.WorkloadTypes.PREPARATORY_WORK, new Float(workloadTokens[4]));
             moduleBuilder.setWorkload(workload);
         } catch (NullPointerException e){
             // no exam -> leave module.workload as null

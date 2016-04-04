@@ -16,7 +16,7 @@ public class Module {
 	private int credits = -1;
 	private String department = "";
 	private String description = "";
-	private Hashtable<Module.WorkloadTypes, Integer> workload = new Hashtable<>();
+	private Hashtable<WorkloadTypes, Float> workload = new Hashtable<>();
 	private ArrayList<String> prerequisites = new ArrayList<>();
 	private ArrayList<String> corequisites = new ArrayList<>();
 	private ArrayList<String> preclusions = new ArrayList<>();
@@ -30,7 +30,7 @@ public class Module {
 		private int credits = -1;
 		private String department = "";
 		private String description = "";
-		private Hashtable<Module.WorkloadTypes, Integer> workload = new Hashtable<>();
+		private Hashtable<Module.WorkloadTypes, Float> workload = new Hashtable<>();
 		private ArrayList<String> prerequisites = new ArrayList<>();
 		private ArrayList<String> corequisites = new ArrayList<>();
 		private ArrayList<String> preclusions = new ArrayList<>();
@@ -67,7 +67,7 @@ public class Module {
 			return this;
 		}
 
-		public Builder setWorkload(Hashtable<Module.WorkloadTypes, Integer> workload) {
+		public Builder setWorkload(Hashtable<Module.WorkloadTypes, Float> workload) {
 			this.workload = workload;
 			return this;
 		}
@@ -147,7 +147,7 @@ public class Module {
 		return credits;
 	}
 
-	public Hashtable<Module.WorkloadTypes, Integer> getWorkload() {
+	public Hashtable<WorkloadTypes, Float> getWorkload() {
 		return workload;
 	}
 
