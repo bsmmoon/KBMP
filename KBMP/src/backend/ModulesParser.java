@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.Exam;
+import common.Lesson;
 import common.Module;
 
 import java.io.BufferedReader;
@@ -145,6 +146,9 @@ public class ModulesParser {
         // preclusions
         // timetable
 
+        // if no timetable, leave as default empty arraylist of Lesson.
+        moduleBuilder.setTimetable(parseTimetable(rawModule));
+
         // exam
         // if no exam, leave module.exam as null.
         moduleBuilder.setExam(parseExam(rawModule));
@@ -176,5 +180,7 @@ public class ModulesParser {
         return examBuilder.build();
     }
 
-
+    private static ArrayList<Lesson> parseTimetable(NusmodsModule rawModule) {
+        return new ArrayList<Lesson>();
+    }
 }
