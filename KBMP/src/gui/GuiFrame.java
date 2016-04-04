@@ -1,24 +1,22 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import common.Module;
-import common.ModulePlan;
 
 import backend.Logic;
 import backend.Model;
 
+import common.Module;
+import common.ModulePlan;
+
 @SuppressWarnings("serial")
 public class GuiFrame extends JFrame {
 	private JPanel cards;	//a panel that uses CardLayout
+	private ArrayList<SelectionStep> steps;
 	private int currentStep = 1;
 	String[] selections = {"CS1101","CS2101","CS2102","CS3342"};
 
@@ -36,25 +34,26 @@ public class GuiFrame extends JFrame {
 	}
 
 	public void init() {
+	    steps = new ArrayList<SelectionStep> ();
 		SelectionStep selection1 = new SelectionStep(this, false);
 		selection1.setQuestion("Please select modules that you have already taken.");
-		selection1.setDropdownItems(selections);
+		//selection1.setDropdownItems(selections);
 
 		SelectionStep selection2 = new SelectionStep(this, true);
 		selection2.setQuestion("Please select modules that you want to take.");
-		selection2.setDropdownItems(selections);
+		//selection2.setDropdownItems(selections);
 
 		SelectionStep selection3 = new SelectionStep(this, false);
 		selection3.setQuestion("Please select modules that you don't want to take.");
-		selection3.setDropdownItems(selections);
+		//selection3.setDropdownItems(selections);
 
 		SelectionStep selection4 = new SelectionStep(this, false);
 		selection4.setQuestion("Please select your focus area.");
-		selection4.setDropdownItems(selections);
+		//selection4.setDropdownItems(selections);
 
 		SelectionStep selection5 = new SelectionStep(this, false);
 		selection5.setQuestion("Please select your program.");
-		selection5.setDropdownItems(selections);
+		//selection5.setDropdownItems(selections);
 
 		ModulePlan plan = new ModulePlan();
 		plan.createNewSemester();
@@ -65,14 +64,19 @@ public class GuiFrame extends JFrame {
 		plan.addNewModule(new Module("CS3245","Information Retrieval"), 2);
 
 		PlanPanel planPanel = new PlanPanel(plan);
-
+		steps.add(selection1);
+		steps.add(selection2);
+		steps.add(selection3);
+		steps.add(selection4);
+		steps.add(selection5);
+		
 		cards = new JPanel(new CardLayout());
 		cards.add(selection1);
 		cards.add(selection2);
 		cards.add(selection3);
 		cards.add(selection4);
 		cards.add(selection5);
-		cards.add(planPanel);
+		//cards.add(planPanel);
 
 		add(cards);
 
@@ -81,9 +85,10 @@ public class GuiFrame extends JFrame {
 	
 	public void nextStep() {
 		CardLayout c = (CardLayout)(cards.getLayout());
-		if (currentStep != 6) {
+		if (currentStep != 5) {
 			c.next(cards);
 			currentStep++;
+			iterate();
 		}
 		
 	}
@@ -93,5 +98,7 @@ public class GuiFrame extends JFrame {
 		ArrayList<Module> availableModules = model.getAvailableModules();
 		System.out.println("Modules Available: (" + availableModules.size() + ")");
 		availableModules.forEach(System.out::println);
+		SelectionStep step = steps.get(currentStep-1);
+        step.setDropdownItems(model.getAvailableModules());
 	}
 }

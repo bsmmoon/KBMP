@@ -3,25 +3,37 @@ package backend;/*
  */
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 import common.Module;
+import common.ModulePlan;
 
 public class Model {
 	private ClipsWrapper clips;
 	private ArrayList<Module> availableModules = populateModules();
+	private ModulePlan plan;
+
+	private int numberOfSemesterLeft;
+	private int semester;
 
 	public Model(ClipsWrapper clips) {
 		this.clips = clips;
 		this.availableModules = new ArrayList<>();
+		this.plan = new ModulePlan();
+		this.plan.createNewSemester();
+		this.semester = 1;
 	}
 
+	public ModulePlan getModulePlan() { return plan; }
+
 	public ArrayList<Module> getAvailableModules() { return availableModules; }
+
+	public int getSemester() { return semester; }
+
+	public void setNumberOfSemesterLeft(int semester) { this.numberOfSemesterLeft = semester; }
 
 	public void update() { availableModules = clips.getAvailableModules(); }
 
@@ -43,5 +55,13 @@ public class Model {
 		// else throw error
 
 //		return modules;
+	}
+
+	public void updatePlan(ArrayList<Module> modules) {
+		modules.forEach((module) -> plan.addNewModule(module, semester));
+	}
+
+	public boolean isDone() {
+		return semester == numberOfSemesterLeft;
 	}
 }

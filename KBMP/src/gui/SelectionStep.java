@@ -6,19 +6,22 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import common.Module;
+
 @SuppressWarnings("serial")
 public class SelectionStep extends JPanel implements ItemListener {
+    private ArrayList<Module> availableModules;
 	private JLabel question;
 	private JScrollPane scroller;
 	private JComboBox<String> dropdownList;
@@ -47,6 +50,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 		add(question);
 		dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
 		dropdownList.setMaximumSize(new Dimension(300,20));
+		dropdownList.addItemListener(this);
 		add(dropdownList);
 		selected.setAlignmentX(LEFT_ALIGNMENT);
 		add(scroller);
@@ -63,13 +67,10 @@ public class SelectionStep extends JPanel implements ItemListener {
 		this.question.setForeground(Color.BLACK);
 	}
 	
-	public void setDropdownItems(String[] list) {
-		for (String item : list) {
-			dropdownList.addItem(item);
+	public void setDropdownItems(ArrayList<Module> modules) {
+		for (Module module : modules) {
+			insertItem(module.getCode() + " " + module.getName());
 		}
-		dropdownList.setSelectedItem(null);
-		//dropdownList.addListDataListener(this);
-		dropdownList.addItemListener(this);
 	}
 	
 	public void insertItem(String item) {
