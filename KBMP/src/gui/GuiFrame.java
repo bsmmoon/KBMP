@@ -83,7 +83,7 @@ public class GuiFrame extends JFrame {
 		getContentPane().setBackground(Color.WHITE);
 	}
 	
-	public void nextStep() {
+	public void nextStep(ArrayList<Object> passToLogic) {
 		CardLayout c = (CardLayout)(cards.getLayout());
 		if (currentStep != 5) {
 			c.next(cards);

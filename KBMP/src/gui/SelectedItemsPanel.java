@@ -21,7 +21,11 @@ public class SelectedItemsPanel extends JPanel {
 		setLayout(new WrapLayout(WrapLayout.LEFT));
 		setOpaque(false);
 	}
-	
+
+	public ArrayList<SelectedItem> getSelectedItems() {
+		return selectedItems;
+	}
+
 	public void addItem(String text) {
 		while (!removedItems.isEmpty()) {
 			SelectedItem toBeRemoved = removedItems.pop();

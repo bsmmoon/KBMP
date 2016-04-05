@@ -41,7 +41,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 		next = new JButton(new AbstractAction("Next"){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.nextStep();
+				frame.nextStep(getSelectedModules());
 			}
 		});
 		
@@ -61,7 +61,15 @@ public class SelectionStep extends JPanel implements ItemListener {
 		
 		setBackground(Color.WHITE);
 	}
-	
+
+	private ArrayList<Object> getSelectedModules() {
+		ArrayList<SelectedItem> modules = selected.getSelectedItems();
+		ArrayList<Object> returnList = new ArrayList<Object>();
+		for (SelectedItem module : modules) {
+			returnList.add()
+		}
+	}
+
 	public void setQuestion(String question) {
 		this.question.setText(question);
 		this.question.setForeground(Color.BLACK);
