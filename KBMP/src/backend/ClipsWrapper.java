@@ -73,16 +73,16 @@ public class ClipsWrapper {
 	private String parseModuleIntoClips(Module module) {
 		String out;
 		out = "(assert (module " +
-				"(code " + module.getCode() +")" +
+				"(code \"" + module.getCode() +"\")" +
 				"(name \"" + module.getName() +"\")" +
 				"(MC " + module.getCredits() + ")";
-//		if (module.getPrerequisites().size() > 0) {
-//			out += "(prerequisites";
-//			for (String prerequisite : module.getPrerequisites()) {
-//				out += " \"" + prerequisite + "\"";
-//			}
-//			out += ")";
-//		}
+		if (module.getPrerequisites().size() > 0) {
+			out += "(prerequisites";
+			for (String prerequisite : module.getPrerequisites()) {
+				out += " \"" + prerequisite + "\"";
+			}
+			out += ")";
+		}
 		out += "))";
 
 		System.out.println(out);
