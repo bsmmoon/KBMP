@@ -22,7 +22,16 @@ public class Logic {
 	public Logic() {
 		this.storage = new Storage();
 		this.clips = new ClipsWrapper();
-		this.model = new Model(this.clips);
+
+		ArrayList<Module> modules = new ArrayList<>();
+		try {
+			modules = this.storage.readModules();
+		} catch (Exception e) {
+			e.printStackTrace();
+			modules = new ArrayList<>();
+		}
+
+		this.model = new Model(this.clips, modules);
 	}
 
 	public Model getModel() { return model; }
