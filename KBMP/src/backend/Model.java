@@ -16,6 +16,8 @@ public class Model {
 	private ArrayList<Module> availableModules;
 	private ModulePlan plan;
 	private String MODULES_FILE_LOCATION = "data/availableModules.txt";
+	private String RAW_MODULES_SEM1_FILE_LOCATION = "data/AY1516_S1_modules.json";
+	private String RAW_MODULES_SEM2_FILE_LOCATION = "data/AY1516_S2_modules.json";
 	private int numberOfSemesterLeft;
 	private int semester;
 
@@ -47,14 +49,18 @@ public class Model {
 		try {
 			// if file containing collated modules exists, just populate from file
 			this.availableModules = readModulesFromFile();
+			System.out.println(this.availableModules.size() + " modules successfully read from file.");
 		} catch (Exception e) {
 			// else if raw files exist, generate collated modules
-
-			Path sem1ModulesJson = Paths.get("data/AY1516_S1_modules.json");
-			// Path sem2ModulesJson = Paths.get("data/AY1516_S2_modules.json");
+			Hashtable<String, Module> allModules;
+			Path sem1ModulesJson = Paths.get(RAW_MODULES_SEM1_FILE_LOCATION);
+			Path sem2ModulesJson = Paths.get(RAW_MODULES_SEM2_FILE_LOCATION);
 			try {
-				this.availableModules = ModulesParser.updateModulesFromPath(sem1ModulesJson, new Hashtable<>(),
+				allModules = ModulesParser.updateModulesFromPath(sem1ModulesJson, new Hashtable<>(),
 						Module.Semester.ONE);
+				allModules = ModulesParser.updateModulesFromPath(sem2ModulesJson, allModules,
+						Module.Semester.TWO);
+				this.availableModules = new ArrayList<>(allModules.values());
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 				throw new FileNotFoundException("Neither collated nor raw modules' files found.");
@@ -62,6 +68,7 @@ public class Model {
 
 			try {
 				writeModulesToFile();
+				System.out.println(this.availableModules.size() + " collated modules successfully written to file.");
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 				throw new IOException("Collated modules file could not be written.");
