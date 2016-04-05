@@ -25,7 +25,6 @@ public class Main {
 
 		ArrayList<Module> list = makeModuleList(new String[]{"CS1020", "CS1231"});
 		logic.selectModules(list);
-		logic.execute("(facts)");
 
 		frame.iterate();
 	}

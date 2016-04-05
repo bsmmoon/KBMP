@@ -97,7 +97,6 @@ public class GuiFrame extends JFrame {
 		// sample code that pulls available modules from the model
 		ArrayList<Module> availableModules = model.getAvailableModules();
 		System.out.println("Modules Available: (" + availableModules.size() + ")");
-		availableModules.forEach(System.out::println);
 		SelectionStep step = steps.get(currentStep-1);
         step.setDropdownItems(model.getAvailableModules());
 	}

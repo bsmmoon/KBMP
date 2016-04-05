@@ -85,7 +85,6 @@ public class ClipsWrapper {
 		}
 		out += "))";
 
-		System.out.println(out);
 		return out;
 	}
 }
