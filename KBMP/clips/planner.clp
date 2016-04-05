@@ -6,7 +6,7 @@
 ; ; Module
 (deftemplate module    "Module Information"
     (slot code
-        (type SYMBOL))
+        (type STRING))
     (slot name
         (type STRING)
         (default ?DERIVE))
@@ -27,23 +27,23 @@
     ; ; And example would be CS2020
     ; ; Potentially useful info: http://stackoverflow.com/questions/12695176/clips-multifield-slots
     (multislot prerequisites
-        (type SYMBOL)   
-        (default none))
+        (type STRING)
+        (default ""))
     (slot status
         (type SYMBOL)   
         (default none)))
 
 ; ; Sample modules
 (deffacts sample-modules
-    (module (code CS1101S) (name "Programming Methodology") (MC 5) (prerequisites none))
-    (module (code CS1010) (name "Programming Methodology") (MC 4) (prerequisites none))
-    (module (code CS1231) (name "Discrete Structures") (MC 4) (prerequisites none))
-    (module (code CS1020) (name "Data Structures and Algorithms I") (MC 4) (prerequisites CS1010))
-    (module (code CS2010) (name "Data Structures and Algorithms II") (MC 4) (prerequisites CS1020))
-    (module (code CS2020) (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites CS1010))
-    (module (code CS2020) (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites CS1101S))
-    (module (code CS2100) (name "Computer Organisation") (MC 4) (prerequisites CS1010))
-    (module (code CS2100) (name "Computer Organisation") (MC 4) (prerequisites CS1101S)))
+    (module (code "CS1101S") (name "Programming Methodology") (MC 5) (prerequisites ""))
+    (module (code "CS1010") (name "Programming Methodology") (MC 4) (prerequisites ""))
+    (module (code "CS1231") (name "Discrete Structures") (MC 4) (prerequisites ""))
+    (module (code "CS1020") (name "Data Structures and Algorithms I") (MC 4) (prerequisites "CS1010"))
+    (module (code "CS2010") (name "Data Structures and Algorithms II") (MC 4) (prerequisites "CS1020"))
+    (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1010"))
+    (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1101S"))
+    (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1010"))
+    (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1101S")))
 
 ; ;
 (deftemplate flag
@@ -67,7 +67,7 @@
 
 
 (defrule RANK::mark-available-no-prequisite "mark modules without prerequisites as available"
-    ?module <- (module (code ?code) (prerequisites none) (status none))
+    ?module <- (module (code ?code) (prerequisites "") (status none))
     =>
     (modify ?module (status available)))
 
@@ -95,7 +95,7 @@
 ; ;     (refresh init-mark-planned)
 ; ;     (bind ?userplanned (read))
 ; ;     (switch ?userplanned (case end then (pop-focus))
-; ; 	   (default then (assert(planned ?userplanned)))))
+; ;        (default then (assert(planned ?userplanned)))))
 
 ; ; TESTS
 (deffacts test-facts

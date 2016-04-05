@@ -1,6 +1,5 @@
 package backend;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import gui.GuiFrame;
 
 import java.util.ArrayList;
@@ -26,17 +25,11 @@ public class Main {
 
 		ArrayList<Module> list = makeModuleList(new String[]{"CS1020", "CS1231"});
 		logic.selectModules(list);
-		logic.execute("(facts)");
 
 		frame.iterate();
 	}
 
 	public static ArrayList<Module> makeModuleList(String[] modules) {
-		ArrayList<Module> list = new ArrayList<Module>(){
-			{
-				for (String module : modules) add(new Module.Builder().setCode(module).build());
-			}
-		};
-		return list;
+		return new ArrayList<Module>(){{ for (String module : modules) add(new Module.Builder().setCode(module).build()); }};
 	}
 }

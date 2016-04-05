@@ -38,8 +38,8 @@ public class ClipsWrapper {
 			FactAddressValue address = itr.next();
 			try {
 				if (address.getFactSlot("status").toString().equals("available")) {
-					code = address.getFactSlot("code").toString();
-					name = address.getFactSlot("name").toString();
+					code = address.getFactSlot("code").toString().replace("\"", "");
+					name = address.getFactSlot("name").toString().replace("\"", "");
 					modules.add(new Module.Builder().setCode(code).setName(name).build());
 				}
 			} catch (Exception e) {
@@ -51,7 +51,11 @@ public class ClipsWrapper {
 	}
 
 	public void printFactsOnConsole() { clips.eval("(facts)"); }
-	
+
+	public void saveModules(ArrayList<Module> modules) {
+		modules.forEach((module) -> clips.eval(parseModuleIntoClips(module)));
+	}
+
 	public void reset() { clips.reset(); }
 
 	public void run() { clips.run(); }
@@ -64,5 +68,23 @@ public class ClipsWrapper {
 			clips.clear();
 		}
 		clips.loadFromString(condition);
+	}
+
+	private String parseModuleIntoClips(Module module) {
+		String out;
+		out = "(assert (module " +
+				"(code \"" + module.getCode() +"\")" +
+				"(name \"" + module.getName() +"\")" +
+				"(MC " + module.getCredits() + ")";
+		if (module.getPrerequisites().size() > 0) {
+			out += "(prerequisites";
+			for (String prerequisite : module.getPrerequisites()) {
+				out += " \"" + prerequisite + "\"";
+			}
+			out += ")";
+		}
+		out += "))";
+
+		return out;
 	}
 }

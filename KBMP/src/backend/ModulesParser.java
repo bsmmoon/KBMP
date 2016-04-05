@@ -32,15 +32,21 @@ public class ModulesParser {
     private static Hashtable<String, Module> existingModules = null;
     private static Module.Semester currentSemester;
 
-    public static ArrayList<Module> updateModulesFromPath(Path pathToFile, Hashtable<String, Module> existingModules,
-                                                          Module.Semester currentSemester) throws IOException {
+    public static Hashtable<String, Module> updateModulesFromPath(Path pathToFile, Hashtable<String, Module> existingModules,
+                                                                  Module.Semester currentSemester) throws IOException {
         ModulesParser.existingModules = existingModules;
         ModulesParser.currentSemester = currentSemester;
 
         if (!Files.isReadable(pathToFile)) throw new IOException(ERROR_MESSAGE_MODULES_NOT_READABLE);
         ArrayList<NusmodsModule> allRawModules = getRawModules(pathToFile);
         ArrayList<NusmodsModule> relevantRawModules = filter(allRawModules, getRelevantPattern());
-        ArrayList<Module> modules = parseModules(relevantRawModules);
+        System.out.println(relevantRawModules.size() + " modules selected.");
+        Hashtable<String, Module> modules = parseModules(relevantRawModules);
+        modules.putAll(existingModules);
+
+        // reset instance-specific data.
+        ModulesParser.existingModules = null;
+        ModulesParser.currentSemester = null;
 
         return modules;
     }
@@ -130,9 +136,20 @@ public class ModulesParser {
         return regex;
     }
 
-    private static ArrayList<Module> parseModules(ArrayList<NusmodsModule> rawModules) {
-        ArrayList<Module> modules = rawModules.stream().map(module -> parseModule(module)).collect(Collectors
-                .toCollection(ArrayList::new));
+    private static Hashtable<String, Module> parseModules(ArrayList<NusmodsModule> rawModules) {
+        Hashtable<String, Module> modules = new Hashtable<>();
+
+        Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
+        while (moduleIterator.hasNext()){
+            NusmodsModule currentRawModule = moduleIterator.next();
+            try {
+                Module currentModule = parseModule(currentRawModule);
+                modules.put(currentModule.getCode(), currentModule);
+            } catch (NullPointerException e) {
+                System.out.println("Parsing failed for \n" + currentRawModule);
+            }
+        }
+
         return modules;
     }
 
@@ -180,19 +197,26 @@ public class ModulesParser {
 
         Exam.Builder examBuilder = Exam.builder();
 
+        // if venue or open book information is not available, leave as null.
+        examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
+
         // format Nusmods' date, necessary for parsing
         String rawDate = rawModule.ExamDate;
         String[] dateTokens = rawDate.split("\\+", 2);
         dateTokens[1] = dateTokens[1].substring(0, 2) + ":" + dateTokens[1].substring(2, 4);
         rawDate = dateTokens[0] + ":00+" + dateTokens[1];
+        examBuilder.setDate(OffsetDateTime.parse(rawDate));
 
         // format Nusmods' duration, necessary for parsing
+        // if duration is not available, leave as null.
         String rawDuration = rawModule.ExamDuration;
-        rawDuration =  rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
-        examBuilder.setDuration(Duration.parse(rawDuration));
+        Duration duration = null;
+        if (rawDuration != null) {
+            rawDuration = rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
+            duration = Duration.parse(rawDuration);
+        }
+        examBuilder.setDuration(duration);
 
-        examBuilder.setDate(OffsetDateTime.parse(rawDate));
-        examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
 
         return examBuilder.build();
     }

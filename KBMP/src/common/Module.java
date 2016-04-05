@@ -10,8 +10,8 @@ import java.util.Hashtable;
  *
  */
 public class Module implements Serializable {
-	public enum WorkloadTypes {LECTURE, TUTORIAL, LABORATORY, CONTINUOUS_ASSESSMENT, PREPARATORY_WORK};
-	public enum Semester {ONE, TWO, BOTH};
+	public enum WorkloadTypes {LECTURE, TUTORIAL, LABORATORY, CONTINUOUS_ASSESSMENT, PREPARATORY_WORK}
+	public enum Semester {ONE, TWO, BOTH}
 
 	private String code;
 	private String name;
@@ -187,7 +187,15 @@ public class Module implements Serializable {
 		this.semesters = semesters;
 	}
 
+	public Semester getSemesters() {
+		return semesters;
+	}
+
 	public void setTaken(boolean taken) {
 		this.taken = taken;
+	}
+
+	public boolean isTaken() {
+		return taken;
 	}
 }

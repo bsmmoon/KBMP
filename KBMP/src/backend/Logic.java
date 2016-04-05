@@ -1,6 +1,5 @@
 package backend;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import common.Module;
@@ -15,28 +14,33 @@ import common.Module;
  */
 public class Logic {
 	private Storage storage;
-	private ClipsWrapper clips;
-	
+
 	private Model model;
 
 	public Logic() {
 		this.storage = new Storage();
-		this.clips = new ClipsWrapper();
-		this.model = new Model(this.clips);
+
+		ArrayList<Module> modules;
+		try {
+			modules = this.storage.readModules();
+		} catch (Exception e) {
+			e.printStackTrace();
+			modules = new ArrayList<>();
+		}
+
+		this.model = new Model(modules);
 	}
 
 	public Model getModel() { return model; }
 
 	public void reset() {
-		String condition = this.storage.readCondition();
-		clips.init(condition);
-		clips.reset();
-		clips.run();
+		String condition = storage.readCondition();
+		model.reset(condition);
 	}
 	
 	public void execute(String command) {
 		System.out.println("CLIPS>> " + command);
-		clips.execute(command);
+		model.execute(command);
 		model.update();
 	}
 
