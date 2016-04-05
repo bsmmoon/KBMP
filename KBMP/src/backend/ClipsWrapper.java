@@ -38,8 +38,8 @@ public class ClipsWrapper {
 			FactAddressValue address = itr.next();
 			try {
 				if (address.getFactSlot("status").toString().equals("available")) {
-					code = address.getFactSlot("code").toString();
-					name = address.getFactSlot("name").toString();
+					code = address.getFactSlot("code").toString().replace("\"", "");
+					name = address.getFactSlot("name").toString().replace("\"", "");
 					modules.add(new Module.Builder().setCode(code).setName(name).build());
 				}
 			} catch (Exception e) {
