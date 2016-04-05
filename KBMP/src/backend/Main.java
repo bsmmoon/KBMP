@@ -31,11 +31,6 @@ public class Main {
 	}
 
 	public static ArrayList<Module> makeModuleList(String[] modules) {
-		ArrayList<Module> list = new ArrayList<Module>(){
-			{
-				for (String module : modules) add(new Module.Builder().setCode(module).build());
-			}
-		};
-		return list;
+		return new ArrayList<Module>(){{ for (String module : modules) add(new Module.Builder().setCode(module).build()); }};
 	}
 }

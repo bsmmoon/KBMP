@@ -15,13 +15,13 @@ public class Model {
 	private int numberOfSemesterLeft;
 	private int semester;
 
-	public Model(ClipsWrapper clips, ArrayList<Module> modules) {
-		this.clips = clips;
+	public Model(ArrayList<Module> modules) {
+		this.clips = new ClipsWrapper();
 		this.plan = new ModulePlan();
 		this.plan.createNewSemester();
 		this.semester = 1;
 		this.modules = modules;
-		this.availableModules = new ArrayList<Module>();
+		this.availableModules = new ArrayList<>();
 	}
 
 	public ModulePlan getModulePlan() { return plan; }
@@ -31,6 +31,14 @@ public class Model {
 	public int getSemester() { return semester; }
 
 	public void setNumberOfSemesterLeft(int semester) { this.numberOfSemesterLeft = semester; }
+
+	public void execute(String command) { clips.execute(command); }
+
+	public void reset(String condition) {
+		clips.init(condition);
+		clips.reset();
+		clips.run();
+	}
 
 	public void update() { availableModules = clips.getAvailableModules(); }
 
