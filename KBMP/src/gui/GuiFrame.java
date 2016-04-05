@@ -47,14 +47,6 @@ public class GuiFrame extends JFrame {
 		selection3.setQuestion("Please select modules that you don't want to take.");
 		//selection3.setDropdownItems(selections);
 
-		SelectionStep selection4 = new SelectionStep(this, false);
-		selection4.setQuestion("Please select your focus area.");
-		//selection4.setDropdownItems(selections);
-
-		SelectionStep selection5 = new SelectionStep(this, false);
-		selection5.setQuestion("Please select your program.");
-		//selection5.setDropdownItems(selections);
-
 		ModulePlan plan = new ModulePlan();
 		plan.createNewSemester();
 		plan.createNewSemester();
@@ -67,15 +59,12 @@ public class GuiFrame extends JFrame {
 		steps.add(selection1);
 		steps.add(selection2);
 		steps.add(selection3);
-		steps.add(selection4);
-		steps.add(selection5);
 		
 		cards = new JPanel(new CardLayout());
 		cards.add(selection1);
 		cards.add(selection2);
 		cards.add(selection3);
-		cards.add(selection4);
-		cards.add(selection5);
+
 		//cards.add(planPanel);
 
 		add(cards);
@@ -83,9 +72,9 @@ public class GuiFrame extends JFrame {
 		getContentPane().setBackground(Color.WHITE);
 	}
 	
-	public void nextStep(ArrayList<Object> passToLogic) {
+	public void nextStep() {
 		CardLayout c = (CardLayout)(cards.getLayout());
-		if (currentStep != 5) {
+		if (currentStep != 3) {
 			c.next(cards);
 			currentStep++;
 			iterate();
@@ -99,5 +88,13 @@ public class GuiFrame extends JFrame {
 		System.out.println("Modules Available: (" + availableModules.size() + ")");
 		SelectionStep step = steps.get(currentStep-1);
         step.setDropdownItems(model.getAvailableModules());
+	}
+
+	public Logic getLogic() {
+		return logic;
+	}
+
+	public int getCurrentStep() {
+		return currentStep;
 	}
 }

@@ -41,7 +41,8 @@ public class SelectionStep extends JPanel implements ItemListener {
 		next = new JButton(new AbstractAction("Next"){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.nextStep(getSelectedModules());
+				frame.nextStep();
+				submit(frame);
 			}
 		});
 		
@@ -62,12 +63,28 @@ public class SelectionStep extends JPanel implements ItemListener {
 		setBackground(Color.WHITE);
 	}
 
-	private ArrayList<Object> getSelectedModules() {
-		ArrayList<SelectedItem> modules = selected.getSelectedItems();
-		ArrayList<Object> returnList = new ArrayList<Object>();
-		for (SelectedItem module : modules) {
-			returnList.add()
+	private void submit(final GuiFrame frame) {
+		switch (frame.getCurrentStep()) {
+			case 1:
+				frame.getLogic().assertTaken(getSelectedModules());
+				break;
+			case 2:
+				frame.getLogic().assertWant(getSelectedModules());
+				break;
+			case 3:
+				frame.getLogic().assertDontWant(getSelectedModules());
+				break;
+
 		}
+	}
+
+	private ArrayList<Module> getSelectedModules() {
+		ArrayList<SelectedItem> modules = selected.getSelectedItems();
+		ArrayList<Module> returnList = new ArrayList<Module>();
+		for (SelectedItem module : modules) {
+			returnList.add(module.getModule());
+		}
+		return returnList;
 	}
 
 	public void setQuestion(String question) {
@@ -76,6 +93,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 	}
 	
 	public void setDropdownItems(ArrayList<Module> modules) {
+		availableModules = modules;
 		for (Module module : modules) {
 			insertItem(module.getCode() + " " + module.getName());
 		}
@@ -120,7 +138,13 @@ public class SelectionStep extends JPanel implements ItemListener {
 		}
 		
 		if (event.getStateChange() == ItemEvent.SELECTED) {
-			selected.addItem(event.getItem().toString());
+			String moduleCode = event.getItem().toString().split(" ")[0];
+			for (Module module: availableModules) {
+				if (module.getCode().compareTo(moduleCode) == 0) {
+					selected.addItem(module);
+					break;
+				}
+			}
 			isAddingOrRemovingItem = true;
 			dropdownList.removeItem(event.getItem());
 			dropdownList.setSelectedItem(null);

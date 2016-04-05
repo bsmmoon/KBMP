@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Stack;
-
+import common.Module;
 import javax.swing.JPanel;
 
 public class SelectedItemsPanel extends JPanel {
@@ -26,13 +26,13 @@ public class SelectedItemsPanel extends JPanel {
 		return selectedItems;
 	}
 
-	public void addItem(String text) {
+	public void addItem(Module module) {
 		while (!removedItems.isEmpty()) {
 			SelectedItem toBeRemoved = removedItems.pop();
 			remove(toBeRemoved);
 		}
 		
-		SelectedItem item = new SelectedItem(this,text,hasDate);
+		SelectedItem item = new SelectedItem(this,module,hasDate);
 		selectedItems.add(item);
 		
 		item.setAlignmentX(LEFT_ALIGNMENT);

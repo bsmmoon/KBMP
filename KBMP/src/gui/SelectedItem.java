@@ -12,8 +12,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import common.Module;
 
 public class SelectedItem extends JPanel {
+	private Module module;
 	private SelectedItemsPanel panel;
 	private SelectedItem item;
 	private JLabel label;
@@ -22,15 +24,14 @@ public class SelectedItem extends JPanel {
 	
 	private String[] semesters = {"optional","2016/2017, Semester 1", "2016/2017, Semester 2"};
 	
-	public SelectedItem(final SelectedItemsPanel panel, String text, boolean hasDate) {
+	public SelectedItem(final SelectedItemsPanel panel, Module module, boolean hasDate) {
 		item = this;
-		setName(text);
 		this.panel = panel;
-		
+		this.module = module;
 		//setLayout(new FlowLayout(FlowLayout.LEFT));
 		this.setOpaque(false);
 		
-		label = new JLabel(text);
+		label = new JLabel(module.getCode() + " " + module.getName());
 		label.setToolTipText("hello");
 		add(label);
 		
@@ -48,7 +49,7 @@ public class SelectedItem extends JPanel {
 				validate();
 			}
 		});
-		
+
 		remove.setOpaque(false);
 		remove.setContentAreaFilled(false);
 		remove.setBorderPainted(false);
@@ -57,7 +58,11 @@ public class SelectedItem extends JPanel {
 		add(remove);
 		setPreferredSize(getPreferredSize());
 	}
-	
+
+	public Module getModule() {
+		return module;
+	}
+
 	public void paint(Graphics g) {
 		Point pos = label.getLocation();
 		pos.x -= 5;
