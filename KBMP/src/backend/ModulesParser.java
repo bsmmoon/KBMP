@@ -180,19 +180,26 @@ public class ModulesParser {
 
         Exam.Builder examBuilder = Exam.builder();
 
+        // if venue or open book information is not available, leave as null.
+        examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
+
         // format Nusmods' date, necessary for parsing
         String rawDate = rawModule.ExamDate;
         String[] dateTokens = rawDate.split("\\+", 2);
         dateTokens[1] = dateTokens[1].substring(0, 2) + ":" + dateTokens[1].substring(2, 4);
         rawDate = dateTokens[0] + ":00+" + dateTokens[1];
+        examBuilder.setDate(OffsetDateTime.parse(rawDate));
 
         // format Nusmods' duration, necessary for parsing
+        // if duration is not available, leave as null.
         String rawDuration = rawModule.ExamDuration;
-        rawDuration =  rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
-        examBuilder.setDuration(Duration.parse(rawDuration));
+        Duration duration = null;
+        if (rawDuration != null) {
+            rawDuration = rawDuration.substring(0, 1) + "T" + rawDuration.substring(1);
+            duration = Duration.parse(rawDuration);
+        }
+        examBuilder.setDuration(duration);
 
-        examBuilder.setDate(OffsetDateTime.parse(rawDate));
-        examBuilder.setVenue(rawModule.ExamVenue).setOpenBook(rawModule.ExamOpenBook);
 
         return examBuilder.build();
     }
