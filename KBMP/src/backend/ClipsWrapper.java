@@ -51,7 +51,11 @@ public class ClipsWrapper {
 	}
 
 	public void printFactsOnConsole() { clips.eval("(facts)"); }
-	
+
+	public void saveModules(ArrayList<Module> modules) {
+		modules.forEach((module) -> clips.eval(parseModuleIntoClips(module)));
+	}
+
 	public void reset() { clips.reset(); }
 
 	public void run() { clips.run(); }
@@ -64,5 +68,24 @@ public class ClipsWrapper {
 			clips.clear();
 		}
 		clips.loadFromString(condition);
+	}
+
+	private String parseModuleIntoClips(Module module) {
+		String out;
+		out = "(assert (module " +
+				"(code " + module.getCode() +")" +
+				"(name \"" + module.getName() +"\")" +
+				"(MC " + module.getCredits() + ")";
+//		if (module.getPrerequisites().size() > 0) {
+//			out += "(prerequisites";
+//			for (String prerequisite : module.getPrerequisites()) {
+//				out += " \"" + prerequisite + "\"";
+//			}
+//			out += ")";
+//		}
+//		out += "))";
+
+		System.out.println(out);
+		return out;
 	}
 }
