@@ -11,6 +11,7 @@ import common.Module;
 
 public class Storage {
 	private String CONDITION_DIR = "clips/planner.clp";
+	private String FOCUS_AREA_DIR = "clips/focus.clp";
 	private String MODULES_FILE_LOCATION = "data/availableModules.txt";
 	private String RAW_MODULES_SEM1_FILE_LOCATION = "data/AY1516_S1_modules.json";
 	private String RAW_MODULES_SEM2_FILE_LOCATION = "data/AY1516_S2_modules.json";
@@ -20,6 +21,7 @@ public class Storage {
 		String condition = "";
 		try {
 			condition = new String(Files.readAllBytes(Paths.get(CONDITION_DIR)));
+			condition += new String(Files.readAllBytes(Paths.get(FOCUS_AREA_DIR)));
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
