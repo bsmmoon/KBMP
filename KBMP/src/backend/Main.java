@@ -15,8 +15,10 @@ public class Main {
 		
 		frame.setVisible(true);
 
-		logic.execute("(focus RANK SELECT)");
-		logic.execute("(run)");
+		logic.execute("(watch facts)");
+		logic.execute("(watch focus)");
+
+		logic.iterate();
 
 		logic.setNumberOfSemesterLeft(8);
 		logic.assertTaken(makeModuleList(new String[]{"CS1010"}));
@@ -25,6 +27,10 @@ public class Main {
 
 		ArrayList<Module> list = makeModuleList(new String[]{"CS1020", "CS1231"});
 		logic.selectModules(list);
+
+		logic.assertPlanned(makeModuleList(new String[]{"CS1010"}));
+
+		logic.iterate();
 
 		frame.iterate();
 	}

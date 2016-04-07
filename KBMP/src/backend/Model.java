@@ -37,7 +37,7 @@ public class Model {
 	public void reset(String condition) {
 		clips.init(condition);
 		clips.reset();
-		clips.saveModules(modules);
+//		clips.saveModules(modules);
 		clips.run();
 	}
 
