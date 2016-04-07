@@ -46,12 +46,24 @@
     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1101S")))
 
 ; ; FUNCTIONS
+(deffunction assert-taken (?x)
+    (assert (taken ?x)))
+
+(deffunction assert-want (?x)
+    (assert (want ?x)))
+
+(deffunction assert-dontwant (?x)
+    (assert (dontwant ?x)))
+
+(deffunction assert-selected (?x ?y)
+    (assert (selected ?x ?y)))
+
+(deffunction assert-planned (?x)
+    (assert (planned ?x)))
 
 ; ; MODULES
-(defmodule RANK
-(import MAIN ?ALL))
-(defmodule SELECT
-(import MAIN ?ALL))
+(defmodule RANK (import MAIN ?ALL))
+(defmodule SELECT (import MAIN ?ALL))
 
 ; ; RULES
 ; ; Ranking modules
