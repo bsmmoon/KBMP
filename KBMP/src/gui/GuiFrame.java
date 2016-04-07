@@ -17,8 +17,8 @@ import common.ModulePlan;
 public class GuiFrame extends JFrame {
 	private JPanel cards;	//a panel that uses CardLayout
 	private ArrayList<SelectionStep> steps;
-	private int currentStep = 1;
-	String[] selections = {"CS1101","CS2101","CS2102","CS3342"};
+	private SelectionStep.STEP currentStep;
+	private final SelectionStep.STEP[] STEPS = SelectionStep.STEP.values();
 
 	Logic logic;
 	Model model;
@@ -34,38 +34,16 @@ public class GuiFrame extends JFrame {
 	}
 
 	public void init() {
-	    steps = new ArrayList<SelectionStep> ();
-		SelectionStep selection1 = new SelectionStep(this, false);
-		selection1.setQuestion("Please select modules that you have already taken.");
-		//selection1.setDropdownItems(selections);
-
-		SelectionStep selection2 = new SelectionStep(this, true);
-		selection2.setQuestion("Please select modules that you want to take.");
-		//selection2.setDropdownItems(selections);
-
-		SelectionStep selection3 = new SelectionStep(this, false);
-		selection3.setQuestion("Please select modules that you don't want to take.");
-		//selection3.setDropdownItems(selections);
-
-		ModulePlan plan = new ModulePlan();
-		plan.createNewSemester();
-		plan.createNewSemester();
-		plan.addNewModule(new Module("CS1010","Programming Methodology"), 1);
-		plan.addNewModule(new Module("CS2020","Data XXX"), 1);
-		plan.addNewModule(new Module("CS1231","Discrete Maths"), 2);
-		plan.addNewModule(new Module("CS3245","Information Retrieval"), 2);
-
-		PlanPanel planPanel = new PlanPanel(plan);
-		steps.add(selection1);
-		steps.add(selection2);
-		steps.add(selection3);
-		
 		cards = new JPanel(new CardLayout());
-		cards.add(selection1);
-		cards.add(selection2);
-		cards.add(selection3);
+	    steps = new ArrayList<SelectionStep> ();
 
-		//cards.add(planPanel);
+		currentStep = SelectionStep.STEP.NUM_SEM_LEFT;
+
+		for (SelectionStep.STEP stepNum : SelectionStep.STEP.values()) {
+			SelectionStep step = new SelectionStep(this, stepNum, false);
+			steps.add(step);
+			cards.add(step);
+		}
 
 		add(cards);
 
@@ -74,19 +52,19 @@ public class GuiFrame extends JFrame {
 	
 	public void nextStep() {
 		CardLayout c = (CardLayout)(cards.getLayout());
-		if (currentStep != 3) {
+		if (currentStep.ordinal() < STEPS.length-1) {
 			c.next(cards);
-			currentStep++;
+			currentStep = STEPS[currentStep.ordinal()+1];
 			iterate();
 		}
 		
 	}
 
 	public void iterate() {
-		// sample code that pulls available modules from the model
 		ArrayList<Module> availableModules = model.getAvailableModules();
 		System.out.println("Modules Available: (" + availableModules.size() + ")");
-		SelectionStep step = steps.get(currentStep-1);
+		SelectionStep step = steps.get(currentStep.ordinal());
+		step.init();
         step.setDropdownItems(model.getAvailableModules());
 	}
 
@@ -94,7 +72,7 @@ public class GuiFrame extends JFrame {
 		return logic;
 	}
 
-	public int getCurrentStep() {
+	public SelectionStep.STEP getCurrentStep() {
 		return currentStep;
 	}
 }

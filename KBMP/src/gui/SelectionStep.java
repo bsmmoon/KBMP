@@ -21,6 +21,7 @@ import common.Module;
 
 @SuppressWarnings("serial")
 public class SelectionStep extends JPanel implements ItemListener {
+	private STEP step;
     private ArrayList<Module> availableModules;
 	private JLabel question;
 	private JScrollPane scroller;
@@ -29,14 +30,19 @@ public class SelectionStep extends JPanel implements ItemListener {
 	private SelectedItemsPanel selected;
 	private JButton next;
 	
-	
-	public SelectionStep(final GuiFrame frame, boolean hasDate) {
+	enum STEP {
+		NUM_SEM_LEFT, MOD_TAKEN, MOD_WANT, MOD_DONT_WANT
+	}
+
+	public SelectionStep(final GuiFrame frame, STEP step, boolean hasDate) {
+		this.step = step;
+
 		question = new JLabel();
 		dropdownList = new JComboBox<String>();
 		//dropdownList.setEditable(true);
 		
 		selected = new SelectedItemsPanel(this, frame, hasDate);
-		scroller = new JScrollPane(selected,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scroller = new JScrollPane(selected,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroller.getViewport().setPreferredSize(new Dimension(200,200));
 		next = new JButton(new AbstractAction("Next"){
 			@Override
@@ -63,19 +69,41 @@ public class SelectionStep extends JPanel implements ItemListener {
 		setBackground(Color.WHITE);
 	}
 
+	public void init() {
+		switch (step) {
+			case NUM_SEM_LEFT:
+				setQuestion("How many semesters have you left?");
+				break;
+			case MOD_TAKEN:
+				setQuestion("Please select modules that you have already taken.");
+				break;
+			case MOD_WANT:
+				setQuestion("Please select modules that you want to take.");
+				break;
+			case MOD_DONT_WANT:
+				setQuestion("Please select modules that you don't want to take.");
+				break;
+			default:
+				System.out.println("Step " + step.name() + " doesn't exist.");
+		}
+	}
 	private void submit(final GuiFrame frame) {
-		switch (frame.getCurrentStep()) {
-			case 1:
+		switch (step) {
+			case MOD_TAKEN:
 				frame.getLogic().assertTaken(getSelectedModules());
 				break;
-			case 2:
+			case MOD_WANT:
 				frame.getLogic().assertWant(getSelectedModules());
 				break;
-			case 3:
+			case MOD_DONT_WANT:
 				frame.getLogic().assertDontWant(getSelectedModules());
 				break;
 
 		}
+	}
+
+	public STEP getStep() {
+		return step;
 	}
 
 	private ArrayList<Module> getSelectedModules() {
