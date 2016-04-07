@@ -28,7 +28,7 @@ public class Main {
 		ArrayList<Module> list = makeModuleList(new String[]{"CS1020", "CS1231"});
 		logic.selectModules(list);
 
-		logic.execute("(assert-planned \"CS1010\")");
+		logic.assertPlanned(makeModuleList(new String[]{"CS1010"}));
 
 		logic.iterate();
 
