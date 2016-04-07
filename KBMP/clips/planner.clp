@@ -45,15 +45,6 @@
     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1010"))
     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1101S")))
 
-; ;
-(deftemplate flag
-    (slot type (type SYMBOL)))
-
-(deftemplate test-template
-    (slot slot1 (type SYMBOL))
-    (slot slot2 (type SYMBOL))
-    (slot slot3 (type SYMBOL)))
-
 ; ; FUNCTIONS
 
 ; ; MODULES
@@ -87,25 +78,3 @@
     =>
     (printout t "Marking module " ?code1 " as planned" crlf)
     (modify ?module (status planned)))
-
-; ; (defrule SELECT::init-mark-planned "initialize marking of modules that the user plan to take"
-; ;     (module (status available) (code ?code))
-; ;     =>
-; ;     (printout t "Module " ?code " available. Enter a module from suggestions:" crlf)
-; ;     (refresh init-mark-planned)
-; ;     (bind ?userplanned (read))
-; ;     (switch ?userplanned (case end then (pop-focus))
-; ;        (default then (assert(planned ?userplanned)))))
-
-; ; TESTS
-(deffacts test-facts
-    (test-template (slot1 true) (slot2 false) (slot3 wow))
-    (test-template (slot1 true) (slot2 wow) (slot3 false))
-    (test-template (slot1 false) (slot2 true) (slot3 wow)))
-
-(defrule call-test-facts
-    ?flag-fact <- (flag (type test))
-    (test-template (slot1 true) (slot2 ?x))
-    =>
-    (printout t "test: " ?x crlf)
-    (retract ?flag-fact))

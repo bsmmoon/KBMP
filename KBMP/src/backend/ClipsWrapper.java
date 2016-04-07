@@ -28,7 +28,6 @@ public class ClipsWrapper {
 	public ArrayList<Module> getAvailableModules() {
 		ArrayList<Module> modules = new ArrayList<Module>();
 		
-		clips.eval("(assert (flag (type return)))");
 		MultifieldValue pv = (MultifieldValue) clips.eval(GET_ALL_AVAIABLE_MODULE);
 		
 		ListIterator<FactAddressValue> itr = pv.multifieldValue().listIterator();

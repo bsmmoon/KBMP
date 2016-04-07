@@ -14,7 +14,7 @@ public class Main {
 		frame.init();
 		
 		frame.setVisible(true);
-//		logic.execute("(assert (flag (type test)))");
+
 		logic.execute("(focus RANK SELECT)");
 		logic.execute("(run)");
 
