@@ -8,20 +8,20 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import common.Module;
+import common.FocusArea;
 
 public class Storage {
 	private String CONDITION_DIR = "clips/planner.clp";
-	private String FOCUS_AREA_DIR = "clips/focus.clp";
 	private String MODULES_FILE_LOCATION = "data/availableModules.txt";
 	private String RAW_MODULES_SEM1_FILE_LOCATION = "data/AY1516_S1_modules.json";
 	private String RAW_MODULES_SEM2_FILE_LOCATION = "data/AY1516_S2_modules.json";
+	private String RAW_FOCUS_AREA_LOCATION = "data/FocusArea.json";
 
 
 	public String readCondition() {
 		String condition = "";
 		try {
 			condition = new String(Files.readAllBytes(Paths.get(CONDITION_DIR)));
-			condition += new String(Files.readAllBytes(Paths.get(FOCUS_AREA_DIR)));
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -60,6 +60,52 @@ public class Storage {
 		}
 
 		return modules;
+	}
+
+	// pseudo json parser to save time :p
+	public ArrayList<FocusArea> readFocusArea() throws IOException {
+		String json = new String(Files.readAllBytes(Paths.get(RAW_FOCUS_AREA_LOCATION)));;
+		String[] list = new String[]{"{", ":", "[", "]", "}", ","};
+		for (String delimeter : list) json = json.replace(delimeter, ";");
+		json = json.replace("\"", "");
+		json = json.replace(";;Primaries;;", ";!;");
+		json = json.replace(";;Electives;;", ";!;");
+		json = json.replace(";;Unrestricted Electives;;", ";!;");
+		while (json.contains(";;;")) json = json.replace(";;;", ";;");
+		json = json.replace(";;", ";!;");
+
+		String[] arr = json.split(";");
+		int phase = 0;
+
+		ArrayList<FocusArea> focusArea = new ArrayList<>();
+		FocusArea focus = new FocusArea();
+		for (String line : arr) {
+			if (line.isEmpty()) continue;
+			switch (phase) {
+				case 0: // Focus Area
+					if (line.equals("!")) phase = 1;
+					else focus.setName(line);
+					break;
+				case 1: // Primaries
+					if (line.equals("!")) phase = 2;
+					else focus.addPrimaries(line);
+					break;
+				case 2: // Electives
+					if (line.equals("!")) phase = 3;
+					else focus.addElectives(line);
+					break;
+				case 3: // Unrestricted Electives
+					if (line.equals("!")) {
+						phase = 0;
+						focusArea.add(focus);
+						focus = new FocusArea();
+					}
+					else focus.addUnrestrictedElectives(line);
+					break;
+			}
+		}
+
+		return focusArea;
 	}
 
 	private void writeModulesToFile(ArrayList<Module> modules) throws IOException {

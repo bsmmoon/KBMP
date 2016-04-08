@@ -3,6 +3,7 @@ package backend;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
+import common.FocusArea;
 import net.sf.clipsrules.jni.*;
 
 import common.Module;
@@ -14,6 +15,7 @@ public class ClipsWrapper {
 	private boolean initialised;
 	
 	private static final String GET_ALL_AVAIABLE_MODULE = "(find-all-facts ((?f module)) TRUE)";
+	private static final String GET_ALL_FOCUS_AREA = "(find-all-facts ((?f focus)) TRUE)";
 	
 	public ClipsWrapper() {
 		this.initialised = false;
@@ -55,6 +57,10 @@ public class ClipsWrapper {
 		modules.forEach((module) -> clips.eval(parseModuleIntoClips(module)));
 	}
 
+	public void saveFocusAreas(ArrayList<FocusArea> focusAreas) {
+		focusAreas.forEach((focusArea) -> clips.eval(parseFocusAreaIntoClips(focusArea)));
+	}
+
 	public void reset() { clips.reset(); }
 
 	public void run() { clips.run(); }
@@ -82,6 +88,34 @@ public class ClipsWrapper {
 			}
 			out += ")";
 		}
+		out += "))";
+
+		return out;
+	}
+
+	private String parseFocusAreaIntoClips(FocusArea focusArea) {
+		String out;
+		out = "(assert (focus " +
+				"(name \"" + focusArea.getName() + "\")";
+
+		out += "(primaries";
+		ArrayList<String> primaries = focusArea.getPrimaries();
+		if (primaries.isEmpty()) out += "\"\"";
+		else for (String primary : primaries) out += " \"" + primary + "\"";
+		out += ")";
+
+		out += "(electives";
+		ArrayList<String> electives = focusArea.getElectives();
+		if (electives.isEmpty()) out += "\"\"";
+		else for (String elective : electives) out += " \"" + elective + "\"";
+		out += ")";
+
+		out += "(unrestricted-electives";
+		ArrayList<String> unrestrictedElectives = focusArea.getUnrestrictedElectives();
+		if (unrestrictedElectives.isEmpty()) out += "\"\"";
+		else for (String unrestrictedElective : unrestrictedElectives) out += " \"" + unrestrictedElective + "\"";
+		out += ")";
+
 		out += "))";
 
 		return out;

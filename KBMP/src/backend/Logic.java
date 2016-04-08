@@ -2,6 +2,7 @@ package backend;
 
 import java.util.ArrayList;
 
+import common.FocusArea;
 import common.Module;
 
 /*
@@ -19,21 +20,25 @@ public class Logic {
 
 	public Logic() {
 		this.storage = new Storage();
-
-		ArrayList<Module> modules;
-		try {
-			modules = this.storage.readModules();
-		} catch (Exception e) {
-			e.printStackTrace();
-			modules = new ArrayList<>();
-		}
-
-		this.model = new Model(modules);
+		this.model = new Model();
 	}
 
 	public Model getModel() { return model; }
 
 	public void reset() {
+		ArrayList<Module> modules;
+		ArrayList<FocusArea> focus;
+		try {
+			modules = this.storage.readModules();
+			focus = this.storage.readFocusArea();
+		} catch (Exception e) {
+			e.printStackTrace();
+			modules = new ArrayList<>();
+			focus = new ArrayList<>();
+		}
+		model.setModules(modules);
+		model.setAllFocusAreas(focus);
+
 		String condition = storage.readCondition();
 		model.reset(condition);
 	}
