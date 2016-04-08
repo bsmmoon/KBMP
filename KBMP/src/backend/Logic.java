@@ -41,6 +41,8 @@ public class Logic {
 
 		String condition = storage.readCondition();
 		model.reset(condition);
+
+		iterate();
 	}
 
 	public void iterate() {

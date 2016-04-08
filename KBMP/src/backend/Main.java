@@ -19,25 +19,25 @@ public class Main {
 		logic.execute("(watch facts)");
 		logic.execute("(watch focus)");
 
-		logic.iterate();
-
-		logic.setNumberOfSemesterLeft(8);
-		logic.assertTaken(makeModuleList(new String[]{"CS1010"}));
-		logic.assertWant(makeModuleList(new String[]{"CS2020"}));
-		logic.assertDontWant(makeModuleList(new String[]{"CS4244"}));
-
-		ArrayList<Module> list = makeModuleList(new String[]{"CS1010", "CS1020", "CS1231"});
-		logic.selectModules(list);
-
-		logic.iterate();
-
-		FocusArea focus = new FocusArea();
-		focus.setName("Artificial Intelligence");
-		logic.assertFocus(new ArrayList<FocusArea>(){{ add(focus); }});
-
-		logic.iterate();
-
-		logic.execute("(facts)");
+//		logic.iterate();
+//
+//		logic.setNumberOfSemesterLeft(8);
+//		logic.assertTaken(makeModuleList(new String[]{"CS1010"}));
+//		logic.assertWant(makeModuleList(new String[]{"CS2020"}));
+//		logic.assertDontWant(makeModuleList(new String[]{"CS4244"}));
+//
+//		ArrayList<Module> list = makeModuleList(new String[]{"CS1010", "CS1020", "CS1231"});
+//		logic.selectModules(list);
+//
+//		logic.iterate();
+//
+//		FocusArea focus = new FocusArea();
+//		focus.setName("Artificial Intelligence");
+//		logic.assertFocus(new ArrayList<FocusArea>(){{ add(focus); }});
+//
+//		logic.iterate();
+//
+//		logic.execute("(facts)");
 
 		//frame.iterate();
 	}

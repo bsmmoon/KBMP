@@ -122,6 +122,14 @@
     (printout t "Marking module " ?code1 " as planned" crlf)
     (modify ?module (status planned)))
 
+(defrule SELECT::mark-taken "mark modules that the user have already taken"
+    ?module <- (module (status ~taken) (code ?code1))
+    (taken ?code2)
+    (test(eq ?code1 ?code2))
+    =>
+    (printout t "Marking module " ?code1 " as taken" crlf)
+    (modify ?module (status taken)))
+
 (defrule SELECT::mark-focus "mark focus area that the user plan to take"
     ?focus <- (focus (status none) (name ?name1))
     (focus-on ?name2)
