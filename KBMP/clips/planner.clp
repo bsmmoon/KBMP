@@ -37,7 +37,12 @@
         (type SYMBOL)   
         (default none)))
 
-(deftemplate focus (slot name (type STRING)) (multislot primaries (type STRING)) (multislot electives (type STRING)) (multislot unrestricted-electives (type STRING)))
+(deftemplate focus
+    (slot name (type STRING))
+    (multislot primaries (type STRING))
+    (multislot electives (type STRING))
+    (multislot unrestricted-electives (type STRING))
+    (slot status (type SYMBOL) (default none)))
 
 ; ; Sample modules
 (deffacts sample-modules
