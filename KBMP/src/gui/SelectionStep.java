@@ -8,14 +8,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import common.Module;
 
@@ -25,6 +18,7 @@ public class SelectionStep extends JPanel implements ItemListener {
     private ArrayList<Module> availableModules;
 	private JLabel question;
 	private JScrollPane scroller;
+	private JTextField textField;
 	private JComboBox<String> dropdownList;
 	private boolean isAddingOrRemovingItem = false;
 	private SelectedItemsPanel selected;
@@ -38,12 +32,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 		this.step = step;
 
 		question = new JLabel();
-		dropdownList = new JComboBox<String>();
-		//dropdownList.setEditable(true);
 		
-		selected = new SelectedItemsPanel(this, frame, hasDate);
-		scroller = new JScrollPane(selected,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scroller.getViewport().setPreferredSize(new Dimension(200,200));
 		next = new JButton(new AbstractAction("Next"){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -55,12 +44,28 @@ public class SelectionStep extends JPanel implements ItemListener {
 		setLocation(20, 20);
 		setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
 		add(question);
-		dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
-		dropdownList.setMaximumSize(new Dimension(300,20));
-		dropdownList.addItemListener(this);
-		add(dropdownList);
-		selected.setAlignmentX(LEFT_ALIGNMENT);
-		add(scroller);
+
+		switch (step) {
+			case NUM_SEM_LEFT:
+				textField = new JTextField(20);
+				textField.setMaximumSize(new Dimension(50,20));
+				textField.setAlignmentX(Component.LEFT_ALIGNMENT);
+				add(textField);
+				break;
+			case MOD_TAKEN: case MOD_WANT: case MOD_DONT_WANT:
+				selected = new SelectedItemsPanel(this, frame, hasDate);
+				selected.setAlignmentX(LEFT_ALIGNMENT);
+				scroller = new JScrollPane(selected,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				scroller.getViewport().setPreferredSize(new Dimension(200,200));
+
+				dropdownList = new JComboBox<String>();
+				dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
+				dropdownList.setMaximumSize(new Dimension(300,20));
+				dropdownList.addItemListener(this);
+				add(dropdownList);
+				add(scroller);
+				break;
+		}
 		add(next);
 		
 		setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -89,6 +94,13 @@ public class SelectionStep extends JPanel implements ItemListener {
 	}
 	private void submit(final GuiFrame frame) {
 		switch (step) {
+			case NUM_SEM_LEFT:
+				try {
+					frame.getLogic().setNumberOfSemesterLeft(Integer.parseInt(textField.getText()));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+				break;
 			case MOD_TAKEN:
 				frame.getLogic().assertTaken(getSelectedModules());
 				break;
