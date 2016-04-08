@@ -4,25 +4,40 @@ package backend;/*
 
 import java.util.ArrayList;
 
+import common.FocusArea;
 import common.Module;
 import common.ModulePlan;
 
 public class Model {
 	private ClipsWrapper clips;
+	private ArrayList<FocusArea> focusAreas;
+	private ArrayList<FocusArea> selectedFocusAreas;
 	private ArrayList<Module> modules;
 	private ArrayList<Module> availableModules;
 	private ModulePlan plan;
 	private int numberOfSemesterLeft;
 	private int semester;
 
-	public Model(ArrayList<Module> modules) {
+	public Model() {
 		this.clips = new ClipsWrapper();
 		this.plan = new ModulePlan();
 		this.plan.createNewSemester();
 		this.semester = 1;
-		this.modules = modules;
+		this.focusAreas = new ArrayList<>();
+		this.selectedFocusAreas = new ArrayList<>();
+		this.modules = new ArrayList<>();
 		this.availableModules = new ArrayList<>();
 	}
+
+	public void setModules(ArrayList<Module> modules) { this.modules = modules; }
+
+	public ArrayList<FocusArea> getAllFocusAreas() { return focusAreas; }
+
+	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) { this.focusAreas = focusAreas; }
+
+	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
+
+	public void setSelectedFocusAreas(ArrayList<FocusArea> selectedFocusAreas) { this.selectedFocusAreas = selectedFocusAreas; }
 
 	public ModulePlan getModulePlan() { return plan; }
 
@@ -38,6 +53,7 @@ public class Model {
 		clips.init(condition);
 		clips.reset();
 //		clips.saveModules(modules);
+		clips.saveFocusAreas(focusAreas);
 		clips.run();
 	}
 

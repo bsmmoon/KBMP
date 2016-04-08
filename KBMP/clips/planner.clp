@@ -33,6 +33,8 @@
         (type SYMBOL)   
         (default none)))
 
+(deftemplate focus (slot name (type STRING)) (multislot primaries (type STRING)) (multislot electives (type STRING)) (multislot unrestricted-electives (type STRING)))
+
 ; ; Sample modules
 (deffacts sample-modules
     (module (code "CS1101S") (name "Programming Methodology") (MC 5) (prerequisites ""))
