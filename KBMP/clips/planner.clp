@@ -29,6 +29,10 @@
     (multislot prerequisites
         (type STRING)
         (default ""))
+    (slot want
+        (type SYMBOL)
+        (allowed-symbols yes no NONE)
+        (default NONE))
     (slot status
         (type SYMBOL)   
         (default none)))
@@ -68,16 +72,36 @@
 (defmodule SELECT (import MAIN ?ALL))
 
 ; ; RULES
-; ; Ranking modules
+; ; Ranking modules for availability
 
-
-(defrule RANK::mark-available-no-prequisite "mark modules without prerequisites as available"
-    ?module <- (module (code ?code) (prerequisites "") (status none))
+; ; Wanted modules
+(defrule RANK::mark-wanted "mark wanted modules"
+    ?module <- (module (code ?code1) (want NONE))
+    (want ?code2)
+    (test(eq ?code1 ?code2))
     =>
+    (printout t "Marking module " ?code1 " as wanted" crlf)
+    (modify ?module (want yes)))
+
+; ; Unwanted modules
+(defrule RANK::mark-unwanted "mark unwanted modules"
+    ?module <- (module (code ?code1) (want NONE))
+    (dontwant ?code2)
+    (test(eq ?code1 ?code2))
+    =>
+    (printout t "Marking module " ?code1 " as unwanted" crlf)
+    (modify ?module (want no)))
+
+; ; Modules without prerequisites
+(defrule RANK::mark-available-no-prerequisites "mark modules without prerequisites as available"
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no))
+    =>
+    (printout t "Marking module " ?code " as available" crlf)
     (modify ?module (status available)))
 
-(defrule RANK::mark-available-prequisite-met "mark modules with prerequisites met as available"
-    ?module <- (module (code ?code) (prerequisites ?prereq) (status none))
+; ; Modules with single prerequisite met
+(defrule RANK::mark-available-prerequisite-met "mark modules with single prerequisite met as available"
+    ?module <- (module (code ?code) (prerequisites ?prereq) (status none) (want ~no))
     (module (status planned) (code ?plannedcode))
     (test(eq ?prereq ?plannedcode))
     =>
