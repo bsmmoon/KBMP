@@ -32,7 +32,7 @@ public class Main {
 
 		logic.iterate();
 
-		frame.iterate();
+		//frame.iterate();
 	}
 
 	public static ArrayList<Module> makeModuleList(String[] modules) {

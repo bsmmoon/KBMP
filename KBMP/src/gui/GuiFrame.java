@@ -34,22 +34,27 @@ public class GuiFrame extends JFrame {
 	}
 
 	public void init() {
-		cards = new JPanel(new CardLayout());
+		/*cards = new JPanel(new CardLayout());
 	    steps = new ArrayList<SelectionStep> ();
 
 		currentStep = SelectionStep.STEP.NUM_SEM_LEFT;
 
 		for (SelectionStep.STEP stepNum : SelectionStep.STEP.values()) {
-			SelectionStep step = new SelectionStep(this, stepNum, false);
+			SelectionStep step = new SelectionStep(this, false);
 			steps.add(step);
 			cards.add(step);
 		}
 
 		add(cards);
+*/
+		SelectionStep step = new SelectionStep(this,false);
+		step.setStep(SelectionStep.STEP.NUM_SEM_LEFT);
+		step.init();
+		add(step);
 
 		getContentPane().setBackground(Color.WHITE);
 	}
-	
+/*
 	public void nextStep() {
 		CardLayout c = (CardLayout)(cards.getLayout());
 		if (currentStep.ordinal() < STEPS.length-1) {
@@ -61,16 +66,19 @@ public class GuiFrame extends JFrame {
 	}
 
 	public void iterate() {
+
 		ArrayList<Module> availableModules = model.getAvailableModules();
 		System.out.println("Modules Available: (" + availableModules.size() + ")");
 		SelectionStep step = steps.get(currentStep.ordinal());
 		step.init();
         step.setDropdownItems(model.getAvailableModules());
 	}
-
+*/
 	public Logic getLogic() {
 		return logic;
 	}
+
+	public Model getModel() { return model; }
 
 	public SelectionStep.STEP getCurrentStep() {
 		return currentStep;
