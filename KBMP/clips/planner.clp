@@ -66,11 +66,11 @@
 (deffunction assert-dontwant (?x)
     (assert (dontwant ?x)))
 
-(deffunction assert-selected (?x ?y)
-    (assert (selected ?x ?y)))
-
-(deffunction assert-planned (?x)
+(deffunction assert-selected (?x)
     (assert (planned ?x)))
+
+(deffunction assert-focus-on (?x)
+    (assert (focus-on ?x)))
 
 ; ; MODULES
 (defmodule RANK (import MAIN ?ALL))
@@ -121,3 +121,11 @@
     =>
     (printout t "Marking module " ?code1 " as planned" crlf)
     (modify ?module (status planned)))
+
+(defrule SELECT::mark-focus "mark focus area that the user plan to take"
+    ?focus <- (focus (status none) (name ?name1))
+    (focus-on ?name2)
+    (test(eq ?name1 ?name2))
+    =>
+    (printout t "Marking focus area " ?name1 " as planned" crlf)
+    (modify ?focus (status planned)))

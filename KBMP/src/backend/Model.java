@@ -37,7 +37,10 @@ public class Model {
 
 	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
 
-	public void setSelectedFocusAreas(ArrayList<FocusArea> selectedFocusAreas) { this.selectedFocusAreas = selectedFocusAreas; }
+	public void setSelectedFocusAreas(ArrayList<FocusArea> selectedFocusAreas) {
+		this.selectedFocusAreas = selectedFocusAreas;
+		selectedFocusAreas.forEach((selectedFocusArea) -> execute("(assert-focus-on \"" + selectedFocusArea.getName() + "\")"));
+	}
 
 	public ModulePlan getModulePlan() { return plan; }
 
@@ -47,7 +50,10 @@ public class Model {
 
 	public void setNumberOfSemesterLeft(int semester) { this.numberOfSemesterLeft = semester; }
 
-	public void execute(String command) { clips.execute(command); }
+	public void execute(String command) {
+		System.out.println("CLIPS>> " + command);
+		clips.execute(command);
+	}
 
 	public void reset(String condition) {
 		clips.init(condition);

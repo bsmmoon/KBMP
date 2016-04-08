@@ -49,7 +49,6 @@ public class Logic {
 	}
 	
 	public void execute(String command) {
-		System.out.println("CLIPS>> " + command);
 		model.execute(command);
 		model.update();
 	}
@@ -62,10 +61,10 @@ public class Logic {
 
 	public void assertDontWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-dontwant \"" + module.getCode() + "\")")); }
 
-	public void assertPlanned(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-planned \"" + module.getCode() + "\")")); }
+	public void assertFocus(ArrayList<FocusArea> focusAreas) { model.setSelectedFocusAreas(focusAreas); }
 
 	public void selectModules(ArrayList<Module> modules) {
-		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\" " + model.getSemester() + ")"));
+		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
 		model.updatePlan(modules);
 	}
 }

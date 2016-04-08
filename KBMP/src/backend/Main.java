@@ -4,6 +4,7 @@ import gui.GuiFrame;
 
 import java.util.ArrayList;
 import common.Module;
+import common.FocusArea;
 
 public class Main {
 	public static void main(String[] args) {
@@ -25,12 +26,18 @@ public class Main {
 		logic.assertWant(makeModuleList(new String[]{"CS2020"}));
 		logic.assertDontWant(makeModuleList(new String[]{"CS4244"}));
 
-		ArrayList<Module> list = makeModuleList(new String[]{"CS1020", "CS1231"});
+		ArrayList<Module> list = makeModuleList(new String[]{"CS1010", "CS1020", "CS1231"});
 		logic.selectModules(list);
 
-		logic.assertPlanned(makeModuleList(new String[]{"CS1010"}));
+		logic.iterate();
+
+		FocusArea focus = new FocusArea();
+		focus.setName("Artificial Intelligence");
+		logic.assertFocus(new ArrayList<FocusArea>(){{ add(focus); }});
 
 		logic.iterate();
+
+		logic.execute("(facts)");
 
 		//frame.iterate();
 	}
