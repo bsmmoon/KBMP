@@ -48,6 +48,7 @@ public class Logic {
 	public void iterate() {
 		execute("(focus SELECT RANK)");
 		execute("(run)");
+		model.update();
 	}
 	
 	public void execute(String command) {
