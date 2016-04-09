@@ -230,8 +230,10 @@ public class ModulesParser {
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(prerequisite).matches()) {
-            prerequisites.add(prerequisite);
-//            System.out.println("Matched: " + prerequisite);
+            // matches from the start
+            String[] tokens = prerequisite.split(" ");
+            prerequisites.add(tokens[0]);
+//            System.out.println("Matched: " + tokens[0]);
 //        } else {
 //            System.out.println("Ignored: " + prerequisite);
         }
