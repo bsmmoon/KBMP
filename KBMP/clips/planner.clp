@@ -45,16 +45,16 @@
     (slot status (type SYMBOL) (default none)))
 
 ; ; Sample modules
-(deffacts sample-modules
-    (module (code "CS1101S") (name "Programming Methodology") (MC 5) (prerequisites ""))
-    (module (code "CS1010") (name "Programming Methodology") (MC 4) (prerequisites ""))
-    (module (code "CS1231") (name "Discrete Structures") (MC 4) (prerequisites ""))
-    (module (code "CS1020") (name "Data Structures and Algorithms I") (MC 4) (prerequisites "CS1010"))
-    (module (code "CS2010") (name "Data Structures and Algorithms II") (MC 4) (prerequisites "CS1020"))
-    (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1010"))
-    (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1101S"))
-    (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1010"))
-    (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1101S")))
+ (deffacts sample-modules
+; ;     (module (code "CS1101S") (name "Programming Methodology") (MC 5) (prerequisites ""))
+; ;     (module (code "CS1010") (name "Programming Methodology") (MC 4) (prerequisites ""))
+; ;     (module (code "CS1231") (name "Discrete Structures") (MC 4) (prerequisites ""))
+; ;     (module (code "CS1020") (name "Data Structures and Algorithms I") (MC 4) (prerequisites "CS1010"))
+; ;     (module (code "CS2010") (name "Data Structures and Algorithms II") (MC 4) (prerequisites "CS1020"))
+; ;     (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1010"))
+; ;     (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1101S"))
+     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1010"))
+     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1101S")))
 
 ; ; FUNCTIONS
 (deffunction assert-taken (?x)
