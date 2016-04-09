@@ -46,7 +46,9 @@ public class Logic {
 	}
 
 	public void iterate() {
-		execute("(focus SELECT RANK)");
+		execute("(focus SELECT)");
+		execute("(refresh RANK::mark-available-no-prerequisites)");
+		execute("(focus RANK)");
 		execute("(run)");
 		model.update();
 	}

@@ -72,13 +72,20 @@
 (deffunction assert-focus-on (?x)
     (assert (focus-on ?x)))
 
+(deffunction count-level-one ()
+    (length$ (find-all-facts ((?f module)) (and (eq ?f:level 1) (or (eq ?f:status planned) (eq ?f:status taken))))))
+
+(deffunction count-available ()
+    (length$ (find-all-facts ((?f module)) (eq ?f:status available))))
+
+
 ; ; MODULES
 (defmodule RANK (import MAIN ?ALL))
 (defmodule SELECT (import MAIN ?ALL))
 
 ; ; RULES
-; ; Ranking modules for availability
 
+; ; RANK
 ; ; Wanted modules
 (defrule RANK::mark-wanted "mark wanted modules"
     ?module <- (module (code ?code1) (want NONE))
@@ -97,22 +104,33 @@
     (printout t "Marking module " ?code1 " as unwanted" crlf)
     (modify ?module (want no)))
 
-; ; Modules without prerequisites
+; ; Modules Available, without prerequisites, limit to 10
 (defrule RANK::mark-available-no-prerequisites "mark modules without prerequisites as available"
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no))
     =>
-    (printout t "Marking module " ?code " as available" crlf)
-    (modify ?module (status available)))
+    (if (< (count-available) 10)
+        then
+        (printout t "Module " ?code " available." crlf)
+        (printout t "Total available: " (count-available) crlf)
+        (printout t "Level 1 planned/taken: " (count-level-one) crlf)
+        (modify ?module (status available))
+        else
+        (printout t "Total available reached max " (count-available) crlf))
+    )
 
-; ; Modules with single prerequisite met
+; ; Modules Available, with single prerequisite met, no limit
 (defrule RANK::mark-available-prerequisite-met "mark modules with single prerequisite met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq) (status none) (want ~no))
     (module (status planned) (code ?plannedcode))
     (test(eq ?prereq ?plannedcode))
     =>
-    (printout t "Marking module " ?code " as available" crlf)
+    (printout t "Module " ?code " available" crlf)
+    (printout t "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available)))
 
+; ; 
+
+; ; SELECT
 ; ; Selecting modules
 (defrule SELECT::mark-planned "mark modules that the user plan to take"
     ?module <- (module (status available) (code ?code1))
