@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Created by Joey on 28/3/16.
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 public class ModulesParser {
     private static String ERROR_MESSAGE_MODULES_NOT_READABLE = "Path to module database is not readable";
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
-    private enum PatternTypes {ANY_ONE_MODULE};
+    private enum PatternTypes {ANY_ONE_MODULE_GREEDY};
     private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
     private static Hashtable<String, Module> existingModules = null;
     private static Module.Semester currentSemester;
@@ -39,7 +38,7 @@ public class ModulesParser {
 
         if (!Files.isReadable(pathToFile)) throw new IOException(ERROR_MESSAGE_MODULES_NOT_READABLE);
         ArrayList<NusmodsModule> allRawModules = getRawModules(pathToFile);
-        ArrayList<NusmodsModule> relevantRawModules = filter(allRawModules, getRelevantPattern());
+        ArrayList<NusmodsModule> relevantRawModules = filterByModuleCode(allRawModules, getRelevantPatternsFromWhitelist());
         System.out.println(relevantRawModules.size() + " modules selected.");
         Hashtable<String, Module> modules = parseModules(relevantRawModules);
         modules.putAll(existingModules);
@@ -60,7 +59,7 @@ public class ModulesParser {
         return rawModules;
     }
 
-    private static ArrayList<NusmodsModule> filter(ArrayList<NusmodsModule> rawModules, Pattern pattern) {
+    private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern pattern) {
         Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
         while (moduleIterator.hasNext()){
             String currentModuleCode = moduleIterator.next().ModuleCode.trim();
@@ -80,7 +79,7 @@ public class ModulesParser {
         return rawModules;
     }
 
-    private static Pattern getRelevantPattern() throws IOException {
+    private static Pattern getRelevantPatternsFromWhitelist() throws IOException {
         Path pathToWhitelistFile = Paths.get("data/Modules_Whitelist.txt");
         if (!Files.isReadable(pathToWhitelistFile)) throw new IOException(ERROR_MESSAGE_WHITELIST_NOT_READABLE);
 
@@ -91,7 +90,7 @@ public class ModulesParser {
         while (currentLine != null) {
             currentLine = currentLine.trim();
             if (!(currentLine.startsWith(commentPrefix) || currentLine.isEmpty())) {
-                patterns.add(extractRegex(currentLine));
+                patterns.add(extractRegexFromWhitelist(currentLine));
             }
             currentLine = whitelist.readLine();
         }
@@ -101,7 +100,7 @@ public class ModulesParser {
         return Pattern.compile(combinedPattern);
     }
 
-    private static String extractRegex(String input) {
+    private static String extractRegexFromWhitelist(String input) {
         String[] tokens = input.split(":", 2);
         String prefix = "(" + tokens[0].trim() + ")";
         String rest = tokens[1].trim();
@@ -229,8 +228,8 @@ public class ModulesParser {
 
         String prerequisite = rawModule.Prerequisite.trim();
 
-        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE);
-        if (anyOneModule.matcher(prerequisite).matches()){
+        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
+        if (anyOneModule.matcher(prerequisite).matches()) {
             prerequisites.add(prerequisite);
 //            System.out.println("Matched: " + prerequisite);
 //        } else {
@@ -248,7 +247,7 @@ public class ModulesParser {
 
         String corequisite = rawModule.Corequisite.trim();
 
-        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE);
+        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(corequisite).matches()){
             corequisites.add(corequisite);
 //            System.out.println("Matched: " + corequisite);
@@ -269,7 +268,7 @@ public class ModulesParser {
 
         String preclusion = rawModule.Preclusion.trim();
 
-        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE);
+        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(preclusion).matches()){
             preclusions.add(preclusion);
 //            System.out.println("Matched: " + preclusion);
@@ -284,7 +283,7 @@ public class ModulesParser {
         Hashtable<PatternTypes, Pattern> patterns = new Hashtable<>();
         String regexAnyModule = "(([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2})[a-zA-Z_\\s_\\p{Punct}]*";
         Pattern anyOne = Pattern.compile(regexAnyModule);
-        patterns.put(PatternTypes.ANY_ONE_MODULE, anyOne);
+        patterns.put(PatternTypes.ANY_ONE_MODULE_GREEDY, anyOne);
         return patterns;
     }
 
