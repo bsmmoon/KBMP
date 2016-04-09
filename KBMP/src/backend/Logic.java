@@ -46,7 +46,7 @@ public class Logic {
 	}
 
 	public void iterate() {
-		execute("(focus RANK SELECT)");
+		execute("(focus SELECT RANK)");
 		execute("(run)");
 	}
 	
