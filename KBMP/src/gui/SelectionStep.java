@@ -30,11 +30,10 @@ public class SelectionStep extends JPanel implements ItemListener {
     private JTextArea planned;
     private JButton next;
 
-
     private final SelectionStep.STEP[] STEPS = SelectionStep.STEP.values();
 
     enum STEP {
-        NUM_SEM_LEFT, MOD_TAKEN, MOD_WANT, MOD_DONT_WANT, FOCUS_AREA, PLANNING
+        NUM_SEM_LEFT, MOD_TAKEN, MOD_WANT, MOD_DONT_WANT, FOCUS_AREA, PLANNING, DONE
     }
 
     public SelectionStep(final GuiFrame frame, boolean hasDate) {
@@ -51,7 +50,7 @@ public class SelectionStep extends JPanel implements ItemListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 submit(frame);
-                if (step.ordinal() < STEPS.length - 1) {
+                if (step.ordinal() < STEP.PLANNING.ordinal()) {
                     step = STEPS[step.ordinal()+1];
                     init();
                 }
@@ -127,6 +126,11 @@ public class SelectionStep extends JPanel implements ItemListener {
                     semester++;
                     setQuestion("<html>Semester " + semester + "<br>Select modules for this semester:");
                     setAvailableModules(frame.getModel().getAvailableModules());
+                } else {
+                    question.setVisible(false);
+                    dropdownList.setVisible(false);
+                    selectedScroller.setVisible(false);
+                    next.setVisible(false);
                 }
                 plannedScroller.setVisible(true);
                 break;
