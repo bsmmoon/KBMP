@@ -69,5 +69,6 @@ public class Logic {
 	public void selectModules(ArrayList<Module> modules) {
 		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
 		model.updatePlan(modules);
+		model.incrementSemester();
 	}
 }

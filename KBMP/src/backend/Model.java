@@ -46,6 +46,8 @@ public class Model {
 
 	public ArrayList<Module> getAvailableModules() { return availableModules; }
 
+	public void incrementSemester() { semester++; }
+
 	public int getSemester() { return semester; }
 
 	public void setNumberOfSemesterLeft(int semester) { this.numberOfSemesterLeft = semester; }
@@ -70,6 +72,6 @@ public class Model {
 	}
 
 	public boolean isDone() {
-		return semester == numberOfSemesterLeft;
+		return semester > numberOfSemesterLeft;
 	}
 }
