@@ -19,11 +19,10 @@ public class ClipsWrapper {
 	
 	public ClipsWrapper() {
 		this.initialised = false;
-		this.parser = new ClipsParser();
 	}
 	
 	public void execute(String command) {
-		command = parser.parseStringIntoClips(command);
+		System.out.println(command);
 		clips.eval(command);
 	}
 	
@@ -54,11 +53,11 @@ public class ClipsWrapper {
 	public void printFactsOnConsole() { clips.eval("(facts)"); }
 
 	public void saveModules(ArrayList<Module> modules) {
-		modules.forEach((module) -> clips.eval(parseModuleIntoClips(module)));
+		modules.forEach((module) -> clips.eval(ClipsParser.parseModuleIntoClips(module)));
 	}
 
 	public void saveFocusAreas(ArrayList<FocusArea> focusAreas) {
-		focusAreas.forEach((focusArea) -> clips.eval(parseFocusAreaIntoClips(focusArea)));
+		focusAreas.forEach((focusArea) -> clips.eval(ClipsParser.parseFocusAreaIntoClips(focusArea)));
 	}
 
 	public void reset() { clips.reset(); }
@@ -73,62 +72,5 @@ public class ClipsWrapper {
 			clips.clear();
 		}
 		clips.loadFromString(condition);
-	}
-
-	private String parseModuleIntoClips(Module module) {
-		String out;
-		out = "(assert (module " +
-				"(code \"" + module.getCode() +"\")" +
-				"(name \"" + module.getName() +"\")" +
-				"(MC " + module.getCredits() + ")";
-		if (module.getPrerequisites().size() > 0) {
-			out += "(prerequisites";
-			for (String prerequisite : module.getPrerequisites()) {
-				out += " \"" + prerequisite + "\"";
-			}
-			out += ")";
-		}
-
-		String code = module.getCode();
-		for (int i = 0; i < code.length(); i++) {
-			int c = code.charAt(i);
-			if (c >= 48 && c <= 57) {
-				out += "(prefix \"" + code.substring(0, i) + "\")";
-				out += "(level " + code.charAt(i) + ")";
-				out += "(rest \"" + code.substring(i+1, code.length()) + "\")";
-				break;
-			}
-		}
-
-		out += "))";
-		return out;
-	}
-
-	private String parseFocusAreaIntoClips(FocusArea focusArea) {
-		String out;
-		out = "(assert (focus " +
-				"(name \"" + focusArea.getName() + "\")";
-
-		out += "(primaries";
-		ArrayList<String> primaries = focusArea.getPrimaries();
-		if (primaries.isEmpty()) out += "\"\"";
-		else for (String primary : primaries) out += " \"" + primary + "\"";
-		out += ")";
-
-		out += "(electives";
-		ArrayList<String> electives = focusArea.getElectives();
-		if (electives.isEmpty()) out += "\"\"";
-		else for (String elective : electives) out += " \"" + elective + "\"";
-		out += ")";
-
-		out += "(unrestricted-electives";
-		ArrayList<String> unrestrictedElectives = focusArea.getUnrestrictedElectives();
-		if (unrestrictedElectives.isEmpty()) out += "\"\"";
-		else for (String unrestrictedElective : unrestrictedElectives) out += " \"" + unrestrictedElective + "\"";
-		out += ")";
-
-		out += "))";
-
-		return out;
 	}
 }
