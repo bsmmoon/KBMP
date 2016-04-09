@@ -12,10 +12,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import common.FocusArea;
 import common.Module;
 
 public class SelectedItem extends JPanel {
 	private Module module;
+	private FocusArea focusArea;
 	private SelectedItemsPanel panel;
 	private SelectedItem item;
 	private JLabel label;
@@ -25,22 +28,26 @@ public class SelectedItem extends JPanel {
 	private String[] semesters = {"optional","2016/2017, Semester 1", "2016/2017, Semester 2"};
 	
 	public SelectedItem(final SelectedItemsPanel panel, Module module, boolean hasDate) {
-		item = this;
-		this.panel = panel;
 		this.module = module;
-		//setLayout(new FlowLayout(FlowLayout.LEFT));
-		this.setOpaque(false);
-		
 		label = new JLabel(module.getCode() + " " + module.getName());
 		label.setToolTipText("hello");
+
+		init(panel);
+	}
+
+	public SelectedItem(final SelectedItemsPanel panel, FocusArea focusArea, boolean hasDate) {
+		this.focusArea = focusArea;
+		label = new JLabel(focusArea.getName());
+
+		init(panel);
+	}
+	public void init(final SelectedItemsPanel panel) {
+		item = this;
+		this.panel = panel;
+		this.setOpaque(false);
+
 		add(label);
-		
-		if (hasDate) {
-			semester = new JComboBox<String>(semesters);
-			semester.setAlignmentX(Component.LEFT_ALIGNMENT);
-			semester.setMaximumSize(new Dimension(100,20));
-			add(semester);
-		}
+
 		remove = new JButton(new AbstractAction("x"){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -54,13 +61,17 @@ public class SelectedItem extends JPanel {
 		remove.setContentAreaFilled(false);
 		remove.setBorderPainted(false);
 		remove.setMargin(new Insets(0,0,0,0));
-		
+
 		add(remove);
 		setPreferredSize(getPreferredSize());
 	}
 
 	public Module getModule() {
 		return module;
+	}
+
+	public FocusArea getFocusArea() {
+		return focusArea;
 	}
 
 	public void paint(Graphics g) {

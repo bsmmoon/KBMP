@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
+import common.FocusArea;
 import common.Module;
 
 @SuppressWarnings("serial")
@@ -17,6 +18,7 @@ public class SelectionStep extends JPanel implements ItemListener {
     private GuiFrame frame;
     private STEP step;
     private ArrayList<Module> availableModules;
+    private ArrayList<FocusArea> availableFocusAreas;
     private JLabel question;
     private JScrollPane scroller;
     private JTextField textField;
@@ -81,6 +83,9 @@ public class SelectionStep extends JPanel implements ItemListener {
     }
 
     public void init() {
+        textField.setText("");
+        dropdownList.removeAllItems();
+
         switch (step) {
             case NUM_SEM_LEFT:
                 setQuestion("How many semesters have you left?");
@@ -88,25 +93,26 @@ public class SelectionStep extends JPanel implements ItemListener {
                 break;
             case MOD_TAKEN:
                 setQuestion("Please select modules that you have already taken.");
-                setDropdownItems(frame.getModel().getAvailableModules());
+                setAvailableModules(frame.getModel().getAvailableModules());
                 textField.setVisible(false);
                 dropdownList.setVisible(true);
                 selected.setVisible(true);
                 break;
             case MOD_WANT:
                 setQuestion("Please select modules that you want to take.");
-                setDropdownItems(frame.getModel().getAvailableModules());
+                setAvailableModules(frame.getModel().getAvailableModules());
                 break;
             case MOD_DONT_WANT:
                 setQuestion("Please select modules that you don't want to take.");
-                setDropdownItems(frame.getModel().getAvailableModules());
+                setAvailableModules(frame.getModel().getAvailableModules());
                 break;
             case FOCUS_AREA:
                 setQuestion("Please select your focus area.");
+                setAvailableFocusAreas(frame.getModel().getAllFocusAreas());
                 break;
             case PLANNING:
                 setQuestion("Please select the modules you want to take from the list.");
-                setDropdownItems(frame.getModel().getAvailableModules());
+                setAvailableModules(frame.getModel().getAvailableModules());
                 break;
             default:
                 System.out.println("Step " + step.name() + " doesn't exist.");
@@ -117,6 +123,7 @@ public class SelectionStep extends JPanel implements ItemListener {
         frame.revalidate();
         revalidate();
     }
+
 
     private void submit(final GuiFrame frame) {
         switch (step) {
@@ -136,14 +143,15 @@ public class SelectionStep extends JPanel implements ItemListener {
             case MOD_DONT_WANT:
                 frame.getLogic().assertDontWant(getSelectedModules());
                 break;
-
+            case FOCUS_AREA:
+                frame.getLogic().assertFocus(getSelectedFocusAreas());
+                break;
         }
+        selected.clearAllItems();
+        revalidate();
         frame.getLogic().iterate();
     }
 
-    public void clearSelectedArea() {
-
-    }
     public  void setStep(STEP step) { this.step = step; }
 
     public STEP getStep() {
@@ -159,18 +167,34 @@ public class SelectionStep extends JPanel implements ItemListener {
         return returnList;
     }
 
+    private ArrayList<FocusArea> getSelectedFocusAreas() {
+        ArrayList<SelectedItem> fas = selected.getSelectedItems();
+        ArrayList<FocusArea> returnList = new ArrayList<FocusArea>();
+        for (SelectedItem fa : fas) {
+            returnList.add(fa.getFocusArea());
+        }
+        return returnList;
+    }
+
     public void setQuestion(String question) {
         this.question.setText(question);
         this.question.setForeground(Color.BLACK);
     }
 
-    public void setDropdownItems(ArrayList<Module> modules) {
+    private void setAvailableModules(ArrayList<Module> modules) {
+
         availableModules = modules;
         for (Module module : modules) {
             insertItem(module.getCode() + " " + module.getName());
         }
     }
 
+    private void setAvailableFocusAreas(ArrayList<FocusArea> focusAreas) {
+        availableFocusAreas = focusAreas;
+        for (FocusArea fa : focusAreas) {
+            insertItem(fa.getName());
+        }
+    }
     public void insertItem(String item) {
         isAddingOrRemovingItem = true;
         boolean added = false;
@@ -210,8 +234,17 @@ public class SelectionStep extends JPanel implements ItemListener {
         }
 
         if (event.getStateChange() == ItemEvent.SELECTED) {
-            String moduleCode = event.getItem().toString().split(" ")[0];
+            if (step == STEP.FOCUS_AREA) {
+                String focusArea = event.getItem().toString();
+                for (FocusArea item : availableFocusAreas) {
+                    if(item.getName().compareTo(focusArea) == 0) {
+                        selected.addItem(item);
+                        break;
+                    }
+                }
+            }
             for (Module module : availableModules) {
+                String moduleCode = event.getItem().toString().split(" ")[0];
                 if (module.getCode().compareTo(moduleCode) == 0) {
                     selected.addItem(module);
                     break;

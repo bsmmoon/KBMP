@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Stack;
+
+import common.FocusArea;
 import common.Module;
 import javax.swing.JPanel;
 
@@ -27,25 +29,40 @@ public class SelectedItemsPanel extends JPanel {
 	}
 
 	public void addItem(Module module) {
+		SelectedItem item = new SelectedItem(this,module,hasDate);
+		addItem(item);
+	}
+
+	public void addItem(FocusArea focusArea) {
+		SelectedItem item = new SelectedItem(this,focusArea,hasDate);
+		addItem(item);
+	}
+
+	private void addItem(SelectedItem item) {
 		while (!removedItems.isEmpty()) {
 			SelectedItem toBeRemoved = removedItems.pop();
 			remove(toBeRemoved);
 		}
-		
-		SelectedItem item = new SelectedItem(this,module,hasDate);
 		selectedItems.add(item);
-		
+
 		item.setAlignmentX(LEFT_ALIGNMENT);
 		add(item);
 		setPreferredSize(getLayout().preferredLayoutSize(this));
 
 		validate();
 	}
-	
-	
 	public void removeItem(SelectedItem item) {
 		selectedItems.remove(item);
 		removedItems.push(item);
 		selectionStep.insertItem(item.toString());
+	}
+
+	public void clearAllItems() {
+		while (!selectedItems.isEmpty()) {
+			SelectedItem item = selectedItems.remove(0);
+			item.setVisible(false);
+			remove(item);
+		}
+		removedItems.clear();
 	}
 }
