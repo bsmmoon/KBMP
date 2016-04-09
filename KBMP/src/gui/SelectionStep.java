@@ -20,12 +20,16 @@ public class SelectionStep extends JPanel implements ItemListener {
     private ArrayList<Module> availableModules;
     private ArrayList<FocusArea> availableFocusAreas;
     private JLabel question;
-    private JScrollPane scroller;
+    private JScrollPane selectedScroller;
+    private JScrollPane plannedScroller;
     private JTextField textField;
     private JComboBox<String> dropdownList;
     private boolean isAddingOrRemovingItem = false;
     private SelectedItemsPanel selected;
+    private int semester;
+    private JTextArea planned;
     private JButton next;
+
 
     private final SelectionStep.STEP[] STEPS = SelectionStep.STEP.values();
 
@@ -34,6 +38,11 @@ public class SelectionStep extends JPanel implements ItemListener {
     }
 
     public SelectionStep(final GuiFrame frame, boolean hasDate) {
+        setAlignmentX(Component.LEFT_ALIGNMENT);
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        setBackground(Color.WHITE);
+
         this.frame = frame;
 
         question = new JLabel();
@@ -59,10 +68,17 @@ public class SelectionStep extends JPanel implements ItemListener {
 
         selected = new SelectedItemsPanel(this, frame, hasDate);
         selected.setAlignmentX(LEFT_ALIGNMENT);
-        selected.setVisible(false);
 
-        scroller = new JScrollPane(selected, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroller.getViewport().setPreferredSize(new Dimension(200, 200));
+        selectedScroller = new JScrollPane(selected, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        selectedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
+        selectedScroller.setVisible(false);
+
+        planned = new JTextArea();
+        planned.setAlignmentX(LEFT_ALIGNMENT);
+
+        plannedScroller = new JScrollPane(planned, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        plannedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
+        plannedScroller.setVisible(false);
 
         dropdownList = new JComboBox<String>();
         dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -73,13 +89,9 @@ public class SelectionStep extends JPanel implements ItemListener {
         add(question);
         add(textField);
         add(dropdownList);
-        add(scroller);
+        add(selectedScroller);
+        add(plannedScroller);
         add(next);
-
-        setAlignmentX(Component.LEFT_ALIGNMENT);
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        setBackground(Color.WHITE);
     }
 
     public void init() {
@@ -96,7 +108,7 @@ public class SelectionStep extends JPanel implements ItemListener {
                 setAvailableModules(frame.getModel().getAvailableModules());
                 textField.setVisible(false);
                 dropdownList.setVisible(true);
-                selected.setVisible(true);
+                selectedScroller.setVisible(true);
                 break;
             case MOD_WANT:
                 setQuestion("Please select modules that you want to take.");
@@ -111,8 +123,12 @@ public class SelectionStep extends JPanel implements ItemListener {
                 setAvailableFocusAreas(frame.getModel().getAllFocusAreas());
                 break;
             case PLANNING:
-                setQuestion("Please select the modules you want to take from the list.");
-                setAvailableModules(frame.getModel().getAvailableModules());
+                if (!frame.getModel().isDone()) {
+                    semester++;
+                    setQuestion("<html>Semester " + semester + "<br>Select modules for this semester:");
+                    setAvailableModules(frame.getModel().getAvailableModules());
+                }
+                plannedScroller.setVisible(true);
                 break;
             default:
                 System.out.println("Step " + step.name() + " doesn't exist.");
@@ -145,6 +161,18 @@ public class SelectionStep extends JPanel implements ItemListener {
                 break;
             case FOCUS_AREA:
                 frame.getLogic().assertFocus(getSelectedFocusAreas());
+                break;
+            case PLANNING:
+                ArrayList<Module> modules = getSelectedModules();
+                frame.getLogic().selectModules(modules);
+                String text = planned.getText();
+                text += "Semester " + semester + "\n";
+                for (Module module : modules) {
+                    text += module.getCode() + " " + module.getName() + "\n";
+                }
+                text+= "-------------------\n";
+                planned.setText(text);
+                init();
                 break;
         }
         selected.clearAllItems();
@@ -222,7 +250,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 
         dropdownList.setSelectedItem(null);
         dropdownList.revalidate();
-        scroller.revalidate();
+        selectedScroller.revalidate();
 
         isAddingOrRemovingItem = false;
     }
@@ -257,6 +285,6 @@ public class SelectionStep extends JPanel implements ItemListener {
             dropdownList.revalidate();
         }
 
-        scroller.revalidate();
+        selectedScroller.revalidate();
     }
 }

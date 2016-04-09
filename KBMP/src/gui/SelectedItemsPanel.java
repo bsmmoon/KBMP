@@ -1,7 +1,6 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -21,7 +20,7 @@ public class SelectedItemsPanel extends JPanel {
 		removedItems = new Stack<SelectedItem> ();
 		this.hasDate = hasDate;
 		setLayout(new WrapLayout(WrapLayout.LEFT));
-		setOpaque(false);
+		//setOpaque(false);
 	}
 
 	public ArrayList<SelectedItem> getSelectedItems() {

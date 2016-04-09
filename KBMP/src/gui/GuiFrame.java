@@ -1,7 +1,6 @@
 package gui;
 
-import java.awt.CardLayout;
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -29,8 +28,8 @@ public class GuiFrame extends JFrame {
 		this.model = logic.getModel();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setResizable(false);
-		setSize(500,500);
+
+		setSize(new Dimension(500,500));
 	}
 
 	public void init() {
@@ -47,12 +46,12 @@ public class GuiFrame extends JFrame {
 
 		add(cards);
 */
+		getContentPane().setBackground(Color.WHITE);
+
 		SelectionStep step = new SelectionStep(this,false);
 		step.setStep(SelectionStep.STEP.NUM_SEM_LEFT);
 		step.init();
 		add(step);
-
-		getContentPane().setBackground(Color.WHITE);
 	}
 /*
 	public void nextStep() {
