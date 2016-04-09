@@ -45,16 +45,9 @@ public class Logic {
 		iterate();
 	}
 
-	public void iterate() {
-		execute("(focus SELECT RANK)");
-		execute("(refresh RANK::mark-available-no-prerequisites-level-higher)");
-		execute("(run)");
-		model.update();
-	}
+	public void iterate() { model.iterate(); }
 	
-	public void execute(String command) {
-		model.execute(command);
-	}
+	public void execute(String command) { model.execute(command); }
 
 	public void setNumberOfSemesterLeft(int semester) { model.setNumberOfSemesterLeft(semester); }
 

@@ -28,26 +28,23 @@ public class Model {
 		this.availableModules = new ArrayList<>();
 	}
 
+	public ArrayList<FocusArea> getAllFocusAreas() { return focusAreas; }
+	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
+	public ModulePlan getModulePlan() { return plan; }
+	public ArrayList<Module> getAvailableModules() { return availableModules; }
+	public int getSemester() { return semester; }
+	public boolean isDone() {
+		return semester > numberOfSemesterLeft;
+	}
+
 	public void setModules(ArrayList<Module> modules) { this.modules = modules; }
 
-	public ArrayList<FocusArea> getAllFocusAreas() { return focusAreas; }
-
 	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) { this.focusAreas = focusAreas; }
-
-	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
 
 	public void setSelectedFocusAreas(ArrayList<FocusArea> selectedFocusAreas) {
 		this.selectedFocusAreas = selectedFocusAreas;
 		selectedFocusAreas.forEach((selectedFocusArea) -> execute("(assert-focus-on \"" + selectedFocusArea.getName() + "\")"));
 	}
-
-	public ModulePlan getModulePlan() { return plan; }
-
-	public ArrayList<Module> getAvailableModules() { return availableModules; }
-
-	public void incrementSemester() { semester++; }
-
-	public int getSemester() { return semester; }
 
 	public void setNumberOfSemesterLeft(int numberOfSemesterLeft) {
 		this.numberOfSemesterLeft = numberOfSemesterLeft;
@@ -67,16 +64,6 @@ public class Model {
 		clips.run();
 	}
 
-	public void update() { availableModules = clips.getAvailableModules(); }
-
-	public void updatePlan(ArrayList<Module> modules) {
-		modules.forEach((module) -> plan.addNewModule(module, semester));
-	}
-
-	public boolean isDone() {
-		return semester > numberOfSemesterLeft;
-	}
-
 	public void assertTaken(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-taken \"" + module.getCode() + "\")")); }
 
 	public void assertWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-want \"" + module.getCode() + "\")")); }
@@ -88,4 +75,19 @@ public class Model {
 		updatePlan(modules);
 		incrementSemester();
 	}
+
+	public void iterate() {
+		execute("(focus SELECT RANK)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-higher)");
+		execute("(run)");
+		update();
+	}
+
+	private void update() { availableModules = clips.getAvailableModules(); }
+
+	private void updatePlan(ArrayList<Module> modules) {
+		modules.forEach((module) -> plan.addNewModule(module, semester));
+	}
+
+	private void incrementSemester() { semester++; }
 }
