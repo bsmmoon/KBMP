@@ -88,8 +88,19 @@ public class ClipsWrapper {
 			}
 			out += ")";
 		}
-		out += "))";
 
+		String code = module.getCode();
+		for (int i = 0; i < code.length(); i++) {
+			int c = code.charAt(i);
+			if (c >= 48 && c <= 57) {
+				out += "(prefix \"" + code.substring(0, i) + "\")";
+				out += "(level " + code.charAt(i) + ")";
+				out += "(rest \"" + code.substring(i+1, code.length()) + "\")";
+				break;
+			}
+		}
+
+		out += "))";
 		return out;
 	}
 
