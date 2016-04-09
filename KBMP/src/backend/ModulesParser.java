@@ -10,6 +10,7 @@ import common.Module;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -231,14 +232,33 @@ public class ModulesParser {
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(prerequisite).matches()) {
             // matches from the start
-            String[] tokens = prerequisite.split(" ");
-            prerequisites.add(tokens[0]);
-//            System.out.println("Matched: " + tokens[0]);
+            ArrayList<String> codes = extractModuleCodesFromOneModuleCode(prerequisite);
+            prerequisites.add(codes.get(0));
+//            StringBuilder matchesBuilder = new StringBuilder();
+//            for (String code : codes) {
+//                matchesBuilder.append(" " + code);
+//            }
+//            System.out.println("Matched: " + matchesBuilder.toString());
 //        } else {
 //            System.out.println("Ignored: " + prerequisite);
         }
 
         return prerequisites;
+    }
+
+    private static ArrayList<String> extractModuleCodesFromOneModuleCode(String code) {
+        String trimmedCode = code.split(" ")[0];
+        ArrayList<String> codes = new ArrayList<>();
+        if (trimmedCode.contains("/")) {
+            String[] tokens = trimmedCode.split("/");
+            codes.add(tokens[0]);
+            for (int i = 1; i < tokens.length; i++) {
+                codes.add(tokens[0] + tokens[i]);
+            }
+        } else {
+            codes.add(trimmedCode);
+        }
+        return codes;
     }
 
     private static ArrayList<String> parseCorequisites(NusmodsModule rawModule) {
