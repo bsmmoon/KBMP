@@ -15,8 +15,10 @@ public class ModulePlan {
 		semesters = new ArrayList<ArrayList<Module>>();
 	}
 	
-	public void createNewSemester() {
-		semesters.add(new ArrayList<Module> ());
+	public void setSemesters(int numberOfSemesters) {
+		for (int i = 0; i < numberOfSemesters; i++) {
+			semesters.add(new ArrayList<>());
+		}
 	}
 	
 	/**
@@ -25,12 +27,7 @@ public class ModulePlan {
 	 * @param semester start from 1
 	 */
 	public void addNewModule(Module module, int semester) {
-		try {
-			semesters.get(semester-1).add(module);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("Semester " + semester + " has not been added!");
-			e.printStackTrace();
-		}
+		semesters.get(semester-1).add(module);
 	}
 	
 	public ArrayList<ArrayList<Module>> getModulePlan() {

@@ -21,7 +21,6 @@ public class Model {
 	public Model() {
 		this.clips = new ClipsWrapper();
 		this.plan = new ModulePlan();
-		this.plan.createNewSemester();
 		this.semester = 1;
 		this.focusAreas = new ArrayList<>();
 		this.selectedFocusAreas = new ArrayList<>();
@@ -50,7 +49,10 @@ public class Model {
 
 	public int getSemester() { return semester; }
 
-	public void setNumberOfSemesterLeft(int semester) { this.numberOfSemesterLeft = semester; }
+	public void setNumberOfSemesterLeft(int numberOfSemesterLeft) {
+		this.numberOfSemesterLeft = numberOfSemesterLeft;
+		this.plan.setSemesters(numberOfSemesterLeft);
+	}
 
 	public void execute(String command) {
 		System.out.println("CLIPS>> " + command);
