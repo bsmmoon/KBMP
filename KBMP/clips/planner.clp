@@ -108,7 +108,7 @@
 (defrule RANK::mark-available-no-prerequisites "mark modules without prerequisites as available"
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no))
     =>
-    (if (< (count-available) 10)
+    (if (< (count-available) 1000)
         then
         (printout t "Module " ?code " available." crlf)
         (printout t "Total available: " (count-available) crlf)
