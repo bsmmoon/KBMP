@@ -71,6 +71,7 @@ public class Model {
 	public void assertDontWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-dontwant \"" + module.getCode() + "\")")); }
 
 	public void selectModules(ArrayList<Module> modules) {
+
 		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
 		updatePlan(modules);
 		incrementSemester();

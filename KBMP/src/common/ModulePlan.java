@@ -9,15 +9,15 @@ import java.util.ArrayList;
  */
 public class ModulePlan {
 	// Each semester contains a list of modules
-	private ArrayList<ArrayList<Module>> semesters;
+	private ArrayList<Semester> semesters;
 	
 	public ModulePlan() {
-		semesters = new ArrayList<ArrayList<Module>>();
+		semesters = new ArrayList<Semester>();
 	}
 	
 	public void setSemesters(int numberOfSemesters) {
 		for (int i = 0; i < numberOfSemesters; i++) {
-			semesters.add(new ArrayList<>());
+			semesters.add(new Semester());
 		}
 	}
 	
@@ -27,10 +27,10 @@ public class ModulePlan {
 	 * @param semester start from 1
 	 */
 	public void addNewModule(Module module, int semester) {
-		semesters.get(semester-1).add(module);
+		semesters.get(semester-1).addModule(module);
 	}
 	
-	public ArrayList<ArrayList<Module>> getModulePlan() {
+	public ArrayList<Semester> getSemesters() {
 		return semesters;
 	}
 }

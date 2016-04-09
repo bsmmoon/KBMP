@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import common.Module;
 import common.ModulePlan;
+import common.Semester;
 
 public class PlanPanel extends JPanel {
 	private ArrayList<ModulePanel> modules;
@@ -52,11 +53,11 @@ public class PlanPanel extends JPanel {
 	}
 	
 	public void addPlan(ModulePlan plan) {
-		ArrayList<ArrayList<Module>> semesters = plan.getModulePlan();
+		ArrayList<Semester> semesters = plan.getSemesters();
 		for (int i=0; i<semesters.size(); i++) {
 			JLabel semester = new JLabel("Semester " + Integer.toString(i+1));
 			add(semester);
-			ArrayList<Module> modules = semesters.get(i);
+			ArrayList<Module> modules = semesters.get(i).getModules();
 			for (int j=0; j<modules.size(); j++) {
 				ModulePanel module = new ModulePanel(this,modules.get(j));
 				add(module);
