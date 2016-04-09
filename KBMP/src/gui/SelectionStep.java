@@ -123,8 +123,7 @@ public class SelectionStep extends JPanel implements ItemListener {
                 break;
             case PLANNING:
                 if (!frame.getModel().isDone()) {
-                    semester++;
-                    setQuestion("<html>Semester " + semester + "<br>Select modules for this semester:");
+                    setQuestion("<html>Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
                     setAvailableModules(frame.getModel().getAvailableModules());
                 } else {
                     question.setVisible(false);
@@ -170,18 +169,18 @@ public class SelectionStep extends JPanel implements ItemListener {
                 ArrayList<Module> modules = getSelectedModules();
                 frame.getLogic().selectModules(modules);
                 String text = planned.getText();
-                text += "Semester " + semester + "\n";
+                text += "Semester " + (frame.getModel().getSemester() - 1) + "\n";
                 for (Module module : modules) {
                     text += module.getCode() + " " + module.getName() + "\n";
                 }
                 text+= "-------------------\n";
                 planned.setText(text);
-                init();
                 break;
         }
         selected.clearAllItems();
         revalidate();
         frame.getLogic().iterate();
+        init();
     }
 
     public  void setStep(STEP step) { this.step = step; }

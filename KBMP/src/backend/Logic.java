@@ -55,7 +55,6 @@ public class Logic {
 	
 	public void execute(String command) {
 		model.execute(command);
-		model.update();
 	}
 
 	public void setNumberOfSemesterLeft(int semester) { model.setNumberOfSemesterLeft(semester); }
