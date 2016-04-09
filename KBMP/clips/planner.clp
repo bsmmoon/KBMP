@@ -104,11 +104,21 @@
     (printout t "Marking module " ?code1 " as unwanted" crlf)
     (modify ?module (want no)))
 
-; ; Modules Available, without prerequisites, limit to 10
-(defrule RANK::mark-available-no-prerequisites "mark modules without prerequisites as available"
-    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no))
+; ; Modules Available, without prerequisites, level 1, no limit
+(defrule RANK::mark-available-no-prerequisites-level-one "mark modules without prerequisites as available"
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 1))
     =>
-    (if (< (count-available) 1000)
+    (printout t "Module " ?code " available." crlf)
+    (printout t "Total available: " (count-available) crlf)
+    (printout t "Level 1 planned/taken: " (count-level-one) crlf)
+    (modify ?module (status available))
+    )
+
+; ; Modules Available, without prerequisites, level 1 above, limit to 10
+(defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level ~1))
+    =>
+    (if (< (count-available) 15)
         then
         (printout t "Module " ?code " available." crlf)
         (printout t "Total available: " (count-available) crlf)
@@ -127,8 +137,6 @@
     (printout t "Module " ?code " available" crlf)
     (printout t "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available)))
-
-; ; 
 
 ; ; SELECT
 ; ; Selecting modules
