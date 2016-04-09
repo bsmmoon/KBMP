@@ -124,8 +124,9 @@
         (printout t "Total available: " (count-available) crlf)
         (printout t "Level 1 planned/taken: " (count-level-one) crlf)
         (modify ?module (status available))
-        else
-        (printout t "Total available reached max " (count-available) crlf))
+        ; ; else
+        ; ; (printout t "Total available reached max " (count-available) crlf)
+        )
     )
 
 ; ; Modules Available, with single prerequisite met, no limit
@@ -137,6 +138,21 @@
     (printout t "Module " ?code " available" crlf)
     (printout t "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available)))
+
+(deffacts RANK::preclusions
+(preclusion "CS1010" "CS1010E" "CS1010R" "CS1010J" "CS1101S" "CS1010X"))
+
+; ; Module precluded when preclusion met
+(defrule RANK::mark-not-available-preclusion-met
+    (module (code ?code1) (status ?status))
+    (test(or (eq ?status planned) (eq ?status taken)))
+    (preclusion $?preclusionlist)
+    (test (member$ ?code1 $?preclusionlist))
+    ?precludedmodule <- (module (code ?code2) (status available))
+    (test (member$ ?code2 $?preclusionlist))
+    =>
+    (modify ?precludedmodule (status not-available))
+    (printout t "Module " ?code2 " precluded " crlf))
 
 ; ; SELECT
 ; ; Selecting modules
