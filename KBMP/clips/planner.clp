@@ -15,7 +15,7 @@
     (slot level
         (type INTEGER))
     (slot rest
-        (type SYMBOL))
+        (type STRING))
     (slot classification
         (type SYMBOL))
     (slot MC
