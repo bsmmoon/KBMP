@@ -257,7 +257,7 @@ public class ModulesParser {
         } else if (rawPrerequisite.contains("(") && !rawPrerequisite.contains("[")) {
             // (a and/or b) and/or (c and/or d)
             // (a and/or b) and/or c
-            Pair<Operator, ArrayList<String>> topLevel = extractTopLevel(rawPrerequisite);
+            Pair<Operator, ArrayList<String>> topLevel = extractTopLevel(rawPrerequisite, "\\(", "\\)", ")");
 
             ArrayList<Operator> secondLevelOperators = new ArrayList<>();
             ArrayList<ArrayList<String>> allModuleCodes = new ArrayList<>();
@@ -271,6 +271,11 @@ public class ModulesParser {
 
             prerequisites = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
 //            System.out.println("Processed: " + prerequisites + "\n");
+        } else if (rawPrerequisite.contains("[")) {
+            // triple level nesting
+            if (rawModule.ModuleCode.contains("CP3106")) {
+                prerequisites = "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
+            }
         } else {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPrerequisite);
             prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
@@ -343,8 +348,9 @@ public class ModulesParser {
     }
 
     // tokenize according to brackets then recognize operator between brackets
-    private static Pair<Operator, ArrayList<String>> extractTopLevel(String rawInput) {
-        String[] rawTokens = rawInput.split("\\(");
+    private static Pair<Operator, ArrayList<String>> extractTopLevel(String rawInput, String regexDelimiterOpen, String
+            regexDelimiterClose, String delimiterClose) {
+        String[] rawTokens = rawInput.split(regexDelimiterOpen);
         ArrayList<String> tokens = new ArrayList<>(rawTokens.length);
         Operator operator = null;
 
@@ -359,10 +365,10 @@ public class ModulesParser {
             } else if (token.endsWith(ModulesParser.OR)) {
                 operator = Operator.OR;
                 tokens.add(token.substring(0, token.length() - ModulesParser.OR.length()).trim());
-            } else if (token.contains(CLOSE_BRACKET)) {
+            } else if (token.contains(delimiterClose)) {
                 // last token
                 // check if contains closing bracket to account for cases like "(a and/or b) and/or c"
-                String[] smallerRawTokens = token.split("\\)", 2);
+                String[] smallerRawTokens = token.split(regexDelimiterClose, 2);
                 tokens.add(smallerRawTokens[0].trim());
                 String rest = smallerRawTokens[1].trim();
                 if (rest.startsWith(ModulesParser.AND)) {
