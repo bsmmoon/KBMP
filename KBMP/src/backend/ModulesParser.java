@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import common.Exam;
 import common.Lesson;
 import common.Module;
+import javafx.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +19,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 /**
@@ -27,10 +28,17 @@ import java.util.regex.Pattern;
 public class ModulesParser {
     private static String ERROR_MESSAGE_MODULES_NOT_READABLE = "Path to module database is not readable";
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
-    private enum PatternTypes {ANY_ONE_MODULE_GREEDY};
+    private enum PatternTypes {ANY_ONE_MODULE_GREEDY}
     private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
     private static Hashtable<String, Module> existingModules = null;
     private static Module.Semester currentSemester;
+    public static String AND_WORD = " and ";
+    public static String AND = "and";
+    public static String OR_WORD = " or ";
+    public static String OR = "or";
+    public static String OPEN_BRACKET = "(";
+    public static String CLOSE_BRACKET = ")";
+    private enum Operator {AND, OR}
 
     public static Hashtable<String, Module> updateModulesFromPath(Path pathToFile, Hashtable<String, Module> existingModules,
                                                                   Module.Semester currentSemester) throws IOException {
@@ -241,9 +249,129 @@ public class ModulesParser {
 //            System.out.println("Matched: " + matchesBuilder.toString());
 //        } else {
 //            System.out.println("Ignored: " + prerequisite);
+        } else if (prerequisite.contains("(") && !prerequisite.contains("[")) {
+            System.out.println("Original: " + prerequisite);
+
+            // tokenize according to brackets then recognize operator between brackets
+            // "(CS1020 or its equivalent) and (MA1101R or MA1506)"
+            String[] rawTokens = prerequisite.split("\\(");
+            ArrayList<String> tokens = new ArrayList<>(rawTokens.length);
+            ArrayList<Operator> topLevel = new ArrayList<>();
+            for (String token : rawTokens) {
+                token = token.trim();
+                if (token.isEmpty()) {
+                    // do nothing
+                } else if (token.endsWith(ModulesParser.AND)) {
+                    // ModulesParser.AND_WORD is lowercase "and". Prerequisites don't contain camelCase or uppercase "and"s.
+                    topLevel.add(Operator.AND);
+                    tokens.add(token.substring(0, token.length() - ModulesParser.AND.length()));
+                } else if (token.endsWith(ModulesParser.OR)) {
+                    topLevel.add(Operator.OR);
+                    tokens.add(token.substring(0, token.length() - ModulesParser.OR.length()));
+                } else {
+                    tokens.add(token);
+                }
+            }
+
+            ArrayList<Operator> secondLevelOperators = new ArrayList<>();
+            ArrayList<ArrayList<String>> allModuleCodes = new ArrayList<>();
+            for (String token : tokens) {
+                Pair<Operator, ArrayList<String>> secondLevel = extractSecondLevel(token);
+                if (secondLevel.getKey() != null && !secondLevel.getValue().isEmpty()) {
+                    secondLevelOperators.add(secondLevel.getKey());
+                    allModuleCodes.add(secondLevel.getValue());
+                }
+            }
+
+            String collatedPrerequisite = generatePrerequisiteString(topLevel, secondLevelOperators, allModuleCodes);
+            System.out.println("Processed: " + collatedPrerequisite);
         }
 
         return prerequisites;
+    }
+
+    private static String generatePrerequisiteString(ArrayList<Operator> topLevel, ArrayList<Operator>
+            secondLevelOperators, ArrayList<ArrayList<String>> allModuleCodes) {
+        StringBuilder prereqBuilder = new StringBuilder();
+
+        Iterator<Operator> topLevelOperatorIter = topLevel.iterator();
+        Iterator<Operator> secondLevelOperatorIter = secondLevelOperators.iterator();
+        for (int i = 0; i < allModuleCodes.size(); i++) {
+            ArrayList<String> modules = allModuleCodes.get(i);
+            Operator currentSecondLevelOperator = secondLevelOperatorIter.next();
+            String currentSecondLevelOperatorString = "";
+            if (currentSecondLevelOperator == Operator.AND) {
+                currentSecondLevelOperatorString = AND_WORD;
+            } else if (currentSecondLevelOperator == Operator.OR) {
+                currentSecondLevelOperatorString = OR_WORD;
+            }
+
+            if (modules.size() > 1 && allModuleCodes.size() > 1) {
+                prereqBuilder.append(OPEN_BRACKET);
+            }
+            for (int j = 0; j < modules.size() - 1; j++) {
+                prereqBuilder.append(modules.get(j));
+                prereqBuilder.append(currentSecondLevelOperatorString);
+            }
+            prereqBuilder.append(modules.get(modules.size()-1));
+            if (modules.size() > 1 && allModuleCodes.size() > 1) {
+                prereqBuilder.append(CLOSE_BRACKET);
+            }
+
+            try {
+                Operator currentTopLevelOperator = topLevelOperatorIter.next();
+                String currentTopLevelOperatorString = "";
+                if (currentTopLevelOperator == Operator.AND) {
+                    currentTopLevelOperatorString = AND_WORD;
+                } else if (currentTopLevelOperator == Operator.OR) {
+                    currentTopLevelOperatorString = OR_WORD;
+                }
+                prereqBuilder.append(currentTopLevelOperatorString);
+            } catch (NoSuchElementException e) {
+                // last set of modules won't have a corresponding operator to go after
+                // do nothing
+            }
+        }
+
+        return prereqBuilder.toString();
+    }
+
+    // tokens contain at least one operator, and the operators within a token must be of the same type.
+    private static Pair<Operator, ArrayList<String>> extractSecondLevel(String token) {
+        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
+        ArrayList<String> moduleCodes = new ArrayList<>();
+        Operator operator = null;
+
+        // split by "or" first because some module codes include "and"
+        // => token might contain "and" but actually the operator is only "or"
+        if (token.contains(ModulesParser.OR_WORD)) {
+            String[] rawModuleTokens = token.split(ModulesParser.OR_WORD);
+            operator = Operator.OR;
+            for (String rawModuleToken : rawModuleTokens) {
+                if (anyOneModule.matcher(rawModuleToken).matches()){
+                    ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
+                    moduleCodes.addAll(codes);
+                } else {
+                    System.out.println("DOESNT MATCH: " + rawModuleToken);
+                }
+            }
+        } else {
+            String[] rawModuleTokens = token.split(ModulesParser.AND_WORD);
+            int count = 0;
+            for (String rawModuleToken : rawModuleTokens) {
+                if (anyOneModule.matcher(rawModuleToken).matches()){
+                    count++;
+                    ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
+                    moduleCodes.addAll(codes);
+                } else {
+                    System.out.println("DOESNT MATCH: " + rawModuleToken);
+                }
+            }
+            if (count > 0) { // "and" isn't present only within a module's title
+                operator = Operator.AND;
+            }
+        }
+        return new Pair<>(operator, moduleCodes);
     }
 
     private static ArrayList<String> extractModuleCodesFromOneModuleCode(String code) {
@@ -303,9 +431,12 @@ public class ModulesParser {
 
     private static Hashtable<PatternTypes, Pattern> generatePatterns() {
         Hashtable<PatternTypes, Pattern> patterns = new Hashtable<>();
+
+        //eg CS1010, CS1231R, CS2103\T
         String regexAnyModule = "(([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2})[a-zA-Z_\\s_\\p{Punct}]*";
         Pattern anyOne = Pattern.compile(regexAnyModule);
         patterns.put(PatternTypes.ANY_ONE_MODULE_GREEDY, anyOne);
+
         return patterns;
     }
 
