@@ -250,32 +250,13 @@ public class ModulesParser {
 //        } else {
 //            System.out.println("Ignored: " + prerequisite);
         } else if (prerequisite.contains("(") && !prerequisite.contains("[")) {
-            System.out.println("Original: " + prerequisite);
-
-            // tokenize according to brackets then recognize operator between brackets
             // "(CS1020 or its equivalent) and (MA1101R or MA1506)"
-            String[] rawTokens = prerequisite.split("\\(");
-            ArrayList<String> tokens = new ArrayList<>(rawTokens.length);
-            ArrayList<Operator> topLevel = new ArrayList<>();
-            for (String token : rawTokens) {
-                token = token.trim();
-                if (token.isEmpty()) {
-                    // do nothing
-                } else if (token.endsWith(ModulesParser.AND)) {
-                    // ModulesParser.AND_WORD is lowercase "and". Prerequisites don't contain camelCase or uppercase "and"s.
-                    topLevel.add(Operator.AND);
-                    tokens.add(token.substring(0, token.length() - ModulesParser.AND.length()));
-                } else if (token.endsWith(ModulesParser.OR)) {
-                    topLevel.add(Operator.OR);
-                    tokens.add(token.substring(0, token.length() - ModulesParser.OR.length()));
-                } else {
-                    tokens.add(token);
-                }
-            }
+            System.out.println("Original: " + prerequisite);
+            Pair<ArrayList<Operator>, ArrayList<String>> topLevel = extractTopLevel(prerequisite);
 
             ArrayList<Operator> secondLevelOperators = new ArrayList<>();
             ArrayList<ArrayList<String>> allModuleCodes = new ArrayList<>();
-            for (String token : tokens) {
+            for (String token : topLevel.getValue()) {
                 Pair<Operator, ArrayList<String>> secondLevel = extractSecondLevel(token);
                 if (secondLevel.getKey() != null && !secondLevel.getValue().isEmpty()) {
                     secondLevelOperators.add(secondLevel.getKey());
@@ -283,7 +264,7 @@ public class ModulesParser {
                 }
             }
 
-            String collatedPrerequisite = generatePrerequisiteString(topLevel, secondLevelOperators, allModuleCodes);
+            String collatedPrerequisite = generatePrerequisiteString(topLevel.getKey(), secondLevelOperators, allModuleCodes);
             System.out.println("Processed: " + collatedPrerequisite);
         }
 
@@ -334,6 +315,30 @@ public class ModulesParser {
         }
 
         return prereqBuilder.toString();
+    }
+
+    // tokenize according to brackets then recognize operator between brackets
+    private static Pair<ArrayList<Operator>, ArrayList<String>> extractTopLevel(String rawInput) {
+        String[] rawTokens = rawInput.split("\\(");
+        ArrayList<String> tokens = new ArrayList<>(rawTokens.length);
+        ArrayList<Operator> topLevelOperators = new ArrayList<>();
+        for (String token : rawTokens) {
+            token = token.trim();
+            if (token.isEmpty()) {
+                // do nothing
+            } else if (token.endsWith(ModulesParser.AND)) {
+                // ModulesParser.AND_WORD is lowercase "and". Prerequisites don't contain camelCase or uppercase "and"s.
+                topLevelOperators.add(Operator.AND);
+                tokens.add(token.substring(0, token.length() - ModulesParser.AND.length()));
+            } else if (token.endsWith(ModulesParser.OR)) {
+                topLevelOperators.add(Operator.OR);
+                tokens.add(token.substring(0, token.length() - ModulesParser.OR.length()));
+            } else {
+                tokens.add(token);
+            }
+        }
+
+        return new Pair<>(topLevelOperators, tokens);
     }
 
     // tokens contain at least one operator, and the operators within a token must be of the same type.
