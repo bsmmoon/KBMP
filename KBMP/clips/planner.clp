@@ -104,8 +104,9 @@
     (printout t "Marking module " ?code1 " as unwanted" crlf)
     (modify ?module (want no)))
 
-; ; Modules Available, without prerequisites, level 1, no limit
+; ; Modules Available, without prerequisites, level 1, salience 4, no limit
 (defrule RANK::mark-available-no-prerequisites-level-one "mark modules without prerequisites as available"
+    (declare (salience 4))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 1))
     =>
     (printout t "Module " ?code " available." crlf)
@@ -114,9 +115,58 @@
     (modify ?module (status available))
     )
 
-; ; Modules Available, without prerequisites, level 1 above, limit to 10
+; ; Modules Available, without prerequisites, level 2, salience 3, check total limit of 15
 (defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
-    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level ~1))
+    (declare (salience 3))
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 2))
+    =>
+    (if (< (count-available) 15)
+        then
+        (printout t "Module " ?code " available." crlf)
+        (printout t "Total available: " (count-available) crlf)
+        (printout t "Level 1 planned/taken: " (count-level-one) crlf)
+        (modify ?module (status available))
+        ; ; else
+        ; ; (printout t "Total available reached max " (count-available) crlf)
+        )
+    )
+
+; ; Modules Available, without prerequisites, level 3, salience 2, check total limit of 15
+(defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
+    (declare (salience 2))
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 3))
+    =>
+    (if (< (count-available) 15)
+        then
+        (printout t "Module " ?code " available." crlf)
+        (printout t "Total available: " (count-available) crlf)
+        (printout t "Level 1 planned/taken: " (count-level-one) crlf)
+        (modify ?module (status available))
+        ; ; else
+        ; ; (printout t "Total available reached max " (count-available) crlf)
+        )
+    )
+
+; ; Modules Available, without prerequisites, level 3 above, salience 0, limit total to 15
+(defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
+    (declare (salience 0))
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level ?level&:(> ?level 3)))
+    =>
+    (if (< (count-available) 15)
+        then
+        (printout t "Module " ?code " available." crlf)
+        (printout t "Total available: " (count-available) crlf)
+        (printout t "Level 1 planned/taken: " (count-level-one) crlf)
+        (modify ?module (status available))
+        ; ; else
+        ; ; (printout t "Total available reached max " (count-available) crlf)
+        )
+    )
+
+; ; Modules Available, without prerequisites, level 3 above, limit total to 15
+(defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
+    (declare (salience 0))
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level ?level&:(> ?level 3)))
     =>
     (if (< (count-available) 15)
         then
@@ -132,15 +182,15 @@
 ; ; Modules Available, with single prerequisite met, no limit
 (defrule RANK::mark-available-prerequisite-met "mark modules with single prerequisite met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq) (status none) (want ~no))
-    (module (status planned) (code ?plannedcode))
+    (module (status planned|taken) (code ?plannedcode))
     (test(eq ?prereq ?plannedcode))
     =>
-    (printout t "Module " ?code " available" crlf)
+    (printout t "Module " ?code " available as prereq met" crlf)
     (printout t "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available)))
 
 (deffacts RANK::preclusions
-(preclusion "CS1010" "CS1010E" "CS1010R" "CS1010J" "CS1101S" "CS1010X"))
+(preclusion "CS1010" "CS1010S" "CS1010E" "CS1010R" "CS1010J" "CS1101S" "CS1010X"))
 
 ; ; Module precluded when preclusion met
 (defrule RANK::mark-not-available-preclusion-met
