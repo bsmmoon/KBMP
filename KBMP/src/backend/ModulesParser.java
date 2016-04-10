@@ -168,7 +168,7 @@ public class ModulesParser {
 
         moduleBuilder.setWorkload(parseWorkload(rawModule));
 
-        // if no prerequisites/corequisites/preclusions, leave as default empty arrayList.
+        // if no prerequisites/corequisites/preclusions, empty string.
         moduleBuilder.setPrerequisites(parsePrerequisites(rawModule));
         moduleBuilder.setCorequisites(parseCorequisites(rawModule));
         moduleBuilder.setPreclusions(parsePreclusions(rawModule));
@@ -246,13 +246,13 @@ public class ModulesParser {
             // (a and/or b) and/or (c and/or d)
             // (a and/or b) and/or c
             System.out.println("\nOriginal: " + prerequisite);
-            Pair<ArrayList<Operator>, ArrayList<String>> topLevel = extractTopLevel(prerequisite);
+            Pair<Operator, ArrayList<String>> topLevel = extractTopLevel(prerequisite);
 
             ArrayList<Operator> secondLevelOperators = new ArrayList<>();
             ArrayList<ArrayList<String>> allModuleCodes = new ArrayList<>();
             for (String token : topLevel.getValue()) {
                 Pair<Operator, ArrayList<String>> secondLevel = extractSecondLevel(token);
-                if (secondLevel.getKey() != null && !secondLevel.getValue().isEmpty()) {
+                if (!secondLevel.getValue().isEmpty()) {
                     secondLevelOperators.add(secondLevel.getKey());
                     allModuleCodes.add(secondLevel.getValue());
                 }
@@ -265,35 +265,34 @@ public class ModulesParser {
         return prerequisites;
     }
 
-    private static String generateDependencyStringWithNesting(ArrayList<Operator> topLevel, ArrayList<Operator>
+    private static String generateDependencyStringWithNesting(Operator topLevelOperator, ArrayList<Operator>
             secondLevelOperators, ArrayList<ArrayList<String>> allModuleCodes) {
         StringBuilder prereqBuilder = new StringBuilder();
-
-        Iterator<Operator> topLevelOperatorIter = topLevel.iterator();
         Iterator<Operator> secondLevelOperatorIter = secondLevelOperators.iterator();
         for (int i = 0; i < allModuleCodes.size(); i++) {
             ArrayList<String> modules = allModuleCodes.get(i);
 
-            if (modules.size() > 1 && allModuleCodes.size() > 1) {
-                prereqBuilder.append(OPEN_BRACKET);
-            }
-            prereqBuilder.append(generateDependencyStringWithoutNesting(secondLevelOperatorIter.next(), modules));
-            if (modules.size() > 1 && allModuleCodes.size() > 1) {
-                prereqBuilder.append(CLOSE_BRACKET);
+            String currentTopLevelOperatorString = "";
+            if (topLevelOperator == Operator.AND) {
+                currentTopLevelOperatorString = AND_WORD;
+            } else if (topLevelOperator == Operator.OR) {
+                currentTopLevelOperatorString = OR_WORD;
             }
 
-            try {
-                Operator currentTopLevelOperator = topLevelOperatorIter.next();
-                String currentTopLevelOperatorString = "";
-                if (currentTopLevelOperator == Operator.AND) {
-                    currentTopLevelOperatorString = AND_WORD;
-                } else if (currentTopLevelOperator == Operator.OR) {
-                    currentTopLevelOperatorString = OR_WORD;
+            String internal = generateDependencyStringWithoutNesting(secondLevelOperatorIter.next(), modules);
+            if (internal.isEmpty()) {
+                continue;
+            }
+
+            if (allModuleCodes.size() > 1) {
+                prereqBuilder.append(OPEN_BRACKET);
+                prereqBuilder.append(internal);
+                prereqBuilder.append(CLOSE_BRACKET);
+                if (i != allModuleCodes.size()-1) {
+                    prereqBuilder.append(currentTopLevelOperatorString);
                 }
-                prereqBuilder.append(currentTopLevelOperatorString);
-            } catch (NoSuchElementException e) {
-                // last set of modules won't have a corresponding operator to go after
-                // do nothing
+            } else {
+                prereqBuilder.append(internal);
             }
         }
 
@@ -309,6 +308,8 @@ public class ModulesParser {
             operatorString = OR_WORD;
         }
 
+        modules.removeIf(module -> module.isEmpty());
+
         for (int i = 0; i < modules.size() - 1; i++) {
             stringBuilder.append(modules.get(i));
             stringBuilder.append(operatorString);
@@ -319,49 +320,49 @@ public class ModulesParser {
     }
 
     // tokenize according to brackets then recognize operator between brackets
-    private static Pair<ArrayList<Operator>, ArrayList<String>> extractTopLevel(String rawInput) {
+    private static Pair<Operator, ArrayList<String>> extractTopLevel(String rawInput) {
         String[] rawTokens = rawInput.split("\\(");
         ArrayList<String> tokens = new ArrayList<>(rawTokens.length);
-        ArrayList<Operator> topLevelOperators = new ArrayList<>();
+        Operator operator = null;
+
         for (String token : rawTokens) {
             token = token.trim();
             if (token.isEmpty()) {
                 // do nothing
             } else if (token.endsWith(ModulesParser.AND)) {
                 // ModulesParser.AND_WORD is lowercase "and". Prerequisites don't contain camelCase or uppercase "and"s.
-                topLevelOperators.add(Operator.AND);
-                tokens.add(token.substring(0, token.length() - ModulesParser.AND.length()));
+                operator = Operator.AND;
+                tokens.add(token.substring(0, token.length() - ModulesParser.AND.length()).trim());
             } else if (token.endsWith(ModulesParser.OR)) {
-                topLevelOperators.add(Operator.OR);
-                tokens.add(token.substring(0, token.length() - ModulesParser.OR.length()));
-            } else {
+                operator = Operator.OR;
+                tokens.add(token.substring(0, token.length() - ModulesParser.OR.length()).trim());
+            } else if (token.contains(CLOSE_BRACKET)) {
                 // last token
                 // check if contains closing bracket to account for cases like "(a and/or b) and/or c"
-                if (token.contains(CLOSE_BRACKET)) {
-                    String[] smallerRawTokens = token.split("\\)", 2);
-                    tokens.add(smallerRawTokens[0].trim());
-                    String rest = smallerRawTokens[1].trim();
-                    if (rest.startsWith(ModulesParser.AND)) {
-                        topLevelOperators.add(Operator.AND);
-                        String rightModule = rest.substring(ModulesParser.AND.length());
-                        tokens.add(rightModule.trim());
-                    } else if (rest.startsWith(ModulesParser.OR)) {
-                        topLevelOperators.add(Operator.OR);
-                        String rightModule = rest.substring(ModulesParser.OR.length());
-                        tokens.add(rightModule.trim());
-                    } else {
-                        // ???
-                    }
+                String[] smallerRawTokens = token.split("\\)", 2);
+                tokens.add(smallerRawTokens[0].trim());
+                String rest = smallerRawTokens[1].trim();
+                if (rest.startsWith(ModulesParser.AND)) {
+                    operator = Operator.AND;
+                    String rightModule = rest.substring(ModulesParser.AND.length()).trim();
+                    tokens.add(rightModule.trim());
+                } else if (rest.startsWith(ModulesParser.OR)) {
+                    operator = Operator.OR;
+                    String rightModule = rest.substring(ModulesParser.OR.length()).trim();
+                    tokens.add(rightModule.trim());
                 } else {
-                    tokens.add(token);
+                    // ???
                 }
+            } else {
+                tokens.add(token);
             }
         }
 
-        return new Pair<>(topLevelOperators, tokens);
+        return new Pair<>(operator, tokens);
     }
 
-    // tokens contain at least one operator, and the operators within a token must be of the same type.
+    // if token contains >1 operator, the operators must be of the same type.
+    // if token contains 0 operators, operator is returned as null.
     private static Pair<Operator, ArrayList<String>> extractSecondLevel(String token) {
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         ArrayList<String> moduleCodes = new ArrayList<>();
@@ -380,7 +381,7 @@ public class ModulesParser {
                     System.out.println("DOESNT MATCH: " + rawModuleToken);
                 }
             }
-        } else {
+        } else if (token.contains(ModulesParser.AND_WORD)) {
             String[] rawModuleTokens = token.split(ModulesParser.AND_WORD);
             int count = 0;
             for (String rawModuleToken : rawModuleTokens) {
@@ -395,7 +396,13 @@ public class ModulesParser {
             if (count > 0) { // "and" isn't present only within a module's title
                 operator = Operator.AND;
             }
+        } else {
+            if (anyOneModule.matcher(token).matches()) {
+                ArrayList<String> codes = extractModuleCodesFromOneModuleCode(token);
+                moduleCodes.addAll(codes);
+            }
         }
+
         return new Pair<>(operator, moduleCodes);
     }
 
@@ -430,7 +437,7 @@ public class ModulesParser {
         }
 
         // extract "co-read ..." from prerequisites
-
+        System.out.println("COREQUISITES: " + corequisites);
         return corequisites;
     }
 
@@ -448,6 +455,7 @@ public class ModulesParser {
             preclusions = generateDependencyStringWithoutNesting(Operator.OR, codes);
         }
 
+        System.out.println("PRECLUSIONS: " + preclusions);
         return preclusions;
     }
 
