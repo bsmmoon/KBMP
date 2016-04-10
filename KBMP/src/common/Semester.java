@@ -17,4 +17,17 @@ public class Semester {
     }
 
     public ArrayList<Module> getModules() { return modules; }
+
+//    public int[] getWorkload() {
+//        int[] workload = new int[5];
+//        int index;
+//        for (Module module : modules) {
+//            index = 0;
+//            for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
+//                workload[index] += module.getWorkload().get(type);
+//            }
+//        }
+//
+//        return workload;
+//    }
 }
