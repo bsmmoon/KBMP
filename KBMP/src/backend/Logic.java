@@ -36,13 +36,13 @@ public class Logic {
 			modules = new ArrayList<>();
 			focus = new ArrayList<>();
 		}
-		model.setModules(modules);
-		model.setAllFocusAreas(focus);
-
-		String condition = storage.readCondition();
-		model.reset(condition);
-
-		iterate();
+//		model.setModules(modules);
+//		model.setAllFocusAreas(focus);
+//
+//		String condition = storage.readCondition();
+//		model.reset(condition);
+//
+//		iterate();
 	}
 
 	public void iterate() { model.iterate(); }

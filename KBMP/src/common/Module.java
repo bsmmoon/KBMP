@@ -19,9 +19,9 @@ public class Module implements Serializable {
 	private String department;
 	private String description;
 	private Hashtable<WorkloadTypes, Float> workload;
-	private ArrayList<String> prerequisites;
-	private ArrayList<String> corequisites;
-	private ArrayList<String> preclusions;
+	private String prerequisites;
+	private String corequisites;
+	private String preclusions;
 	private ArrayList<Lesson> timetable;
 	private Exam exam;
 	private ArrayList<String> types;
@@ -35,9 +35,9 @@ public class Module implements Serializable {
 		private String department;
 		private String description;
 		private Hashtable<Module.WorkloadTypes, Float> workload;
-		private ArrayList<String> prerequisites;
-		private ArrayList<String> corequisites;
-		private ArrayList<String> preclusions;
+		private String prerequisites;
+		private String corequisites;
+		private String preclusions;
 		private ArrayList<Lesson> timetable;
 		private Exam exam;
 		private ArrayList<String> types;
@@ -76,17 +76,17 @@ public class Module implements Serializable {
 			return this;
 		}
 
-		public Builder setPrerequisites(ArrayList<String> prerequisites) {
+		public Builder setPrerequisites(String prerequisites) {
 			this.prerequisites = prerequisites;
 			return this;
 		}
 
-		public Builder setCorequisites(ArrayList<String> corequisites) {
+		public Builder setCorequisites(String corequisites) {
 			this.corequisites = corequisites;
 			return this;
 		}
 
-		public Builder setPreclusions(ArrayList<String> preclusions) {
+		public Builder setPreclusions(String preclusions) {
 			this.preclusions = preclusions;
 			return this;
 		}
@@ -159,15 +159,15 @@ public class Module implements Serializable {
 		return exam;
 	}
 
-	public ArrayList<String> getPrerequisites() {
+	public String getPrerequisites() {
 		return prerequisites;
 	}
 
-	public ArrayList<String> getCorequisites() {
+	public String getCorequisites() {
 		return corequisites;
 	}
 
-	public ArrayList<String> getPreclusions() {
+	public String getPreclusions() {
 		return preclusions;
 	}
 

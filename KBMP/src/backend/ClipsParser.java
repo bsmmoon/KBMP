@@ -15,13 +15,13 @@ public class ClipsParser {
 				"(code \"" + module.getCode() +"\")" +
 				"(name \"" + module.getName() +"\")" +
 				"(MC " + module.getCredits() + ")";
-		if (module.getPrerequisites().size() > 0) {
-			out += "(prerequisites";
-			for (String prerequisite : module.getPrerequisites()) {
-				out += " \"" + prerequisite + "\"";
-			}
-			out += ")";
-		}
+//		if (module.getPrerequisites().size() > 0) {
+//			out += "(prerequisites";
+//			for (String prerequisite : module.getPrerequisites()) {
+//				out += " \"" + prerequisite + "\"";
+//			}
+//			out += ")";
+//		}
 
 		String code = module.getCode();
 		for (int i = 0; i < code.length(); i++) {

@@ -229,8 +229,8 @@ public class ModulesParser {
         return examBuilder.build();
     }
 
-    private static ArrayList<String> parsePrerequisites(NusmodsModule rawModule) {
-        ArrayList<String> prerequisites = new ArrayList<>();
+    private static String parsePrerequisites(NusmodsModule rawModule) {
+        String prerequisites = "";
         if (rawModule.Prerequisite == null) {
             return prerequisites;
         }
@@ -239,18 +239,12 @@ public class ModulesParser {
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(prerequisite).matches()) {
-            // matches from the start
+            // a
             ArrayList<String> codes = extractModuleCodesFromOneModuleCode(prerequisite);
-            prerequisites.add(codes.get(0));
-//            StringBuilder matchesBuilder = new StringBuilder();
-//            for (String code : codes) {
-//                matchesBuilder.append(" " + code);
-//            }
-//            System.out.println("Matched: " + matchesBuilder.toString());
-//        } else {
-//            System.out.println("Ignored: " + prerequisite);
+            prerequisites = generateDependencyStringWithoutNesting(Operator.OR, codes);
         } else if (prerequisite.contains("(") && !prerequisite.contains("[")) {
-            // "(CS1020 or its equivalent) and (MA1101R or MA1506)"
+            // (a and/or b) and/or (c and/or d)
+            // (a and/or b) and/or c
             System.out.println("\nOriginal: " + prerequisite);
             Pair<ArrayList<Operator>, ArrayList<String>> topLevel = extractTopLevel(prerequisite);
 
@@ -264,14 +258,14 @@ public class ModulesParser {
                 }
             }
 
-            String collatedPrerequisite = generatePrerequisiteString(topLevel.getKey(), secondLevelOperators, allModuleCodes);
+            String collatedPrerequisite = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
             System.out.println("Processed: " + collatedPrerequisite);
         }
 
         return prerequisites;
     }
 
-    private static String generatePrerequisiteString(ArrayList<Operator> topLevel, ArrayList<Operator>
+    private static String generateDependencyStringWithNesting(ArrayList<Operator> topLevel, ArrayList<Operator>
             secondLevelOperators, ArrayList<ArrayList<String>> allModuleCodes) {
         StringBuilder prereqBuilder = new StringBuilder();
 
@@ -279,22 +273,11 @@ public class ModulesParser {
         Iterator<Operator> secondLevelOperatorIter = secondLevelOperators.iterator();
         for (int i = 0; i < allModuleCodes.size(); i++) {
             ArrayList<String> modules = allModuleCodes.get(i);
-            Operator currentSecondLevelOperator = secondLevelOperatorIter.next();
-            String currentSecondLevelOperatorString = "";
-            if (currentSecondLevelOperator == Operator.AND) {
-                currentSecondLevelOperatorString = AND_WORD;
-            } else if (currentSecondLevelOperator == Operator.OR) {
-                currentSecondLevelOperatorString = OR_WORD;
-            }
 
             if (modules.size() > 1 && allModuleCodes.size() > 1) {
                 prereqBuilder.append(OPEN_BRACKET);
             }
-            for (int j = 0; j < modules.size() - 1; j++) {
-                prereqBuilder.append(modules.get(j));
-                prereqBuilder.append(currentSecondLevelOperatorString);
-            }
-            prereqBuilder.append(modules.get(modules.size()-1));
+            prereqBuilder.append(generateDependencyStringWithoutNesting(secondLevelOperatorIter.next(), modules));
             if (modules.size() > 1 && allModuleCodes.size() > 1) {
                 prereqBuilder.append(CLOSE_BRACKET);
             }
@@ -315,6 +298,24 @@ public class ModulesParser {
         }
 
         return prereqBuilder.toString();
+    }
+
+    private static String generateDependencyStringWithoutNesting(Operator operator, ArrayList<String> modules) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String operatorString = "";
+        if (operator == Operator.AND) {
+            operatorString = AND_WORD;
+        } else if (operator == Operator.OR) {
+            operatorString = OR_WORD;
+        }
+
+        for (int i = 0; i < modules.size() - 1; i++) {
+            stringBuilder.append(modules.get(i));
+            stringBuilder.append(operatorString);
+        }
+        stringBuilder.append(modules.get(modules.size()-1));
+
+        return stringBuilder.toString();
     }
 
     // tokenize according to brackets then recognize operator between brackets
@@ -414,8 +415,8 @@ public class ModulesParser {
         return codes;
     }
 
-    private static ArrayList<String> parseCorequisites(NusmodsModule rawModule) {
-        ArrayList<String> corequisites = new ArrayList<>();
+    private static String parseCorequisites(NusmodsModule rawModule) {
+        String corequisites = "";
         if (rawModule.Corequisite == null) {
             return corequisites;
         }
@@ -423,11 +424,9 @@ public class ModulesParser {
         String corequisite = rawModule.Corequisite.trim();
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
-        if (anyOneModule.matcher(corequisite).matches()){
-            corequisites.add(corequisite);
-//            System.out.println("Matched: " + corequisite);
-//        } else {
-//            System.out.println("Ignored: " + corequisite);
+        if (anyOneModule.matcher(corequisite).matches()) {
+            ArrayList<String> codes = extractModuleCodesFromOneModuleCode(corequisite);
+            corequisites = generateDependencyStringWithoutNesting(Operator.OR, codes);
         }
 
         // extract "co-read ..." from prerequisites
@@ -435,8 +434,8 @@ public class ModulesParser {
         return corequisites;
     }
 
-    private static ArrayList<String> parsePreclusions(NusmodsModule rawModule) {
-        ArrayList<String> preclusions = new ArrayList<>();
+    private static String parsePreclusions(NusmodsModule rawModule) {
+        String preclusions = "";
         if (rawModule.Preclusion == null) {
             return preclusions;
         }
@@ -445,10 +444,8 @@ public class ModulesParser {
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(preclusion).matches()){
-            preclusions.add(preclusion);
-//            System.out.println("Matched: " + preclusion);
-//        } else {
-//            System.out.println("Ignored: " + preclusion);
+            ArrayList<String> codes = extractModuleCodesFromOneModuleCode(preclusion);
+            preclusions = generateDependencyStringWithoutNesting(Operator.OR, codes);
         }
 
         return preclusions;
