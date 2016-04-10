@@ -239,7 +239,12 @@ public class ModulesParser {
             return prerequisites;
         }
 
-        String prerequisite = rawModule.Prerequisite.trim();
+        String prerequisite = rawModule.Prerequisite;
+
+        if (prerequisite.contains("Other students:")) {
+            prerequisite = prerequisite.split("Other students:")[0];
+        }
+        prerequisite = prerequisite.trim();
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(prerequisite).matches()) {
