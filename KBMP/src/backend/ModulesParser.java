@@ -251,7 +251,7 @@ public class ModulesParser {
 //            System.out.println("Ignored: " + prerequisite);
         } else if (prerequisite.contains("(") && !prerequisite.contains("[")) {
             // "(CS1020 or its equivalent) and (MA1101R or MA1506)"
-            System.out.println("Original: " + prerequisite);
+            System.out.println("\nOriginal: " + prerequisite);
             Pair<ArrayList<Operator>, ArrayList<String>> topLevel = extractTopLevel(prerequisite);
 
             ArrayList<Operator> secondLevelOperators = new ArrayList<>();
@@ -380,7 +380,8 @@ public class ModulesParser {
     }
 
     private static ArrayList<String> extractModuleCodesFromOneModuleCode(String code) {
-        String trimmedCode = code.split(" ")[0];
+        String trimmedCode = code.split(" ")[0].replaceAll("[^/a-zA-Z0-9]", "");
+
         ArrayList<String> codes = new ArrayList<>();
         if (trimmedCode.contains("/")) {
             String[] tokens = trimmedCode.split("/");
