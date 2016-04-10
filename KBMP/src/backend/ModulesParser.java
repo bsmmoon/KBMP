@@ -334,7 +334,26 @@ public class ModulesParser {
                 topLevelOperators.add(Operator.OR);
                 tokens.add(token.substring(0, token.length() - ModulesParser.OR.length()));
             } else {
-                tokens.add(token);
+                // last token
+                // check if contains closing bracket to account for cases like "(a and/or b) and/or c"
+                if (token.contains(CLOSE_BRACKET)) {
+                    String[] smallerRawTokens = token.split("\\)", 2);
+                    tokens.add(smallerRawTokens[0].trim());
+                    String rest = smallerRawTokens[1].trim();
+                    if (rest.startsWith(ModulesParser.AND)) {
+                        topLevelOperators.add(Operator.AND);
+                        String rightModule = rest.substring(ModulesParser.AND.length());
+                        tokens.add(rightModule.trim());
+                    } else if (rest.startsWith(ModulesParser.OR)) {
+                        topLevelOperators.add(Operator.OR);
+                        String rightModule = rest.substring(ModulesParser.OR.length());
+                        tokens.add(rightModule.trim());
+                    } else {
+                        // ???
+                    }
+                } else {
+                    tokens.add(token);
+                }
             }
         }
 
