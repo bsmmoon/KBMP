@@ -45,7 +45,7 @@ public class ModulesParser {
         if (!Files.isReadable(pathToFile)) throw new IOException(ERROR_MESSAGE_MODULES_NOT_READABLE);
         ArrayList<NusmodsModule> allRawModules = getRawModules(pathToFile);
         ArrayList<NusmodsModule> relevantRawModules = filterByModuleCode(allRawModules, getRelevantPatternsFromWhitelist());
-        System.out.println(relevantRawModules.size() + " modules selected.");
+//        System.out.println(relevantRawModules.size() + " modules selected.");
         Hashtable<String, Module> modules = parseModules(relevantRawModules);
         modules.putAll(existingModules);
 
@@ -240,11 +240,14 @@ public class ModulesParser {
         }
 
         String rawPrerequisite = rawModule.Prerequisite;
-
+        rawPrerequisite = rawPrerequisite.replace("For SoC students only.", "");
         if (rawPrerequisite.contains("Other students:")) {
             rawPrerequisite = rawPrerequisite.split("Other students:")[0];
+            String[] tokens = rawPrerequisite.split(":");
+            rawPrerequisite = tokens[1].trim();
         }
         rawPrerequisite = rawPrerequisite.trim();
+        System.out.println("\nOriginal: " + rawPrerequisite);
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(rawPrerequisite).matches()) {
@@ -254,7 +257,6 @@ public class ModulesParser {
         } else if (rawPrerequisite.contains("(") && !rawPrerequisite.contains("[")) {
             // (a and/or b) and/or (c and/or d)
             // (a and/or b) and/or c
-            System.out.println("\nOriginal: " + rawPrerequisite);
             Pair<Operator, ArrayList<String>> topLevel = extractTopLevel(rawPrerequisite);
 
             ArrayList<Operator> secondLevelOperators = new ArrayList<>();
@@ -268,11 +270,11 @@ public class ModulesParser {
             }
 
             prerequisites = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
-            System.out.println("Processed: " + prerequisites + "\n");
+//            System.out.println("Processed: " + prerequisites + "\n");
         } else {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPrerequisite);
             prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
-            System.out.println("Processed: " + prerequisites);
+//            System.out.println("Processed: " + prerequisites);
         }
 
         return prerequisites;
@@ -466,7 +468,7 @@ public class ModulesParser {
         }
 
         // extract "co-read ..." from prerequisites
-        System.out.println("COREQUISITES: " + corequisites);
+//        System.out.println("COREQUISITES: " + corequisites);
         return corequisites;
     }
 
@@ -484,7 +486,7 @@ public class ModulesParser {
             preclusions = generateDependencyStringWithoutNesting(Operator.OR, codes);
         }
 
-        System.out.println("PRECLUSIONS: " + preclusions);
+//        System.out.println("PRECLUSIONS: " + preclusions);
         return preclusions;
     }
 
