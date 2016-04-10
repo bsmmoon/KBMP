@@ -239,23 +239,23 @@ public class ModulesParser {
             return prerequisites;
         }
 
-        String prerequisite = rawModule.Prerequisite;
+        String rawPrerequisite = rawModule.Prerequisite;
 
-        if (prerequisite.contains("Other students:")) {
-            prerequisite = prerequisite.split("Other students:")[0];
+        if (rawPrerequisite.contains("Other students:")) {
+            rawPrerequisite = rawPrerequisite.split("Other students:")[0];
         }
-        prerequisite = prerequisite.trim();
+        rawPrerequisite = rawPrerequisite.trim();
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
-        if (anyOneModule.matcher(prerequisite).matches()) {
+        if (anyOneModule.matcher(rawPrerequisite).matches()) {
             // a
-            ArrayList<String> codes = extractModuleCodesFromOneModuleCode(prerequisite);
+            ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawPrerequisite);
             prerequisites = generateDependencyStringWithoutNesting(Operator.OR, codes);
-        } else if (prerequisite.contains("(") && !prerequisite.contains("[")) {
+        } else if (rawPrerequisite.contains("(") && !rawPrerequisite.contains("[")) {
             // (a and/or b) and/or (c and/or d)
             // (a and/or b) and/or c
-            System.out.println("\nOriginal: " + prerequisite);
-            Pair<Operator, ArrayList<String>> topLevel = extractTopLevel(prerequisite);
+            System.out.println("\nOriginal: " + rawPrerequisite);
+            Pair<Operator, ArrayList<String>> topLevel = extractTopLevel(rawPrerequisite);
 
             ArrayList<Operator> secondLevelOperators = new ArrayList<>();
             ArrayList<ArrayList<String>> allModuleCodes = new ArrayList<>();
@@ -267,8 +267,12 @@ public class ModulesParser {
                 }
             }
 
-            String collatedPrerequisite = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
-            System.out.println("Processed: " + collatedPrerequisite + "\n");
+            prerequisites = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
+            System.out.println("Processed: " + prerequisites + "\n");
+        } else {
+            Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPrerequisite);
+            prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
+            System.out.println("Processed: " + prerequisites);
         }
 
         return prerequisites;
@@ -314,6 +318,11 @@ public class ModulesParser {
     }
 
     private static String generateDependencyStringWithoutNesting(Operator operator, ArrayList<String> modules) {
+        modules.removeIf(module -> module.isEmpty());
+        if (modules.isEmpty()) {
+            return "";
+        }
+
         StringBuilder stringBuilder = new StringBuilder();
         String operatorString = "";
         if (operator == Operator.AND) {
@@ -321,8 +330,6 @@ public class ModulesParser {
         } else if (operator == Operator.OR) {
             operatorString = OR_WORD;
         }
-
-        modules.removeIf(module -> module.isEmpty());
 
         for (int i = 0; i < modules.size() - 1; i++) {
             stringBuilder.append(modules.get(i));
