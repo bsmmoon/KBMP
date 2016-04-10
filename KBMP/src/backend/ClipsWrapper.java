@@ -53,7 +53,10 @@ public class ClipsWrapper {
 	public void printFactsOnConsole() { clips.eval("(facts)"); }
 
 	public void saveModules(ArrayList<Module> modules) {
-		modules.forEach((module) -> clips.eval(ClipsParser.parseModuleIntoClips(module)));
+		for (Module module : modules) {
+			ArrayList<String> entries = ClipsParser.parseModuleIntoClips(module);
+			entries.forEach((entry) -> clips.eval(entry));
+		}
 	}
 
 	public void saveFocusAreas(ArrayList<FocusArea> focusAreas) {
