@@ -247,9 +247,10 @@ public class ModulesParser {
             rawPrerequisite = tokens[1].trim();
         }
         rawPrerequisite = rawPrerequisite.trim();
-        System.out.println("\nOriginal: " + rawPrerequisite);
+//        System.out.println("\nOriginal: " + rawPrerequisite);
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
+
         if (anyOneModule.matcher(rawPrerequisite).matches()) {
             // a
             ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawPrerequisite);
@@ -276,6 +277,8 @@ public class ModulesParser {
             if (rawModule.ModuleCode.contains("CP3106")) {
                 prerequisites = "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
             }
+        } else if (rawModule.ModuleCode.contains("CS4350")) {
+            prerequisites = "CS3247";
         } else {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPrerequisite);
             prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
@@ -413,8 +416,8 @@ public class ModulesParser {
                         for (String code : codes) {
                             moduleCodes.addAll(extractModuleCodesFromOneModuleCode(code));
                         }
-                    } else {
-                        System.out.println("DOESNT MATCH: " + rawModuleToken);
+//                    } else {
+//                        System.out.println("DOESNT MATCH: " + rawModuleToken);
                     }
                 }
             }
