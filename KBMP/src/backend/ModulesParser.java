@@ -259,7 +259,7 @@ public class ModulesParser {
             }
 
             String collatedPrerequisite = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
-            System.out.println("Processed: " + collatedPrerequisite);
+            System.out.println("Processed: " + collatedPrerequisite + "\n");
         }
 
         return prerequisites;
@@ -285,9 +285,14 @@ public class ModulesParser {
             }
 
             if (allModuleCodes.size() > 1) {
-                prereqBuilder.append(OPEN_BRACKET);
-                prereqBuilder.append(internal);
-                prereqBuilder.append(CLOSE_BRACKET);
+                if (internal.contains(OR_WORD) || internal.contains(AND_WORD)) {
+                    prereqBuilder.append(OPEN_BRACKET);
+                    prereqBuilder.append(internal);
+                    prereqBuilder.append(CLOSE_BRACKET);
+                } else {
+                    prereqBuilder.append(internal);
+                }
+
                 if (i != allModuleCodes.size()-1) {
                     prereqBuilder.append(currentTopLevelOperatorString);
                 }
