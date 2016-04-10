@@ -16,10 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -28,7 +25,7 @@ import java.util.regex.Pattern;
 public class ModulesParser {
     private static String ERROR_MESSAGE_MODULES_NOT_READABLE = "Path to module database is not readable";
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
-    private enum PatternTypes {ANY_ONE_MODULE_GREEDY}
+    private enum PatternTypes {ANY_ONE_MODULE_GREEDY, ANY_ONE_MODULE_EXACT, ANY_TWO_MODULES}
     private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
     private static Hashtable<String, Module> existingModules = null;
     private static Module.Semester currentSemester;
@@ -383,7 +380,15 @@ public class ModulesParser {
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
                     moduleCodes.addAll(codes);
                 } else {
-                    System.out.println("DOESNT MATCH: " + rawModuleToken);
+                    Pattern anyTwoModules = patterns.get(PatternTypes.ANY_TWO_MODULES);
+                    if (anyTwoModules.matcher(rawModuleToken).matches()) {
+                        String[] codes = rawModuleToken.split("/");
+                        for (String code : codes) {
+                            moduleCodes.addAll(extractModuleCodesFromOneModuleCode(code));
+                        }
+                    } else {
+                        System.out.println("DOESNT MATCH: " + rawModuleToken);
+                    }
                 }
             }
         } else if (token.contains(ModulesParser.AND_WORD)) {
@@ -467,10 +472,20 @@ public class ModulesParser {
     private static Hashtable<PatternTypes, Pattern> generatePatterns() {
         Hashtable<PatternTypes, Pattern> patterns = new Hashtable<>();
 
-        //eg CS1010, CS1231R, CS2103\T
-        String regexAnyModule = "(([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2})[a-zA-Z_\\s_\\p{Punct}]*";
-        Pattern anyOne = Pattern.compile(regexAnyModule);
-        patterns.put(PatternTypes.ANY_ONE_MODULE_GREEDY, anyOne);
+        //eg CS1010, CS1231R, CS2103/T <module title>
+        String regexAnyModuleGreedy = "(([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2})[a-zA-Z_\\s_\\p{Punct}]*";
+        Pattern anyOneGreedy = Pattern.compile(regexAnyModuleGreedy);
+        patterns.put(PatternTypes.ANY_ONE_MODULE_GREEDY, anyOneGreedy);
+
+        // eg CS1010
+        String regexAnyModuleExact = "([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2}";
+        Pattern anyOneExact = Pattern.compile(regexAnyModuleExact);
+        patterns.put(PatternTypes.ANY_ONE_MODULE_EXACT, anyOneExact);
+
+        // eg CS2103/CS2103T <module title>
+        String regexAnyTwoModules = regexAnyModuleExact + "/" + regexAnyModuleExact + "[a-zA-Z_\\s_\\p{Punct}]*";
+        Pattern anyTwoModules = Pattern.compile(regexAnyTwoModules);
+        patterns.put(PatternTypes.ANY_TWO_MODULES, anyTwoModules);
 
         return patterns;
     }
