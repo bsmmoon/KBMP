@@ -65,12 +65,19 @@ public class ModulesParser {
         return rawModules;
     }
 
-    private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern pattern) {
+    private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern whitelist) {
         Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
+        ArrayList<String> blacklist = new ArrayList<>(Arrays.asList("IS4010"));
         while (moduleIterator.hasNext()){
             String currentModuleCode = moduleIterator.next().ModuleCode.trim();
+
+            // remove modules if they are blacklisted
+            if (blacklist.contains(currentModuleCode)) {
+                moduleIterator.remove();
+            }
+
             // remove modules if they do not match any of the whitelisted module codes as defined in pattern.
-            if (!pattern.matcher(currentModuleCode).matches()){
+            if (!whitelist.matcher(currentModuleCode).matches()){
                 moduleIterator.remove();
             }
 
