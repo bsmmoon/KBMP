@@ -267,15 +267,19 @@ public class ModulesParser {
         if (rawPrerequisite.endsWith(".")) {
             rawPrerequisite = rawPrerequisite.substring(0, rawPrerequisite.length()-1);
         }
-//        System.out.println("Original: " + rawPrerequisite);
+        System.out.println("Original: " + rawPrerequisite);
 
         if (rawPrerequisite.contains(".")) {
             String[] sentences = rawPrerequisite.split("\\.");
             ArrayList<String> parsedSentences = new ArrayList<>();
             for (String sentence : sentences) {
-                String parsedSentence;
-                if (moduleCode.endsWith("R") && sentence.contains("pass host module in previous")) {
-                    parsedSentence = moduleCode.substring(0, moduleCode.length()-1);
+                String parsedSentence = "";
+                if (moduleCode.endsWith("R")) {
+                    if (sentence.contains("pass host module in previous")) {
+                        parsedSentence = moduleCode.substring(0, moduleCode.length() - 1);
+                    } else if (sentence.contains("Co-read host module")) {
+                        parsedSentence = moduleCode.substring(0, moduleCode.length() - 1);
+                    }
                 } else {
                     parsedSentence = parsePrerequisiteFromSentence(sentence, rawModule.ModuleCode);
                 }
