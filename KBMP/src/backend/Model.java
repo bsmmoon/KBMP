@@ -48,7 +48,6 @@ public class Model {
 		this.preplanModules = modules;
 		this.modules.sort((a,b) -> a.getCode().compareTo(b.getCode()));
 		addPlaceHolderModules();
-		pruneNonFocusHighLevelModules();
 	}
 
 	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) {
@@ -157,12 +156,6 @@ public class Model {
 			this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
 			this.modules.add(new Module.Builder().setCode("GEM0123").setName("General Education Module " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
 			this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
-		}
-	}
-
-	private void pruneNonFocusHighLevelModules() {
-		for (Module module : modules) {
-
 		}
 	}
 }
