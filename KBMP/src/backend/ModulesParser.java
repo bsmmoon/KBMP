@@ -425,7 +425,8 @@ public class ModulesParser {
             }
 
             for (String rawModuleToken : rawModuleTokens) {
-                if (anyOneModule.matcher(rawModuleToken).matches()){
+                rawModuleToken = rawModuleToken.trim();
+                if (anyOneModule.matcher(rawModuleToken).matches()) {
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
                     moduleCodes.addAll(codes);
                 } else {
@@ -435,8 +436,8 @@ public class ModulesParser {
                         for (String code : codes) {
                             moduleCodes.addAll(extractModuleCodesFromOneModuleCode(code));
                         }
-//                    } else {
-//                        System.out.println("DOESNT MATCH: " + rawModuleToken);
+                    } else {
+                        System.out.println("DOESNT MATCH: " + rawModuleToken);
                     }
                 }
             }
@@ -444,7 +445,7 @@ public class ModulesParser {
             String[] rawModuleTokens = token.split(ModulesParser.AND_WORD);
             int count = 0;
             for (String rawModuleToken : rawModuleTokens) {
-                if (anyOneModule.matcher(rawModuleToken).matches()){
+                if (anyOneModule.matcher(rawModuleToken).matches()) {
                     count++;
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
                     moduleCodes.addAll(codes);
@@ -455,11 +456,27 @@ public class ModulesParser {
             if (count > 0) { // "and" isn't present only within a module's title
                 operator = Operator.AND;
             }
-        } else {
-            if (anyOneModule.matcher(token).matches()) {
+        } else if (token.contains(",")) {
+            // no "and", no "or". just commas -> assume OR because it's preclusions
+            String[] rawModuleTokens;
+            operator = Operator.OR;
+
+            String[] tokens = token.split(",");
+
+            for (String rawModuleToken : tokens) {
+                rawModuleToken = rawModuleToken.trim();
+                if (anyOneModule.matcher(rawModuleToken).matches()) {
+                    ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
+                    moduleCodes.addAll(codes);
+                } else {
+                    System.out.println("DOESNT MATCH: " + rawModuleToken);
+                }
+            }
+        } else if (anyOneModule.matcher(token).matches()) {
                 ArrayList<String> codes = extractModuleCodesFromOneModuleCode(token);
                 moduleCodes.addAll(codes);
-            }
+        } else {
+
         }
 
         return new Pair<>(operator, moduleCodes);
@@ -506,15 +523,36 @@ public class ModulesParser {
             return preclusions;
         }
 
-        String preclusion = rawModule.Preclusion.trim();
+        String rawPreclusion = rawModule.Preclusion.trim();
+        System.out.println("\nOriginal: " + rawPreclusion);
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
-        if (anyOneModule.matcher(preclusion).matches()){
-            ArrayList<String> codes = extractModuleCodesFromOneModuleCode(preclusion);
+        if (anyOneModule.matcher(rawPreclusion).matches()){
+            ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawPreclusion);
             preclusions = generateDependencyStringWithoutNesting(Operator.OR, codes);
+        } else if (rawPreclusion.contains("(")) {
+            // (a and/or b) and/or (c and/or d)
+            // (a and/or b) and/or c
+            Pair<Operator, ArrayList<String>> topLevel = extractTopLevel(rawPreclusion, "\\(", "\\)", ")");
+
+            ArrayList<Operator> secondLevelOperators = new ArrayList<>();
+            ArrayList<ArrayList<String>> allModuleCodes = new ArrayList<>();
+            for (String token : topLevel.getValue()) {
+                Pair<Operator, ArrayList<String>> secondLevel = extractSecondLevel(token);
+                if (!secondLevel.getValue().isEmpty()) {
+                    secondLevelOperators.add(secondLevel.getKey());
+                    allModuleCodes.add(secondLevel.getValue());
+                }
+            }
+
+            preclusions = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
+        } else {
+            Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPreclusion);
+            preclusions = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
         }
 
-//        System.out.println("PRECLUSIONS: " + preclusions);
+
+        System.out.println("PRECLUSIONS: " + preclusions);
         return preclusions;
     }
 
