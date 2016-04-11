@@ -3,6 +3,7 @@ package backend;/*
  */
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import common.FocusArea;
 import common.Module;
@@ -38,7 +39,10 @@ public class Model {
 		return semester > numberOfSemesterLeft;
 	}
 
-	public void setModules(ArrayList<Module> modules) { this.modules = modules; }
+	public void setModules(ArrayList<Module> modules) {
+		this.modules = modules;
+		addPlaceHolderModules();
+	}
 
 	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) { this.focusAreas = focusAreas; }
 
@@ -107,5 +111,20 @@ public class Model {
 			if (module.getCode().equals(code)) return module;
 		}
 		return new Module("", "");
+	}
+
+
+	private void addPlaceHolderModules() {
+		Hashtable<Module.WorkloadTypes, Float> standardWorkloads = new Hashtable<>();
+		for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
+			standardWorkloads.put(type, 2.0f);
+		}
+		int num = 5;
+		while (num-- > 1) {
+			this.modules.add(new Module.Builder().setCode("SC0123").setName("Science " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+			this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+			this.modules.add(new Module.Builder().setCode("GEM0123").setName("General Education Module " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+			this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+		}
 	}
 }
