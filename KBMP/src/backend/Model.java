@@ -31,6 +31,7 @@ public class Model {
 	public ArrayList<FocusArea> getAllFocusAreas() { return focusAreas; }
 	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
 	public ModulePlan getModulePlan() { return plan; }
+	public ArrayList<Module> getRecommendedModules() { return new ArrayList<>(availableModules.subList(0, 5)); }
 	public ArrayList<Module> getAvailableModules() { return availableModules; }
 	public int getSemester() { return semester; }
 	public boolean isDone() {
