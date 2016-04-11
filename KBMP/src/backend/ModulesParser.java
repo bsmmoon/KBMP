@@ -254,10 +254,6 @@ public class ModulesParser {
             return "CS3241, PC1221, MA1521 and MA1101R";
         }
 
-        if (moduleCode.contains("CS2103T")) {
-            System.out.println("huh");
-        }
-
         System.out.println("\n" + rawModule.ModuleCode);
 
         rawPrerequisite = rawPrerequisite.replace("For SoC students only.", "");
