@@ -5,6 +5,7 @@ package backend;/*
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import common.AvailableModule;
 import common.FocusArea;
 import common.Module;
 import common.ModulePlan;
@@ -14,7 +15,7 @@ public class Model {
 	private ArrayList<FocusArea> focusAreas;
 	private ArrayList<FocusArea> selectedFocusAreas;
 	private ArrayList<Module> modules;
-	private ArrayList<Module> availableModules;
+	private ArrayList<AvailableModule> availableModules;
 	private ModulePlan plan;
 	private int numberOfSemesterLeft;
 	private int semester;
@@ -32,8 +33,8 @@ public class Model {
 	public ArrayList<FocusArea> getAllFocusAreas() { return focusAreas; }
 	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
 	public ModulePlan getModulePlan() { return plan; }
-	public ArrayList<Module> getRecommendedModules() { return new ArrayList<>(availableModules.subList(0, 5)); }
-	public ArrayList<Module> getAvailableModules() { return availableModules; }
+	public ArrayList<AvailableModule> getRecommendedModules() { return new ArrayList<>(availableModules.subList(0, 5)); }
+	public ArrayList<AvailableModule> getAvailableModules() { return availableModules; }
 	public ArrayList<Module> getModules() { return modules; }
 	public int getSemester() { return semester; }
 	public boolean isDone() {
@@ -42,6 +43,7 @@ public class Model {
 
 	public void setModules(ArrayList<Module> modules) {
 		this.modules = modules;
+		this.modules.sort((a,b) -> a.getCode().compareTo(b.getCode()));
 		addPlaceHolderModules();
 		pruneNonFocusHighLevelModules();
 	}
@@ -92,13 +94,12 @@ public class Model {
 		execute("(refresh RANK::mark-available-no-prerequisites-level-3-higher)");
 		execute("(run)");
 		update();
-//		execute("(facts)");
 	}
 
 	private void update() {
-		availableModules = new ArrayList<>();
-		ArrayList<String> availableModulesCodes = clips.getAvailableModules();
-		availableModulesCodes.forEach((code) -> availableModules.add(findModuleByCode(code)));
+		availableModules = clips.getAvailableModules();
+		availableModules.sort(AvailableModule::compareTo);
+		availableModules.forEach((availableModule) -> availableModule.setModule(findModuleByCode(availableModule.getCode())));
 	}
 
 	private void updatePlan(ArrayList<Module> modules) {
