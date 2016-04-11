@@ -25,7 +25,8 @@ import java.util.regex.Pattern;
 public class ModulesParser {
     private static String ERROR_MESSAGE_MODULES_NOT_READABLE = "Path to module database is not readable";
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
-    private enum PatternTypes {ANY_ONE_MODULE_GREEDY, ANY_ONE_MODULE_EXACT, ANY_TWO_MODULES}
+    private enum PatternTypes {ANY_ONE_MODULE_GREEDY, ANY_ONE_MODULE_EXACT, ANY_TWO_MODULES,
+        SENTENCE_FRAGMENT_CONTAINING_MODULES}
     private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
     private static Hashtable<String, Module> existingModules = null;
     private static Module.Semester currentSemester;
@@ -67,7 +68,7 @@ public class ModulesParser {
 
     private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern whitelist) {
         Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
-        ArrayList<String> blacklist = new ArrayList<>(Arrays.asList("IS4010"));
+        ArrayList<String> blacklist = new ArrayList<>(Arrays.asList("IS4010", "CP5102"));
         while (moduleIterator.hasNext()){
             String currentModuleCode = moduleIterator.next().ModuleCode.trim();
 
@@ -240,6 +241,21 @@ public class ModulesParser {
         }
 
         String rawPrerequisite = rawModule.Prerequisite;
+
+        String moduleCode = rawModule.ModuleCode.trim();
+        if (moduleCode.contains("CP3106")) {
+            return "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
+        } else if (moduleCode.contains("CS4350")) {
+            return "CS3247";
+        } else if (moduleCode.contains("CS4243")) {
+            return "CS1020 and (MA1101R or MA1506) and (MA1102R or MA1505C or MA1505 or MA1521) and (ST1232 " +
+                    "or ST2131 or ST2334)";
+        } else if (moduleCode.contains("CS3242")) {
+            return "CS3241, PC1221, MA1521 and MA1101R";
+        }
+
+//        System.out.println("\nModule: " + rawModule.ModuleCode);
+
         rawPrerequisite = rawPrerequisite.replace("For SoC students only.", "");
         if (rawPrerequisite.contains("Other students:")) {
             rawPrerequisite = rawPrerequisite.split("Other students:")[0];
@@ -247,10 +263,39 @@ public class ModulesParser {
             rawPrerequisite = tokens[1].trim();
         }
         rawPrerequisite = rawPrerequisite.trim();
-//        System.out.println("\nOriginal: " + rawPrerequisite);
+        if (rawPrerequisite.endsWith(".")) {
+            rawPrerequisite = rawPrerequisite.substring(0, rawPrerequisite.length()-1);
+        }
+//        System.out.println("Original: " + rawPrerequisite);
+
+        if (rawPrerequisite.contains(".")) {
+            String[] sentences = rawPrerequisite.split("\\.");
+            ArrayList<String> parsedSentences = new ArrayList<>();
+            for (String sentence : sentences) {
+                String parsedSentence;
+                if (moduleCode.endsWith("R") && sentence.contains("pass host module in previous")) {
+                    parsedSentence = moduleCode.substring(0, moduleCode.length()-1);
+                } else {
+                    parsedSentence = parsePrerequisiteFromSentence(sentence, rawModule.ModuleCode);
+                }
+//                System.out.println("Original fragment: " + sentence);
+//                System.out.println("Parsed fragment: " + parsedSentence);
+                if (!parsedSentence.isEmpty()) {
+                     parsedSentences.add(parsedSentence);
+                }
+            }
+            prerequisites = generateDependencyStringWithoutNesting(Operator.AND, parsedSentences);
+        } else {
+            prerequisites = parsePrerequisiteFromSentence(rawPrerequisite, rawModule.ModuleCode);
+        }
+//        System.out.println("Processed: " + prerequisites);
+        return prerequisites;
+    }
+
+    private static String parsePrerequisiteFromSentence(String rawPrerequisite, String moduleCode) {
+        String prerequisites;
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
-
         if (anyOneModule.matcher(rawPrerequisite).matches()) {
             // a
             ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawPrerequisite);
@@ -272,22 +317,11 @@ public class ModulesParser {
 
             prerequisites = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
 //            System.out.println("Processed: " + prerequisites + "\n");
-        } else if (rawPrerequisite.contains("[")) {
-            // triple level nesting
-            if (rawModule.ModuleCode.contains("CP3106")) {
-                prerequisites = "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
-            }
-        } else if (rawModule.ModuleCode.contains("CS4350")) {
-            prerequisites = "CS3247";
-        } else if (rawModule.ModuleCode.contains("CS4243")) {
-            prerequisites = "CS1020 and (MA1101R or MA1506) and (MA1102R or MA1505C or MA1505 or MA1521) and (ST1232 " +
-                    "or ST2131 or ST2334)";
         } else {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPrerequisite);
             prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
 //            System.out.println("Processed: " + prerequisites);
         }
-
         return prerequisites;
     }
 
@@ -424,7 +458,9 @@ public class ModulesParser {
                 rawModuleTokens = token.split(ModulesParser.OR_WORD);
             }
 
-            for (String rawModuleToken : rawModuleTokens) {
+            ArrayList<String> newTokens = splitModulesIfNecessary(rawModuleTokens);
+
+            for (String rawModuleToken : newTokens) {
                 rawModuleToken = rawModuleToken.trim();
                 if (anyOneModule.matcher(rawModuleToken).matches()) {
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
@@ -443,8 +479,9 @@ public class ModulesParser {
             }
         } else if (token.contains(ModulesParser.AND_WORD)) {
             String[] rawModuleTokens = token.split(ModulesParser.AND_WORD);
+            ArrayList<String> newTokens = splitModulesIfNecessary(rawModuleTokens);
             int count = 0;
-            for (String rawModuleToken : rawModuleTokens) {
+            for (String rawModuleToken : newTokens) {
                 if (anyOneModule.matcher(rawModuleToken).matches()) {
                     count++;
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
@@ -480,6 +517,29 @@ public class ModulesParser {
         }
 
         return new Pair<>(operator, moduleCodes);
+    }
+
+    // written for a particular case
+    // assumes that any operators found in is not important
+    private static ArrayList<String> splitModulesIfNecessary(String[] tokens) {
+        ArrayList<String> newTokens = new ArrayList<>();
+        for (String token : tokens) {
+            if (token.contains(AND_WORD)) {
+                String[] smallerTokens = token.split(AND_WORD);
+                for (String smallerToken : smallerTokens) {
+                    newTokens.add(smallerToken.trim());
+                }
+            } else if (token.contains(OR_WORD)) {
+                String[] smallerTokens = token.split(OR_WORD);
+                for (String smallerToken : smallerTokens) {
+                    newTokens.add(smallerToken.trim());
+                }
+            } else {
+                newTokens.add(token);
+            }
+        }
+
+        return newTokens;
     }
 
     private static ArrayList<String> extractModuleCodesFromOneModuleCode(String code) {
@@ -523,10 +583,37 @@ public class ModulesParser {
             return preclusions;
         }
 
+        if (rawModule.ModuleCode.contains("MA1301X")) {
+            return "MA1301 or MA1301FC";
+        }
+
         String rawPreclusion = rawModule.Preclusion.trim();
 //        System.out.println("\nOriginal: " + rawPreclusion);
 
+        if (rawPreclusion.contains(".")) {
+            String[] sentences = rawPreclusion.split("\\.");
+            ArrayList<String> parsedSentences = new ArrayList<>();
+            for (String sentence : sentences) {
+                String parsedSentence = parsePreclusionFromSentence(sentence);
+                if (!parsedSentence.isEmpty()) {
+                    parsedSentences.add(parsedSentence);
+                }
+            }
+
+            preclusions = generateDependencyStringWithoutNesting(Operator.OR, parsedSentences);
+        } else {
+            preclusions = parsePreclusionFromSentence(rawPreclusion);
+        }
+
+//        System.out.println("PRECLUSIONS: " + preclusions);
+        return preclusions;
+    }
+
+    private static String parsePreclusionFromSentence(String rawPreclusion) {
+        String preclusions;
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
+//        System.out.println("Sentence: " + rawPreclusion);
+
         if (anyOneModule.matcher(rawPreclusion).matches()){
             ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawPreclusion);
             preclusions = generateDependencyStringWithoutNesting(Operator.OR, codes);
@@ -550,29 +637,32 @@ public class ModulesParser {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPreclusion);
             preclusions = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
         }
-
-
-//        System.out.println("PRECLUSIONS: " + preclusions);
         return preclusions;
     }
 
     private static Hashtable<PatternTypes, Pattern> generatePatterns() {
         Hashtable<PatternTypes, Pattern> patterns = new Hashtable<>();
 
-        //eg CS1010, CS1231R, CS2103/T <module title>
-        String regexAnyModuleGreedy = "(([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2})[a-zA-Z_\\s_\\p{Punct}]*";
-        Pattern anyOneGreedy = Pattern.compile(regexAnyModuleGreedy);
-        patterns.put(PatternTypes.ANY_ONE_MODULE_GREEDY, anyOneGreedy);
-
-        // eg CS1010
+        // eg "CS1010"
         String regexAnyModuleExact = "([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2}";
         Pattern anyOneExact = Pattern.compile(regexAnyModuleExact);
         patterns.put(PatternTypes.ANY_ONE_MODULE_EXACT, anyOneExact);
 
-        // eg CS2103/CS2103T <module title>
+        //eg "CS1010", "CS1231R", "CS2103/T <module title>"
+        String regexAnyModuleGreedy = "(" + regexAnyModuleExact + ")[a-zA-Z_\\s_\\p{Punct}]*";
+        Pattern anyOneGreedy = Pattern.compile(regexAnyModuleGreedy);
+        patterns.put(PatternTypes.ANY_ONE_MODULE_GREEDY, anyOneGreedy);
+
+        // eg "CS2103/CS2103T <module title>"
         String regexAnyTwoModules = regexAnyModuleExact + "/" + regexAnyModuleExact + "[a-zA-Z_\\s_\\p{Punct}]*";
         Pattern anyTwoModules = Pattern.compile(regexAnyTwoModules);
         patterns.put(PatternTypes.ANY_TWO_MODULES, anyTwoModules);
+
+        // eg "CS1101C, CS1101S. Engineering"
+        String regexModuleInSentenceFragment = ".*?" + regexAnyModuleExact + ".*?\\.";
+        String regexModuleAfterSentenceFragment = ".*?\\." + ".*?" + regexAnyModuleExact + ".*?";
+        Pattern sentenceFragmentContainingModules = Pattern.compile(regexModuleInSentenceFragment + "|" + regexModuleAfterSentenceFragment);
+        patterns.put(PatternTypes.SENTENCE_FRAGMENT_CONTAINING_MODULES, sentenceFragmentContainingModules);
 
         return patterns;
     }
