@@ -458,6 +458,8 @@ public class ModulesParser {
                         String[] smallerRawTokens = rawModuleToken.split(",");
                         // can just add because it's OR
                         tokens.addAll(Arrays.asList(smallerRawTokens));
+                    } else {
+                        tokens.add(rawModuleToken);
                     }
                 }
                 rawModuleTokens = tokens.toArray(new String[0]);
