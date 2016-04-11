@@ -17,6 +17,7 @@ import common.FocusArea;
 import common.Module;
 
 public class SelectedItem extends JPanel {
+	private boolean isModule;
 	private Module module;
 	private FocusArea focusArea;
 	private SelectedItemsPanel panel;
@@ -28,14 +29,19 @@ public class SelectedItem extends JPanel {
 	private String[] semesters = {"optional","2016/2017, Semester 1", "2016/2017, Semester 2"};
 	
 	public SelectedItem(final SelectedItemsPanel panel, Module module, boolean hasDate) {
+		isModule = true;
 		this.module = module;
-		label = new JLabel(module.getCode() + " " + module.getName());
-		label.setToolTipText("hello");
+		String module_info = "<html>" + module.getCode() + " " + module.getName() +
+				"<br>Credit: " + module.getCredits() +
+				"<br>Workload: " + module.getWorkload();
+		label = new JLabel(module_info);
+		//label.setToolTipText("hello");
 
 		init(panel);
 	}
 
 	public SelectedItem(final SelectedItemsPanel panel, FocusArea focusArea, boolean hasDate) {
+		isModule = false;
 		this.focusArea = focusArea;
 		label = new JLabel(focusArea.getName());
 
@@ -51,6 +57,9 @@ public class SelectedItem extends JPanel {
 		remove = new JButton(new AbstractAction("x"){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (isModule) {
+					label.setText(module.getCode() + " " + module.getName());
+				}
 				item.setVisible(false);
 				panel.removeItem(item);
 				validate();
