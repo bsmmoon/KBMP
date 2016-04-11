@@ -267,7 +267,11 @@ public class ModulesParser {
             rawPrerequisite = tokens[1].trim();
         }
         rawPrerequisite = rawPrerequisite.trim();
-//        System.out.println("\nOriginal: " + rawPrerequisite);
+        if (rawPrerequisite.endsWith(".")) {
+            rawPrerequisite = rawPrerequisite.substring(0, rawPrerequisite.length()-1);
+        }
+//        System.out.println("Original: " + rawPrerequisite);
+
 
         if (rawPrerequisite.contains(".")) {
             String[] sentences = rawPrerequisite.split(".");
