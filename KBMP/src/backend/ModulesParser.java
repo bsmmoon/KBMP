@@ -241,6 +241,25 @@ public class ModulesParser {
         }
 
         String rawPrerequisite = rawModule.Prerequisite;
+
+        String moduleCode = rawModule.ModuleCode;
+        if (moduleCode.contains("CP3106")) {
+            return "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
+        } else if (moduleCode.contains("CS4350")) {
+            return "CS3247";
+        } else if (moduleCode.contains("CS4243")) {
+            return "CS1020 and (MA1101R or MA1506) and (MA1102R or MA1505C or MA1505 or MA1521) and (ST1232 " +
+                    "or ST2131 or ST2334)";
+        } else if (moduleCode.contains("CS3242")) {
+            return "CS3241, PC1221, MA1521 and MA1101R";
+        }
+
+        if (moduleCode.contains("CS2103T")) {
+            System.out.println("huh");
+        }
+
+        System.out.println("\n" + rawModule.ModuleCode);
+
         rawPrerequisite = rawPrerequisite.replace("For SoC students only.", "");
         if (rawPrerequisite.contains("Other students:")) {
             rawPrerequisite = rawPrerequisite.split("Other students:")[0];
@@ -295,16 +314,6 @@ public class ModulesParser {
 
             prerequisites = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
 //            System.out.println("Processed: " + prerequisites + "\n");
-        } else if (rawPrerequisite.contains("[")) {
-            // triple level nesting
-            if (moduleCode.contains("CP3106")) {
-                prerequisites = "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
-            }
-        } else if (moduleCode.contains("CS4350")) {
-            prerequisites = "CS3247";
-        } else if (moduleCode.contains("CS4243")) {
-            prerequisites = "CS1020 and (MA1101R or MA1506) and (MA1102R or MA1505C or MA1505 or MA1521) and (ST1232 " +
-                    "or ST2131 or ST2334)";
         } else {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPrerequisite);
             prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
