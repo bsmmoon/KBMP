@@ -279,6 +279,9 @@ public class ModulesParser {
             }
         } else if (rawModule.ModuleCode.contains("CS4350")) {
             prerequisites = "CS3247";
+        } else if (rawModule.ModuleCode.contains("CS4243")) {
+            prerequisites = "CS1020 and (MA1101R or MA1506) and (MA1102R or MA1505C or MA1505 or MA1521) and (ST1232 " +
+                    "or ST2131 or ST2334)";
         } else {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPrerequisite);
             prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
@@ -403,8 +406,24 @@ public class ModulesParser {
         // split by "or" first because some module codes include "and"
         // => token might contain "and" but actually the operator is only "or"
         if (token.contains(ModulesParser.OR_WORD)) {
-            String[] rawModuleTokens = token.split(ModulesParser.OR_WORD);
+            String[] rawModuleTokens;
             operator = Operator.OR;
+
+            if (token.contains(",")) {
+                String[] tokenizedByOr = token.split(ModulesParser.OR_WORD);
+                ArrayList<String> tokens = new ArrayList<>();
+                for (String rawModuleToken : tokenizedByOr) {
+                    if (rawModuleToken.contains(",")) {
+                        String[] smallerRawTokens = rawModuleToken.split(",");
+                        // can just add because it's OR
+                        tokens.addAll(Arrays.asList(smallerRawTokens));
+                    }
+                }
+                rawModuleTokens = tokens.toArray(new String[0]);
+            } else {
+                rawModuleTokens = token.split(ModulesParser.OR_WORD);
+            }
+
             for (String rawModuleToken : rawModuleTokens) {
                 if (anyOneModule.matcher(rawModuleToken).matches()){
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
