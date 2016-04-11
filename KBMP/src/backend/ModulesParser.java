@@ -437,7 +437,7 @@ public class ModulesParser {
                             moduleCodes.addAll(extractModuleCodesFromOneModuleCode(code));
                         }
                     } else {
-                        System.out.println("DOESNT MATCH: " + rawModuleToken);
+//                        System.out.println("DOESNT MATCH: " + rawModuleToken);
                     }
                 }
             }
@@ -450,7 +450,7 @@ public class ModulesParser {
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
                     moduleCodes.addAll(codes);
                 } else {
-                    System.out.println("DOESNT MATCH: " + rawModuleToken);
+//                    System.out.println("DOESNT MATCH: " + rawModuleToken);
                 }
             }
             if (count > 0) { // "and" isn't present only within a module's title
@@ -469,7 +469,7 @@ public class ModulesParser {
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
                     moduleCodes.addAll(codes);
                 } else {
-                    System.out.println("DOESNT MATCH: " + rawModuleToken);
+//                    System.out.println("DOESNT MATCH: " + rawModuleToken);
                 }
             }
         } else if (anyOneModule.matcher(token).matches()) {
@@ -524,7 +524,7 @@ public class ModulesParser {
         }
 
         String rawPreclusion = rawModule.Preclusion.trim();
-        System.out.println("\nOriginal: " + rawPreclusion);
+//        System.out.println("\nOriginal: " + rawPreclusion);
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(rawPreclusion).matches()){
@@ -552,7 +552,7 @@ public class ModulesParser {
         }
 
 
-        System.out.println("PRECLUSIONS: " + preclusions);
+//        System.out.println("PRECLUSIONS: " + preclusions);
         return preclusions;
     }
 
