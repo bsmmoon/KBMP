@@ -16,8 +16,10 @@
         (type INTEGER))
     (slot rest
         (type STRING))
-    (slot classification
+    (multislot classification
         (type SYMBOL))
+    (multislot focusarea
+        (type STRING))
     (slot MC
         (type INTEGER)  
         (default 4))
@@ -35,7 +37,10 @@
         (default NONE))
     (slot status
         (type SYMBOL)   
-        (default none)))
+        (default none))
+    (slot weight
+        (type INTEGER)   
+        (default 0)))
 
 (deftemplate focus
     (slot name (type STRING))
@@ -45,7 +50,7 @@
     (slot status (type SYMBOL) (default none)))
 
 ; ; Sample modules
- (deffacts sample-modules
+; ; (deffacts sample-modules
 ; ;     (module (code "CS1101S") (name "Programming Methodology") (MC 5) (prerequisites ""))
 ; ;     (module (code "CS1010") (name "Programming Methodology") (MC 4) (prerequisites ""))
 ; ;     (module (code "CS1231") (name "Discrete Structures") (MC 4) (prerequisites ""))
@@ -53,8 +58,8 @@
 ; ;     (module (code "CS2010") (name "Data Structures and Algorithms II") (MC 4) (prerequisites "CS1020"))
 ; ;     (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1010"))
 ; ;     (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1101S"))
-     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1010"))
-     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1101S")))
+; ;     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1010"))
+; ;     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1101S")))
 
 ; ; FUNCTIONS
 (deffunction assert-taken (?x)
@@ -104,27 +109,26 @@
     (printout t "Marking module " ?code1 " as unwanted" crlf)
     (modify ?module (want no)))
 
+; ; ----------------
+; ; STATUS AVAILABLE
 ; ; Modules Available, without prerequisites, level 1, salience 4, no limit
-(defrule RANK::mark-available-no-prerequisites-level-one "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-1 "mark modules without prerequisites as available"
     (declare (salience 4))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 1))
     =>
     (printout t "Module " ?code " available." crlf)
-    (printout t "Total available: " (count-available) crlf)
-    (printout t "Level 1 planned/taken: " (count-level-one) crlf)
+    (printout t "Total available: " (count-available) "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available))
     )
 
 ; ; Modules Available, without prerequisites, level 2, salience 3, check total limit of 15
-(defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-2 "mark modules without prerequisites as available"
     (declare (salience 3))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 2))
     =>
     (if (< (count-available) 15)
         then
         (printout t "Module " ?code " available." crlf)
-        (printout t "Total available: " (count-available) crlf)
-        (printout t "Level 1 planned/taken: " (count-level-one) crlf)
         (modify ?module (status available))
         ; ; else
         ; ; (printout t "Total available reached max " (count-available) crlf)
@@ -132,15 +136,13 @@
     )
 
 ; ; Modules Available, without prerequisites, level 3, salience 2, check total limit of 15
-(defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-3 "mark modules without prerequisites as available"
     (declare (salience 2))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 3))
     =>
     (if (< (count-available) 15)
         then
         (printout t "Module " ?code " available." crlf)
-        (printout t "Total available: " (count-available) crlf)
-        (printout t "Level 1 planned/taken: " (count-level-one) crlf)
         (modify ?module (status available))
         ; ; else
         ; ; (printout t "Total available reached max " (count-available) crlf)
@@ -148,31 +150,13 @@
     )
 
 ; ; Modules Available, without prerequisites, level 3 above, salience 0, limit total to 15
-(defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-3-higher "mark modules without prerequisites as available"
     (declare (salience 0))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level ?level&:(> ?level 3)))
     =>
     (if (< (count-available) 15)
         then
         (printout t "Module " ?code " available." crlf)
-        (printout t "Total available: " (count-available) crlf)
-        (printout t "Level 1 planned/taken: " (count-level-one) crlf)
-        (modify ?module (status available))
-        ; ; else
-        ; ; (printout t "Total available reached max " (count-available) crlf)
-        )
-    )
-
-; ; Modules Available, without prerequisites, level 3 above, limit total to 15
-(defrule RANK::mark-available-no-prerequisites-level-higher "mark modules without prerequisites as available"
-    (declare (salience 0))
-    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level ?level&:(> ?level 3)))
-    =>
-    (if (< (count-available) 15)
-        then
-        (printout t "Module " ?code " available." crlf)
-        (printout t "Total available: " (count-available) crlf)
-        (printout t "Level 1 planned/taken: " (count-level-one) crlf)
         (modify ?module (status available))
         ; ; else
         ; ; (printout t "Total available reached max " (count-available) crlf)
@@ -180,17 +164,50 @@
     )
 
 ; ; Modules Available, with single prerequisite met, no limit
-(defrule RANK::mark-available-prerequisite-met "mark modules with single prerequisite met as available"
-    ?module <- (module (code ?code) (prerequisites ?prereq) (status none) (want ~no))
-    (module (status planned|taken) (code ?plannedcode))
-    (test(eq ?prereq ?plannedcode))
+(defrule RANK::mark-available-1-prerequisite-met "mark modules with single prerequisite met as available"
+    (declare (salience 5))
+    ?module <- (module (code ?code) (prerequisites ?prereq1) (status none) (want ~no))
+    (module (status planned|taken) (code ?prereq1))
     =>
-    (printout t "Module " ?code " available as prereq met" crlf)
-    (printout t "Level 1 planned/taken: " (count-level-one) crlf)
+    (printout t "Module " ?code " available as single prereq met" crlf)
+    (modify ?module (status available)))
+
+; ; Modules Available, with 2 prerequisites met, no limit
+(defrule RANK::mark-available-2-prerequisites-met "mark modules with single prerequisite met as available"
+    ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2) (status none) (want ~no))
+    (module (status planned|taken) (code ?prereq1))
+    (module (status planned|taken) (code ?prereq2))
+    =>
+    (printout t "Module " ?code " available as 2 prereqs met" crlf)
+    (modify ?module (status available)))
+
+; ; Modules Available, with 3 prerequisites met, no limit
+(defrule RANK::mark-available-3-prerequisites-met "mark modules with single prerequisite met as available"
+    ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2 ?prereq3) (status none) (want ~no))
+    (module (status planned|taken) (code ?prereq1))
+    (module (status planned|taken) (code ?prereq2))
+    (module (status planned|taken) (code ?prereq3))
+    =>
+    (printout t "Module " ?code " available as 3 prereqs met" crlf)
+    (modify ?module (status available)))
+
+; ; Modules Available, with 4 prerequisites met, no limit
+(defrule RANK::mark-available-4-prerequisites-met "mark modules with single prerequisite met as available"
+    ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2 ?prereq3 ?prereq4) (status none) (want ~no))
+    (module (status planned|taken) (code ?prereq1))
+    (module (status planned|taken) (code ?prereq2))
+    (module (status planned|taken) (code ?prereq3))
+    (module (status planned|taken) (code ?prereq4))
+    =>
+    (printout t "Module " ?code " available as 4 prereqs met" crlf)
     (modify ?module (status available)))
 
 (deffacts RANK::preclusions
 (preclusion "CS1010" "CS1010S" "CS1010E" "CS1010R" "CS1010J" "CS1101S" "CS1010X"))
+
+; ; --------------------
+; ; STATUS NOT-AVAILABLE
+; ; --------------------
 
 ; ; Module precluded when preclusion met
 (defrule RANK::mark-not-available-preclusion-met
@@ -203,6 +220,32 @@
     =>
     (modify ?precludedmodule (status not-available))
     (printout t "Module " ?code2 " precluded " crlf))
+
+; ; Copies of same modules with different prerequisites
+(defrule RANK::mark-not-available-different-prereq
+    (module (code ?code) (status planned))
+    ?copy <- (module (code ?code) (status none))
+    =>
+    (modify ?copy (status not-available))
+    (printout t "Module copy " ?code " marked not available." crlf))
+
+; ; -------------
+; ; ASSIGN WEIGHT
+; ; -------------
+
+(deffunction RANK::calweight (?level ?want)
+    (if (eq ?want yes) 
+    then 
+        (return (+ (- 5 ?level) 5))
+    else
+        (return (- 5 ?level))
+    ))
+
+(defrule RANK::assign-weight
+    (module (code ?code) (status available) (level ?level) (want ?want))
+    =>
+    (bind ?weight (calweight ?level ?want))
+    (printout t "Module " ?code " weight: " ?weight crlf))
 
 ; ; SELECT
 ; ; Selecting modules

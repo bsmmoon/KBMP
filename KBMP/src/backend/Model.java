@@ -31,6 +31,7 @@ public class Model {
 	public ArrayList<FocusArea> getAllFocusAreas() { return focusAreas; }
 	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
 	public ModulePlan getModulePlan() { return plan; }
+	public ArrayList<Module> getRecommendedModules() { return new ArrayList<>(availableModules.subList(0, 5)); }
 	public ArrayList<Module> getAvailableModules() { return availableModules; }
 	public int getSemester() { return semester; }
 	public boolean isDone() {
@@ -84,11 +85,27 @@ public class Model {
 		update();
 	}
 
-	private void update() { availableModules = clips.getAvailableModules(); }
+	private void update() {
+		availableModules = new ArrayList<>();
+		ArrayList<String> availableModulesCodes = clips.getAvailableModules();
+		availableModulesCodes.forEach((code) -> availableModules.add(findModuleByCode(code)));
+	}
 
 	private void updatePlan(ArrayList<Module> modules) {
 		modules.forEach((module) -> plan.addNewModule(module, semester));
+		Float[] workloads = plan.getWorkloads(semester);
+		for (Float workload : workloads) {
+			System.out.print(workload + " ");
+		}
+		System.out.println();
 	}
 
 	private void incrementSemester() { semester++; }
+
+	private Module findModuleByCode(String code) {
+		for (Module module : modules) {
+			if (module.getCode().equals(code)) return module;
+		}
+		return new Module("", "");
+	}
 }
