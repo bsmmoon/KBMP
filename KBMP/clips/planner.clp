@@ -38,9 +38,9 @@
     (slot status
         (type SYMBOL)   
         (default none))
-    (slot weight
+    (slot score
         (type INTEGER)   
-        (default 0)))
+        (default -99)))
 
 (deftemplate focus
     (slot name (type STRING))
@@ -91,6 +91,11 @@
 ; ; RULES
 
 ; ; RANK
+
+; ; ---------------
+; ; USER PREFERENCE
+; ; ---------------
+
 ; ; Wanted modules
 (defrule RANK::mark-wanted "mark wanted modules"
     ?module <- (module (code ?code1) (want NONE))
@@ -98,7 +103,7 @@
     (test(eq ?code1 ?code2))
     =>
     (printout t "Marking module " ?code1 " as wanted" crlf)
-    (modify ?module (want yes)))
+    (modify ?module (want yes) (score -99)))
 
 ; ; Unwanted modules
 (defrule RANK::mark-unwanted "mark unwanted modules"
@@ -107,10 +112,12 @@
     (test(eq ?code1 ?code2))
     =>
     (printout t "Marking module " ?code1 " as unwanted" crlf)
-    (modify ?module (want no)))
+    (modify ?module (want no) (score -99)))
 
 ; ; ----------------
 ; ; STATUS AVAILABLE
+; ; ----------------
+
 ; ; Modules Available, without prerequisites, level 1, salience 4, no limit
 (defrule RANK::mark-available-no-prerequisites-level-1 "mark modules without prerequisites as available"
     (declare (salience 4))
@@ -230,10 +237,10 @@
     (printout t "Module copy " ?code " marked not available." crlf))
 
 ; ; -------------
-; ; ASSIGN WEIGHT
+; ; ASSIGN SCORE
 ; ; -------------
 
-(deffunction RANK::calweight (?level ?want)
+(deffunction RANK::calscore (?level ?want)
     (if (eq ?want yes) 
     then 
         (return (+ (- 5 ?level) 5))
@@ -241,11 +248,12 @@
         (return (- 5 ?level))
     ))
 
-(defrule RANK::assign-weight
-    (module (code ?code) (status available) (level ?level) (want ?want))
+(defrule RANK::assign-score
+    ?module <- (module (code ?code) (status available) (level ?level) (want ?want&~no) (score -99))
     =>
-    (bind ?weight (calweight ?level ?want))
-    (printout t "Module " ?code " weight: " ?weight crlf))
+    (bind ?score (calscore ?level ?want))
+    (modify ?module (score ?score))
+    (printout t "Module " ?code " score: " ?score crlf))
 
 ; ; SELECT
 ; ; Selecting modules
