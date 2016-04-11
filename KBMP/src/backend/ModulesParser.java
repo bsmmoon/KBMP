@@ -345,7 +345,7 @@ public class ModulesParser {
             }
 
             if (allModuleCodes.size() > 1) {
-                if (internal.contains(OR_WORD) || internal.contains(AND_WORD)) {
+                if (internal.toLowerCase().contains(OR_WORD) || internal.toLowerCase().contains(AND_WORD)) {
                     dependencyStringBuilder.append(OPEN_BRACKET);
                     dependencyStringBuilder.append(internal);
                     dependencyStringBuilder.append(CLOSE_BRACKET);
@@ -439,7 +439,7 @@ public class ModulesParser {
 
         // split by "or" first because some module codes include "and"
         // => token might contain "and" but actually the operator is only "or"
-        if (token.contains(ModulesParser.OR_WORD)) {
+        if (token.toLowerCase().contains(ModulesParser.OR_WORD)) {
             String[] rawModuleTokens;
             operator = Operator.OR;
 
@@ -477,7 +477,7 @@ public class ModulesParser {
                     }
                 }
             }
-        } else if (token.contains(ModulesParser.AND_WORD)) {
+        } else if (token.toLowerCase().contains(ModulesParser.AND_WORD)) {
             String[] rawModuleTokens = token.split(ModulesParser.AND_WORD);
             ArrayList<String> newTokens = splitModulesIfNecessary(rawModuleTokens);
             int count = 0;
@@ -524,12 +524,12 @@ public class ModulesParser {
     private static ArrayList<String> splitModulesIfNecessary(String[] tokens) {
         ArrayList<String> newTokens = new ArrayList<>();
         for (String token : tokens) {
-            if (token.contains(AND_WORD)) {
+            if (token.toLowerCase().contains(AND_WORD)) {
                 String[] smallerTokens = token.split(AND_WORD);
                 for (String smallerToken : smallerTokens) {
                     newTokens.add(smallerToken.trim());
                 }
-            } else if (token.contains(OR_WORD)) {
+            } else if (token.toLowerCase().contains(OR_WORD)) {
                 String[] smallerTokens = token.split(OR_WORD);
                 for (String smallerToken : smallerTokens) {
                     newTokens.add(smallerToken.trim());
