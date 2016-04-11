@@ -37,6 +37,8 @@ public class ModulesParser {
     public static String OR = "or";
     public static String OPEN_BRACKET = "(";
     public static String CLOSE_BRACKET = ")";
+    public static String COMMA = ",";
+    private static String CASE_INSENSITIVE_FLAG = "(?i)";
     private enum Operator {AND, OR}
 
     public static Hashtable<String, Module> updateModulesFromPath(Path pathToFile, Hashtable<String, Module> existingModules,
@@ -126,7 +128,7 @@ public class ModulesParser {
             // match prefix exactly once, followed by 4 digits, and 0-2 alphabets/numbers
             regex = prefix + "(\\d){4}([a-zA-Z]){0,2}";
         } else {
-            String[] restOfTokens = rest.split(",");
+            String[] restOfTokens = rest.split(COMMA);
             ArrayList<String> regexTokens = new ArrayList<>();
             for (String currentToken : restOfTokens){
                 String token = currentToken.trim();
@@ -449,7 +451,7 @@ public class ModulesParser {
             operator = Operator.OR;
 
             if (token.contains(",")) {
-                String[] tokenizedByOr = token.split(ModulesParser.OR_WORD);
+                String[] tokenizedByOr = token.split(CASE_INSENSITIVE_FLAG + ModulesParser.OR_WORD);
                 ArrayList<String> tokens = new ArrayList<>();
                 for (String rawModuleToken : tokenizedByOr) {
                     if (rawModuleToken.contains(",")) {
@@ -460,7 +462,7 @@ public class ModulesParser {
                 }
                 rawModuleTokens = tokens.toArray(new String[0]);
             } else {
-                rawModuleTokens = token.split(ModulesParser.OR_WORD);
+                rawModuleTokens = token.split(CASE_INSENSITIVE_FLAG + ModulesParser.OR_WORD);
             }
 
             ArrayList<String> newTokens = splitModulesIfNecessary(rawModuleTokens);
@@ -488,7 +490,7 @@ public class ModulesParser {
                 }
             }
         } else if (token.toLowerCase().contains(ModulesParser.AND_WORD)) {
-            String[] rawModuleTokens = token.split(ModulesParser.AND_WORD);
+            String[] rawModuleTokens = token.split(CASE_INSENSITIVE_FLAG + ModulesParser.AND_WORD);
             ArrayList<String> newTokens = splitModulesIfNecessary(rawModuleTokens);
             int count = 0;
             for (String rawModuleToken : newTokens) {
@@ -508,7 +510,7 @@ public class ModulesParser {
             String[] rawModuleTokens;
             operator = Operator.OR;
 
-            String[] tokens = token.split(",");
+            String[] tokens = token.split(COMMA);
 
             for (String rawModuleToken : tokens) {
                 rawModuleToken = rawModuleToken.trim();
@@ -535,12 +537,12 @@ public class ModulesParser {
         ArrayList<String> newTokens = new ArrayList<>();
         for (String token : tokens) {
             if (token.toLowerCase().contains(AND_WORD)) {
-                String[] smallerTokens = token.split(AND_WORD);
+                String[] smallerTokens = token.split(CASE_INSENSITIVE_FLAG + AND_WORD);
                 for (String smallerToken : smallerTokens) {
                     newTokens.add(smallerToken.trim());
                 }
             } else if (token.toLowerCase().contains(OR_WORD)) {
-                String[] smallerTokens = token.split(OR_WORD);
+                String[] smallerTokens = token.split(CASE_INSENSITIVE_FLAG + OR_WORD);
                 for (String smallerToken : smallerTokens) {
                     newTokens.add(smallerToken.trim());
                 }
