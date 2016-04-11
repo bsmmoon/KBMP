@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -473,7 +474,12 @@ public class ModulesParser {
                             moduleCodes.addAll(extractModuleCodesFromOneModuleCode(code));
                         }
                     } else {
+                        Matcher matcher = anyOneModule.matcher(rawModuleToken);
+                        if (matcher.find()) {
+                            moduleCodes.add(matcher.group());
+//                        } else {
 //                        System.out.println("DOESNT MATCH: " + rawModuleToken);
+                        }
                     }
                 }
             }
