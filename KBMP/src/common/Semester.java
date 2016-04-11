@@ -18,16 +18,17 @@ public class Semester {
 
     public ArrayList<Module> getModules() { return modules; }
 
-//    public int[] getWorkload() {
-//        int[] workload = new int[5];
-//        int index;
-//        for (Module module : modules) {
-//            index = 0;
-//            for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
-//                workload[index] += module.getWorkload().get(type);
-//            }
-//        }
-//
-//        return workload;
-//    }
+    public Float[] getWorkloads() {
+        Float[] result = new Float[]{0f, 0f, 0f, 0f, 0f};
+
+        int index;
+        for (Module module : modules) {
+            index = 0;
+            for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
+                result[index] += module.getWorkload().get(type);
+                index++;
+            }
+        }
+        return result;
+    }
 }
