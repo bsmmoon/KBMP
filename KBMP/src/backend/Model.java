@@ -34,6 +34,7 @@ public class Model {
 	public ModulePlan getModulePlan() { return plan; }
 	public ArrayList<Module> getRecommendedModules() { return new ArrayList<>(availableModules.subList(0, 5)); }
 	public ArrayList<Module> getAvailableModules() { return availableModules; }
+	public ArrayList<Module> getModules() { return modules; }
 	public int getSemester() { return semester; }
 	public boolean isDone() {
 		return semester > numberOfSemesterLeft;
@@ -42,6 +43,7 @@ public class Model {
 	public void setModules(ArrayList<Module> modules) {
 		this.modules = modules;
 		addPlaceHolderModules();
+		pruneNonFocusHighLevelModules();
 	}
 
 	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) { this.focusAreas = focusAreas; }
@@ -129,6 +131,12 @@ public class Model {
 			this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
 			this.modules.add(new Module.Builder().setCode("GEM0123").setName("General Education Module " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
 			this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+		}
+	}
+
+	private void pruneNonFocusHighLevelModules() {
+		for (Module module : modules) {
+
 		}
 	}
 }

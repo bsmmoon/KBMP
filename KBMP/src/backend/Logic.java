@@ -36,8 +36,8 @@ public class Logic {
 			modules = new ArrayList<>();
 			focus = new ArrayList<>();
 		}
-		model.setModules(modules);
 		model.setAllFocusAreas(focus);
+		model.setModules(modules);
 
 		String condition = storage.readCondition();
 		model.reset(condition);
