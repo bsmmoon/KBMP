@@ -269,7 +269,7 @@ public class ModulesParser {
         if (rawPrerequisite.endsWith(".")) {
             rawPrerequisite = rawPrerequisite.substring(0, rawPrerequisite.length()-1);
         }
-        System.out.println("Original: " + rawPrerequisite);
+//        System.out.println("Original: " + rawPrerequisite);
 
         if (rawPrerequisite.contains(".")) {
             String[] sentences = rawPrerequisite.split("\\.");
@@ -579,6 +579,12 @@ public class ModulesParser {
         }
 
         String corequisite = rawModule.Corequisite.trim();
+
+        if (rawModule.ModuleCode.contains("CS3281")) {
+            return "CS3282";
+        } else if (rawModule.ModuleCode.contains("CS3282")) {
+            return "CS3281";
+        }
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(corequisite).matches()) {
