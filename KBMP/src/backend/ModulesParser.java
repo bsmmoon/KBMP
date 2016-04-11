@@ -584,6 +584,14 @@ public class ModulesParser {
         if (anyOneModule.matcher(corequisite).matches()) {
             ArrayList<String> codes = extractModuleCodesFromOneModuleCode(corequisite);
             corequisites = generateDependencyStringWithoutNesting(Operator.OR, codes);
+        } else {
+            // for CS2101 and CS2103T
+            Pattern exact = patterns.get(PatternTypes.ANY_ONE_MODULE_EXACT);
+            Matcher matcher = exact.matcher(corequisite);
+            if (matcher.find()) {
+                corequisites = matcher.group();
+            }
+
         }
 
         // extract "co-read ..." from prerequisites
