@@ -109,6 +109,8 @@
     (printout t "Marking module " ?code1 " as unwanted" crlf)
     (modify ?module (want no)))
 
+; ; ----------------
+; ; STATUS AVAILABLE
 ; ; Modules Available, without prerequisites, level 1, salience 4, no limit
 (defrule RANK::mark-available-no-prerequisites-level-one "mark modules without prerequisites as available"
     (declare (salience 4))
@@ -231,6 +233,8 @@
 (deffacts RANK::preclusions
 (preclusion "CS1010" "CS1010S" "CS1010E" "CS1010R" "CS1010J" "CS1101S" "CS1010X"))
 
+; ; --------------------
+; ; STATUS NOT-AVAILABLE
 ; ; Module precluded when preclusion met
 (defrule RANK::mark-not-available-preclusion-met
     (module (code ?code1) (status ?status))
@@ -242,6 +246,24 @@
     =>
     (modify ?precludedmodule (status not-available))
     (printout t "Module " ?code2 " precluded " crlf))
+
+; ; -------------
+; ; ASSIGN WEIGHT
+(deffunction RANK::calweight (?level ?want)
+    (printout t " level:" ?level " want:" ?want crlf)
+    (if (eq ?want yes) 
+    then 
+        (return (+ (- 5 ?level) 5))
+    else
+        (return (- 5 ?level))
+    ))
+
+(defrule RANK::assign-weight
+    (module (code ?code) (status available) (level ?level) (want ?want))
+    =>
+    (bind ?weight (calweight ?level ?want))
+    (printout t "Module " ?code " weight: " ?weight crlf))
+)
 
 ; ; SELECT
 ; ; Selecting modules
