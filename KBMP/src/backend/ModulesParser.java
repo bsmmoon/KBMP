@@ -290,7 +290,7 @@ public class ModulesParser {
 
     private static String generateDependencyStringWithNesting(Operator topLevelOperator, ArrayList<Operator>
             secondLevelOperators, ArrayList<ArrayList<String>> allModuleCodes) {
-        StringBuilder prereqBuilder = new StringBuilder();
+        StringBuilder dependencyStringBuilder = new StringBuilder();
         Iterator<Operator> secondLevelOperatorIter = secondLevelOperators.iterator();
         for (int i = 0; i < allModuleCodes.size(); i++) {
             ArrayList<String> modules = allModuleCodes.get(i);
@@ -309,22 +309,22 @@ public class ModulesParser {
 
             if (allModuleCodes.size() > 1) {
                 if (internal.contains(OR_WORD) || internal.contains(AND_WORD)) {
-                    prereqBuilder.append(OPEN_BRACKET);
-                    prereqBuilder.append(internal);
-                    prereqBuilder.append(CLOSE_BRACKET);
+                    dependencyStringBuilder.append(OPEN_BRACKET);
+                    dependencyStringBuilder.append(internal);
+                    dependencyStringBuilder.append(CLOSE_BRACKET);
                 } else {
-                    prereqBuilder.append(internal);
+                    dependencyStringBuilder.append(internal);
                 }
 
                 if (i != allModuleCodes.size()-1) {
-                    prereqBuilder.append(currentTopLevelOperatorString);
+                    dependencyStringBuilder.append(currentTopLevelOperatorString);
                 }
             } else {
-                prereqBuilder.append(internal);
+                dependencyStringBuilder.append(internal);
             }
         }
 
-        return prereqBuilder.toString();
+        return dependencyStringBuilder.toString();
     }
 
     private static String generateDependencyStringWithoutNesting(Operator operator, ArrayList<String> modules) {
