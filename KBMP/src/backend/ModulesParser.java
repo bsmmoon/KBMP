@@ -571,6 +571,10 @@ public class ModulesParser {
             return preclusions;
         }
 
+        if (rawModule.ModuleCode.contains("MA1301X")) {
+            return "MA1301 or MA1301FC";
+        }
+
         String rawPreclusion = rawModule.Preclusion.trim();
         System.out.println("\nOriginal: " + rawPreclusion);
 
