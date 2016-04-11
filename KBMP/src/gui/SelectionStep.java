@@ -248,17 +248,16 @@ public class SelectionStep extends JPanel implements ItemListener {
         for (int i = 0; i < dropdownList.getItemCount(); i++) {
             if (added) break;
 
-            switch (dropdownList.getItemAt(i).compareTo(item)) {
-                case -1:    // item to be inserted is after the current item
-                    added = false;
-                    break;
-                case 0:        // item to be inserted = current item
-                    added = true;
-                    break;
-                case 1:        // item to be inserted is before the current item
-                    dropdownList.insertItemAt(item, i);
-                    added = true;
-                    break;
+            int compare = dropdownList.getItemAt(i).compareTo(item);
+            if (compare < 0) {
+                added = false;
+            } else if (compare == 0) { // item to be inserted = current item
+                added = true;
+                break;
+            } else {        // item to be inserted is before the current item
+                dropdownList.insertItemAt(item, i);
+                added = true;
+                break;
             }
         }
 
