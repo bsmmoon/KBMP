@@ -83,6 +83,7 @@ public class SelectionStep extends JPanel implements ItemListener {
         dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
         dropdownList.setMaximumSize(new Dimension(300, 20));
         dropdownList.addItemListener(this);
+        dropdownList.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
         dropdownList.setVisible(false);
 
         add(question);
@@ -264,7 +265,7 @@ public class SelectionStep extends JPanel implements ItemListener {
             return;
         }
 
-        if (event.getStateChange() == ItemEvent.SELECTED) {
+        if (event.getStateChange() == ItemEvent.SELECTED ) {
             if (step == STEP.FOCUS_AREA) {
                 String focusArea = event.getItem().toString();
                 for (FocusArea item : availableFocusAreas) {
