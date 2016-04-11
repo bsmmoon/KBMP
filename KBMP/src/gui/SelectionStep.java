@@ -49,8 +49,8 @@ public class SelectionStep extends JPanel implements ItemListener {
         next = new JButton(new AbstractAction("Next") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                submit(frame);
-                if (step.ordinal() < STEP.PLANNING.ordinal()) {
+                boolean isSuccessful = submit(frame);
+                if (isSuccessful && step.ordinal() < STEP.PLANNING.ordinal()) {
                     step = STEPS[step.ordinal()+1];
                     init();
                 }
@@ -145,13 +145,25 @@ public class SelectionStep extends JPanel implements ItemListener {
     }
 
 
-    private void submit(final GuiFrame frame) {
+    private boolean submit(final GuiFrame frame) {
+        boolean isSuccessful = true;
         switch (step) {
             case NUM_SEM_LEFT:
                 try {
+                    int number = Integer.parseInt(textField.getText());
+                    if (number < 1 || number > 10) {
+                        JOptionPane.showMessageDialog(frame, "Please enter a number between 1 and 10.");
+                        isSuccessful = false;
+
+                        return isSuccessful;
+                    }
+
                     frame.getLogic().setNumberOfSemesterLeft(Integer.parseInt(textField.getText()));
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(frame, textField.getText() + " is not a valid number.");
+                    isSuccessful = false;
+
+                    return isSuccessful;
                 }
                 break;
             case MOD_TAKEN:
@@ -182,6 +194,8 @@ public class SelectionStep extends JPanel implements ItemListener {
         revalidate();
         frame.getLogic().iterate();
         init();
+
+        return isSuccessful;
     }
 
     public  void setStep(STEP step) { this.step = step; }
