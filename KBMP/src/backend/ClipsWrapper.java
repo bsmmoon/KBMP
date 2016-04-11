@@ -54,7 +54,8 @@ public class ClipsWrapper {
 
 	public void saveModules(ArrayList<Module> modules) {
 		for (Module module : modules) {
-			if (isHighLevelNonFocus(module.getCode())) continue;
+			if (getModuleLevel(module.getCode()) >= 4
+					&& !modulesInFocusAreas.contains(module.getCode())) continue;
 			ArrayList<String> entries = ClipsParser.parseModuleIntoClips(module);
 			entries.forEach((entry) -> clips.eval(entry));
 		}
@@ -81,14 +82,12 @@ public class ClipsWrapper {
 		clips.loadFromString(condition);
 	}
 
-	private boolean isHighLevelNonFocus(String code) {
+	private int getModuleLevel(String code) {
 		for (int i = 0; i < code.length(); i++) {
 			int c = code.charAt(i);
 			if (!(c >= 48 && c <= 57)) continue;
-			if (Integer.parseInt(code.substring(i, i + 1)) < 4) break;
-			if (!modulesInFocusAreas.contains(code)) return true;
-			break;
+			return Integer.parseInt(code.substring(i, i + 1));
 		}
-		return false;
+		return -1;
 	}
 }
