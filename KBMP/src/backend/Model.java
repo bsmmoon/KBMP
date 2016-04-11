@@ -3,6 +3,7 @@ package backend;/*
  */
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import common.FocusArea;
 import common.Module;
@@ -33,12 +34,17 @@ public class Model {
 	public ModulePlan getModulePlan() { return plan; }
 	public ArrayList<Module> getRecommendedModules() { return new ArrayList<>(availableModules.subList(0, 5)); }
 	public ArrayList<Module> getAvailableModules() { return availableModules; }
+	public ArrayList<Module> getModules() { return modules; }
 	public int getSemester() { return semester; }
 	public boolean isDone() {
 		return semester > numberOfSemesterLeft;
 	}
 
-	public void setModules(ArrayList<Module> modules) { this.modules = modules; }
+	public void setModules(ArrayList<Module> modules) {
+		this.modules = modules;
+		addPlaceHolderModules();
+		pruneNonFocusHighLevelModules();
+	}
 
 	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) { this.focusAreas = focusAreas; }
 
@@ -80,9 +86,13 @@ public class Model {
 
 	public void iterate() {
 		execute("(focus SELECT RANK)");
-		execute("(refresh RANK::mark-available-no-prerequisites-level-higher)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-1)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-2)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-3)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-3-higher)");
 		execute("(run)");
 		update();
+//		execute("(facts)");
 	}
 
 	private void update() {
@@ -107,5 +117,26 @@ public class Model {
 			if (module.getCode().equals(code)) return module;
 		}
 		return new Module("", "");
+	}
+
+
+	private void addPlaceHolderModules() {
+		Hashtable<Module.WorkloadTypes, Float> standardWorkloads = new Hashtable<>();
+		for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
+			standardWorkloads.put(type, 2.0f);
+		}
+		int num = 5;
+		while (num-- > 1) {
+			this.modules.add(new Module.Builder().setCode("SC0123").setName("Science " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+			this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+			this.modules.add(new Module.Builder().setCode("GEM0123").setName("General Education Module " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+			this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+		}
+	}
+
+	private void pruneNonFocusHighLevelModules() {
+		for (Module module : modules) {
+
+		}
 	}
 }

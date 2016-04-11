@@ -105,18 +105,18 @@ public class SelectionStep extends JPanel implements ItemListener {
                 break;
             case MOD_TAKEN:
                 setQuestion("Please select modules that you have already taken.");
-                setAvailableModules(frame.getModel().getAvailableModules());
+                setAvailableModules(frame.getModel().getModules());
                 textField.setVisible(false);
                 dropdownList.setVisible(true);
                 selectedScroller.setVisible(true);
                 break;
             case MOD_WANT:
                 setQuestion("Please select modules that you want to take.");
-                setAvailableModules(frame.getModel().getAvailableModules());
+                setAvailableModules(frame.getModel().getModules());
                 break;
             case MOD_DONT_WANT:
                 setQuestion("Please select modules that you don't want to take.");
-                setAvailableModules(frame.getModel().getAvailableModules());
+                setAvailableModules(frame.getModel().getModules());
                 break;
             case FOCUS_AREA:
                 setQuestion("Please select your focus area.");

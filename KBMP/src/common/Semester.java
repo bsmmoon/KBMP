@@ -25,6 +25,7 @@ public class Semester {
         for (Module module : modules) {
             index = 0;
             for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
+                if (module.getWorkload().isEmpty()) break;
                 result[index] += module.getWorkload().get(type);
                 index++;
             }
