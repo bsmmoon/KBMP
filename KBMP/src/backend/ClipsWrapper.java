@@ -57,6 +57,7 @@ public class ClipsWrapper {
 			ArrayList<String> entries = ClipsParser.parseModuleIntoClips(module);
 			entries.forEach((entry) -> clips.eval(entry));
 		}
+		ArrayList<String> preclusions = ClipsParser.parsePreclusions(modules);
 	}
 
 	public void saveFocusAreas(ArrayList<FocusArea> focusAreas) {
