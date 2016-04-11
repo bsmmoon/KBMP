@@ -242,7 +242,7 @@ public class ModulesParser {
 
         String rawPrerequisite = rawModule.Prerequisite;
 
-        String moduleCode = rawModule.ModuleCode;
+        String moduleCode = rawModule.ModuleCode.trim();
         if (moduleCode.contains("CP3106")) {
             return "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
         } else if (moduleCode.contains("CS4350")) {
@@ -268,20 +268,23 @@ public class ModulesParser {
         }
 //        System.out.println("Original: " + rawPrerequisite);
 
-
         if (rawPrerequisite.contains(".")) {
-            String[] sentences = rawPrerequisite.split(".");
+            String[] sentences = rawPrerequisite.split("\\.");
             ArrayList<String> parsedSentences = new ArrayList<>();
             for (String sentence : sentences) {
-                String parsedSentence = parsePrerequisiteFromSentence(sentence, rawModule.ModuleCode);
-                System.out.println("Original fragment: " + sentence);
-                System.out.println("Parsed fragment: " + parsedSentence);
+                String parsedSentence;
+                if (moduleCode.endsWith("R") && sentence.contains("pass host module in previous")) {
+                    parsedSentence = moduleCode.substring(0, moduleCode.length()-1);
+                } else {
+                    parsedSentence = parsePrerequisiteFromSentence(sentence, rawModule.ModuleCode);
+                }
+//                System.out.println("Original fragment: " + sentence);
+//                System.out.println("Parsed fragment: " + parsedSentence);
                 if (!parsedSentence.isEmpty()) {
                      parsedSentences.add(parsedSentence);
                 }
             }
             prerequisites = generateDependencyStringWithoutNesting(Operator.AND, parsedSentences);
-//            System.out.println("Processed: " + prerequisites);
         } else {
             prerequisites = parsePrerequisiteFromSentence(rawPrerequisite, rawModule.ModuleCode);
         }
@@ -290,7 +293,7 @@ public class ModulesParser {
     }
 
     private static String parsePrerequisiteFromSentence(String rawPrerequisite, String moduleCode) {
-        String prerequisites = "";
+        String prerequisites;
 
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(rawPrerequisite).matches()) {
@@ -643,7 +646,7 @@ public class ModulesParser {
         Pattern anyOneExact = Pattern.compile(regexAnyModuleExact);
         patterns.put(PatternTypes.ANY_ONE_MODULE_EXACT, anyOneExact);
 
-        //eg "CS1010, CS1231R, CS2103/T <module title>"
+        //eg "CS1010", "CS1231R", "CS2103/T <module title>"
         String regexAnyModuleGreedy = "(" + regexAnyModuleExact + ")[a-zA-Z_\\s_\\p{Punct}]*";
         Pattern anyOneGreedy = Pattern.compile(regexAnyModuleGreedy);
         patterns.put(PatternTypes.ANY_ONE_MODULE_GREEDY, anyOneGreedy);
