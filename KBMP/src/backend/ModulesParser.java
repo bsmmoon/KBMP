@@ -250,8 +250,30 @@ public class ModulesParser {
         rawPrerequisite = rawPrerequisite.trim();
 //        System.out.println("\nOriginal: " + rawPrerequisite);
 
-        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
+        if (rawPrerequisite.contains(".")) {
+            String[] sentences = rawPrerequisite.split(".");
+            ArrayList<String> parsedSentences = new ArrayList<>();
+            for (String sentence : sentences) {
+                String parsedSentence = parsePrerequisiteFromSentence(sentence, rawModule.ModuleCode);
+                System.out.println("Original fragment: " + sentence);
+                System.out.println("Parsed fragment: " + parsedSentence);
+                if (!parsedSentence.isEmpty()) {
+                     parsedSentences.add(parsedSentence);
+                }
+            }
+            prerequisites = generateDependencyStringWithoutNesting(Operator.AND, parsedSentences);
+//            System.out.println("Processed: " + prerequisites);
+        } else {
+            prerequisites = parsePrerequisiteFromSentence(rawPrerequisite, rawModule.ModuleCode);
+        }
+//        System.out.println("Processed: " + prerequisites);
+        return prerequisites;
+    }
 
+    private static String parsePrerequisiteFromSentence(String rawPrerequisite, String moduleCode) {
+        String prerequisites = "";
+
+        Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(rawPrerequisite).matches()) {
             // a
             ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawPrerequisite);
@@ -275,12 +297,12 @@ public class ModulesParser {
 //            System.out.println("Processed: " + prerequisites + "\n");
         } else if (rawPrerequisite.contains("[")) {
             // triple level nesting
-            if (rawModule.ModuleCode.contains("CP3106")) {
+            if (moduleCode.contains("CP3106")) {
                 prerequisites = "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
             }
-        } else if (rawModule.ModuleCode.contains("CS4350")) {
+        } else if (moduleCode.contains("CS4350")) {
             prerequisites = "CS3247";
-        } else if (rawModule.ModuleCode.contains("CS4243")) {
+        } else if (moduleCode.contains("CS4243")) {
             prerequisites = "CS1020 and (MA1101R or MA1506) and (MA1102R or MA1505C or MA1505 or MA1521) and (ST1232 " +
                     "or ST2131 or ST2334)";
         } else {
@@ -288,7 +310,6 @@ public class ModulesParser {
             prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
 //            System.out.println("Processed: " + prerequisites);
         }
-
         return prerequisites;
     }
 
@@ -425,7 +446,9 @@ public class ModulesParser {
                 rawModuleTokens = token.split(ModulesParser.OR_WORD);
             }
 
-            for (String rawModuleToken : rawModuleTokens) {
+            ArrayList<String> newTokens = splitModulesIfNecessary(rawModuleTokens);
+
+            for (String rawModuleToken : newTokens) {
                 rawModuleToken = rawModuleToken.trim();
                 if (anyOneModule.matcher(rawModuleToken).matches()) {
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
@@ -444,8 +467,9 @@ public class ModulesParser {
             }
         } else if (token.contains(ModulesParser.AND_WORD)) {
             String[] rawModuleTokens = token.split(ModulesParser.AND_WORD);
+            ArrayList<String> newTokens = splitModulesIfNecessary(rawModuleTokens);
             int count = 0;
-            for (String rawModuleToken : rawModuleTokens) {
+            for (String rawModuleToken : newTokens) {
                 if (anyOneModule.matcher(rawModuleToken).matches()) {
                     count++;
                     ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawModuleToken);
@@ -481,6 +505,29 @@ public class ModulesParser {
         }
 
         return new Pair<>(operator, moduleCodes);
+    }
+
+    // written for a particular case
+    // assumes that any operators found in is not important
+    private static ArrayList<String> splitModulesIfNecessary(String[] tokens) {
+        ArrayList<String> newTokens = new ArrayList<>();
+        for (String token : tokens) {
+            if (token.contains(AND_WORD)) {
+                String[] smallerTokens = token.split(AND_WORD);
+                for (String smallerToken : smallerTokens) {
+                    newTokens.add(smallerToken.trim());
+                }
+            } else if (token.contains(OR_WORD)) {
+                String[] smallerTokens = token.split(OR_WORD);
+                for (String smallerToken : smallerTokens) {
+                    newTokens.add(smallerToken.trim());
+                }
+            } else {
+                newTokens.add(token);
+            }
+        }
+
+        return newTokens;
     }
 
     private static ArrayList<String> extractModuleCodesFromOneModuleCode(String code) {
@@ -525,8 +572,29 @@ public class ModulesParser {
         }
 
         String rawPreclusion = rawModule.Preclusion.trim();
-//        System.out.println("\nOriginal: " + rawPreclusion);
+        System.out.println("\nOriginal: " + rawPreclusion);
 
+        if (rawPreclusion.contains(".")) {
+            String[] sentences = rawPreclusion.split("\\.");
+            ArrayList<String> parsedSentences = new ArrayList<>();
+            for (String sentence : sentences) {
+                String parsedSentence = parsePreclusionFromSentence(sentence);
+                if (!parsedSentence.isEmpty()) {
+                    parsedSentences.add(parsedSentence);
+                }
+            }
+
+            preclusions = generateDependencyStringWithoutNesting(Operator.OR, parsedSentences);
+        } else {
+            preclusions = parsePreclusionFromSentence(rawPreclusion);
+        }
+
+        System.out.println("PRECLUSIONS: " + preclusions);
+        return preclusions;
+    }
+
+    private static String parsePreclusionFromSentence(String rawPreclusion) {
+        String preclusions;
         Pattern anyOneModule = patterns.get(PatternTypes.ANY_ONE_MODULE_GREEDY);
         if (anyOneModule.matcher(rawPreclusion).matches()){
             ArrayList<String> codes = extractModuleCodesFromOneModuleCode(rawPreclusion);
@@ -551,9 +619,6 @@ public class ModulesParser {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPreclusion);
             preclusions = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
         }
-
-
-//        System.out.println("PRECLUSIONS: " + preclusions);
         return preclusions;
     }
 
