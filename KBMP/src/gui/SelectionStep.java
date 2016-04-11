@@ -18,6 +18,7 @@ import common.Module;
 public class SelectionStep extends JPanel implements ItemListener {
     private GuiFrame frame;
     private STEP step;
+    private ArrayList<Module> preplanModules;
     private ArrayList<AvailableModule> availableModules;
     private ArrayList<FocusArea> availableFocusAreas;
     private JLabel question;
@@ -106,18 +107,18 @@ public class SelectionStep extends JPanel implements ItemListener {
                 break;
             case MOD_TAKEN:
                 setQuestion("Please select modules that you have already taken.");
-                setAllModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getPreplanModules());
                 textField.setVisible(false);
                 dropdownList.setVisible(true);
                 selectedScroller.setVisible(true);
                 break;
             case MOD_WANT:
                 setQuestion("Please select modules that you want to take.");
-                setAllModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getPreplanModules());
                 break;
             case MOD_DONT_WANT:
                 setQuestion("Please select modules that you don't want to take.");
-                setAllModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getPreplanModules());
                 break;
             case FOCUS_AREA:
                 setQuestion("Please select your focus area.");
@@ -228,8 +229,9 @@ public class SelectionStep extends JPanel implements ItemListener {
         this.question.setForeground(Color.BLACK);
     }
 
-    private void setAllModules(ArrayList<Module> modules) {
-        for (Module module : modules) {
+    private void setAllModules(ArrayList<Module> preplanModules) {
+        this.preplanModules = preplanModules;
+        for (Module module : preplanModules) {
             insertItem(module.getCode() + " " + module.getName());
         }
     }
@@ -275,15 +277,29 @@ public class SelectionStep extends JPanel implements ItemListener {
                     }
                 }
             }
-            Module module;
-            for (AvailableModule availableModule : availableModules) {
-                module = availableModule.getModule();
-                String moduleCode = event.getItem().toString().split(" ")[0];
-                if (module.getCode().compareTo(moduleCode) == 0) {
-                    selected.addItem(module);
-                    break;
+
+            if (step == STEP.MOD_TAKEN || step == STEP.MOD_WANT || step == STEP.MOD_DONT_WANT) {
+                for (Module module : preplanModules) {
+                    String moduleCode = event.getItem().toString().split(" ")[0];
+                    if (module.getCode().compareTo(moduleCode) == 0) {
+                        selected.addItem(module);
+                        break;
+                    }
                 }
             }
+
+            if (step == STEP.PLANNING) {
+                Module module;
+                for (AvailableModule availableModule : availableModules) {
+                    module = availableModule.getModule();
+                    String moduleCode = event.getItem().toString().split(" ")[0];
+                    if (module.getCode().compareTo(moduleCode) == 0) {
+                        selected.addItem(module);
+                        break;
+                    }
+                }
+            }
+
             isAddingOrRemovingItem = true;
             dropdownList.removeItem(event.getItem());
             dropdownList.setSelectedItem(null);
