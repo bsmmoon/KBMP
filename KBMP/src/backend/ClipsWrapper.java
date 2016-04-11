@@ -14,6 +14,7 @@ public class ClipsWrapper {
 	
 	private Environment clips;
 	private boolean initialised;
+	private ArrayList<String> modulesInFocusAreas;
 	
 	private static final String GET_ALL_AVAIABLE_MODULE = "(find-all-facts ((?f module)) TRUE)";
 	private static final String GET_ALL_FOCUS_AREA = "(find-all-facts ((?f focus)) TRUE)";
@@ -22,10 +23,7 @@ public class ClipsWrapper {
 		this.initialised = false;
 	}
 	
-	public void execute(String command) {
-		System.out.println(command);
-		clips.eval(command);
-	}
+	public void execute(String command) { clips.eval(command); }
 	
 	public ArrayList<AvailableModule> getAvailableModules() {
 		ArrayList<AvailableModule> modules = new ArrayList<>();
@@ -56,6 +54,7 @@ public class ClipsWrapper {
 
 	public void saveModules(ArrayList<Module> modules) {
 		for (Module module : modules) {
+			if (isHighLevelNonFocus(module.getCode())) continue;
 			ArrayList<String> entries = ClipsParser.parseModuleIntoClips(module);
 			entries.forEach((entry) -> clips.eval(entry));
 		}
@@ -65,6 +64,8 @@ public class ClipsWrapper {
 	public void saveFocusAreas(ArrayList<FocusArea> focusAreas) {
 		focusAreas.forEach((focusArea) -> clips.eval(ClipsParser.parseFocusAreaIntoClips(focusArea)));
 	}
+
+	public void saveModulesInFocusAreas(ArrayList<String> modulesInFocusAreas) { this.modulesInFocusAreas = modulesInFocusAreas; }
 
 	public void reset() { clips.reset(); }
 
@@ -78,5 +79,16 @@ public class ClipsWrapper {
 			clips.clear();
 		}
 		clips.loadFromString(condition);
+	}
+
+	private boolean isHighLevelNonFocus(String code) {
+		for (int i = 0; i < code.length(); i++) {
+			int c = code.charAt(i);
+			if (!(c >= 48 && c <= 57)) continue;
+			if (Integer.parseInt(code.substring(i, i + 1)) < 4) break;
+			if (!modulesInFocusAreas.contains(code)) return true;
+			break;
+		}
+		return false;
 	}
 }

@@ -2,7 +2,6 @@ package backend;/*
  * Facet
  */
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -52,7 +51,17 @@ public class Model {
 		pruneNonFocusHighLevelModules();
 	}
 
-	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) { this.focusAreas = focusAreas; }
+	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) {
+		this.focusAreas = focusAreas;
+
+		ArrayList<String> modulesInFocusAreas = new ArrayList<>();
+		for (FocusArea focus : focusAreas) {
+			for (String primary : focus.getPrimaries()) modulesInFocusAreas.add(primary);
+			for (String elective : focus.getElectives()) modulesInFocusAreas.add(elective);
+			for (String elective : focus.getUnrestrictedElectives()) modulesInFocusAreas.add(elective);
+		}
+		clips.saveModulesInFocusAreas(modulesInFocusAreas);
+	}
 
 	public void setSelectedFocusAreas(ArrayList<FocusArea> selectedFocusAreas) {
 		this.selectedFocusAreas = selectedFocusAreas;
