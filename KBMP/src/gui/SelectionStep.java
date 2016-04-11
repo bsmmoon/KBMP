@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
+import common.AvailableModule;
 import common.FocusArea;
 import common.Module;
 
@@ -17,7 +18,7 @@ import common.Module;
 public class SelectionStep extends JPanel implements ItemListener {
     private GuiFrame frame;
     private STEP step;
-    private ArrayList<Module> availableModules;
+    private ArrayList<AvailableModule> availableModules;
     private ArrayList<FocusArea> availableFocusAreas;
     private JLabel question;
     private JScrollPane selectedScroller;
@@ -105,18 +106,18 @@ public class SelectionStep extends JPanel implements ItemListener {
                 break;
             case MOD_TAKEN:
                 setQuestion("Please select modules that you have already taken.");
-                setAvailableModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getModules());
                 textField.setVisible(false);
                 dropdownList.setVisible(true);
                 selectedScroller.setVisible(true);
                 break;
             case MOD_WANT:
                 setQuestion("Please select modules that you want to take.");
-                setAvailableModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getModules());
                 break;
             case MOD_DONT_WANT:
                 setQuestion("Please select modules that you don't want to take.");
-                setAvailableModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getModules());
                 break;
             case FOCUS_AREA:
                 setQuestion("Please select your focus area.");
@@ -227,11 +228,16 @@ public class SelectionStep extends JPanel implements ItemListener {
         this.question.setForeground(Color.BLACK);
     }
 
-    private void setAvailableModules(ArrayList<Module> modules) {
-
-        availableModules = modules;
+    private void setAllModules(ArrayList<Module> modules) {
         for (Module module : modules) {
             insertItem(module.getCode() + " " + module.getName());
+        }
+    }
+
+    private void setAvailableModules(ArrayList<AvailableModule> availableModules) {
+        this.availableModules = availableModules;
+        for (AvailableModule availableModule : availableModules) {
+            insertItem(availableModule.getModule().getCode() + " " + availableModule.getModule().getName() + " (" + availableModule.getScore() + ")");
         }
     }
 
@@ -243,27 +249,8 @@ public class SelectionStep extends JPanel implements ItemListener {
     }
     public void insertItem(String item) {
         isAddingOrRemovingItem = true;
-        boolean added = false;
 
-        for (int i = 0; i < dropdownList.getItemCount(); i++) {
-            if (added) break;
-
-            int compare = dropdownList.getItemAt(i).compareTo(item);
-            if (compare < 0) {
-                added = false;
-            } else if (compare == 0) { // item to be inserted = current item
-                added = true;
-                break;
-            } else {        // item to be inserted is before the current item
-                dropdownList.insertItemAt(item, i);
-                added = true;
-                break;
-            }
-        }
-
-        if (!added) {
-            dropdownList.addItem(item);
-        }
+        dropdownList.addItem(item);
 
         dropdownList.setSelectedItem(null);
         dropdownList.revalidate();
@@ -288,7 +275,9 @@ public class SelectionStep extends JPanel implements ItemListener {
                     }
                 }
             }
-            for (Module module : availableModules) {
+            Module module;
+            for (AvailableModule availableModule : availableModules) {
+                module = availableModule.getModule();
                 String moduleCode = event.getItem().toString().split(" ")[0];
                 if (module.getCode().compareTo(moduleCode) == 0) {
                     selected.addItem(module);

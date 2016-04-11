@@ -3,6 +3,7 @@ package backend;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
+import common.AvailableModule;
 import common.FocusArea;
 import net.sf.clipsrules.jni.*;
 
@@ -26,25 +27,25 @@ public class ClipsWrapper {
 		clips.eval(command);
 	}
 	
-	public ArrayList<String> getAvailableModules() {
-		ArrayList<String> modules = new ArrayList<>();
+	public ArrayList<AvailableModule> getAvailableModules() {
+		ArrayList<AvailableModule> modules = new ArrayList<>();
 		
 		MultifieldValue pv = (MultifieldValue) clips.eval(GET_ALL_AVAIABLE_MODULE);
 		
 		ListIterator<FactAddressValue> itr = pv.multifieldValue().listIterator();
 		int len = pv.size();
 		String code, name;
+		int weight;
 		while (len-- > 0 && itr.hasNext()) {
 			FactAddressValue address = itr.next();
 			try {
 				if (address.getFactSlot("status").toString().equals("available")) {
 					code = address.getFactSlot("code").toString().replace("\"", "");
-					int weight = Integer.parseInt(address.getFactSlot("weight").toString());
-//					System.out.println(weight);
-					modules.add(code);
+					weight = Integer.parseInt(address.getFactSlot("score").toString());
+					modules.add(new AvailableModule(code, weight));
 				}
 			} catch (Exception e) {
-				System.out.println("Something went wrong!");
+				System.out.println("Something went wrong! " + e.getMessage());
 			}
 		}
 		
