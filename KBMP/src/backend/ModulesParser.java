@@ -656,7 +656,7 @@ public class ModulesParser {
         Hashtable<PatternTypes, Pattern> patterns = new Hashtable<>();
 
         // eg "CS1010"
-        String regexAnyModuleExact = "([a-zA-Z]){0,2}(\\d){4}([a-zA-Z]){0,2}";
+        String regexAnyModuleExact = "([a-zA-Z]){2,3}(\\d){4}([a-zA-Z]){0,2}";
         Pattern anyOneExact = Pattern.compile(regexAnyModuleExact);
         patterns.put(PatternTypes.ANY_ONE_MODULE_EXACT, anyOneExact);
 
