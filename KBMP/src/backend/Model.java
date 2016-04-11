@@ -84,9 +84,13 @@ public class Model {
 
 	public void iterate() {
 		execute("(focus SELECT RANK)");
-		execute("(refresh RANK::mark-available-no-prerequisites-level-higher)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-1)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-2)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-3)");
+		execute("(refresh RANK::mark-available-no-prerequisites-level-3-higher)");
 		execute("(run)");
 		update();
+//		execute("(facts)");
 	}
 
 	private void update() {
