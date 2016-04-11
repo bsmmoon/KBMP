@@ -39,6 +39,8 @@ public class ClipsWrapper {
 			try {
 				if (address.getFactSlot("status").toString().equals("available")) {
 					code = address.getFactSlot("code").toString().replace("\"", "");
+					int weight = Integer.parseInt(address.getFactSlot("weight").toString());
+//					System.out.println(weight);
 					modules.add(code);
 				}
 			} catch (Exception e) {
