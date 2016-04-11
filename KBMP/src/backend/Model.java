@@ -58,11 +58,12 @@ public class Model {
 		this.selectedFocusAreas = selectedFocusAreas;
 		selectedFocusAreas.forEach((selectedFocusArea) -> execute("(assert-focus-on \"" + selectedFocusArea.getName() + "\")"));
 
-		String primaryfocus = "(primaryfocus";
-		String electivefocus = "(electivefocus";
+		String primaryfocus = "(assert-primaryfocus";
+		String electivefocus = "(assert-electivefocus";
 		for (FocusArea focus : selectedFocusAreas) {
 			for (String primary : focus.getPrimaries()) primaryfocus += " \"" + primary + "\"";
 			for (String elective : focus.getElectives()) electivefocus += " \"" + elective + "\"";
+			for (String elective : focus.getUnrestrictedElectives()) electivefocus += " \"" + elective + "\"";
 		}
 		primaryfocus += ")";
 		electivefocus += ")";

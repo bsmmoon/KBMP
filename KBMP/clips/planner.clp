@@ -77,6 +77,12 @@
 (deffunction assert-focus-on (?x)
     (assert (focus-on ?x)))
 
+(deffunction assert-primaryfocus ($?x)
+    (assert (primaryfocus $?x)))
+
+(deffunction assert-electivefocus ($?x)
+    (assert (electivefocus $?x)))
+
 (deffunction count-level-one ()
     (length$ (find-all-facts ((?f module)) (and (eq ?f:level 1) (or (eq ?f:status planned) (eq ?f:status taken))))))
 
