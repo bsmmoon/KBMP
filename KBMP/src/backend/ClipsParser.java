@@ -42,6 +42,8 @@ public class ClipsParser {
 			result.add(out);
 		}
 
+//		result.forEach((line) -> System.out.println(line));
+
 		return result;
 	}
 
@@ -71,6 +73,13 @@ public class ClipsParser {
 		out += "))";
 
 		return out;
+	}
+
+	public static ArrayList<String> parsePreclusions(ArrayList<Module> modules) {
+		for (Module module : modules) {
+			if (module.getPreclusions().isEmpty()) continue;
+		}
+		return new ArrayList<>();
 	}
 
 	private static ArrayList<String> parsePrereq(String prereq) {

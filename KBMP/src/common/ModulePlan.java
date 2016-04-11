@@ -33,4 +33,6 @@ public class ModulePlan {
 	public ArrayList<Semester> getSemesters() {
 		return semesters;
 	}
+
+	public Float[] getWorkloads(int semester) { return semesters.get(semester-1).getWorkloads(); }
 }
