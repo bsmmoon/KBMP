@@ -26,8 +26,8 @@ public class ClipsWrapper {
 		clips.eval(command);
 	}
 	
-	public ArrayList<Module> getAvailableModules() {
-		ArrayList<Module> modules = new ArrayList<Module>();
+	public ArrayList<String> getAvailableModules() {
+		ArrayList<String> modules = new ArrayList<>();
 		
 		MultifieldValue pv = (MultifieldValue) clips.eval(GET_ALL_AVAIABLE_MODULE);
 		
@@ -39,8 +39,7 @@ public class ClipsWrapper {
 			try {
 				if (address.getFactSlot("status").toString().equals("available")) {
 					code = address.getFactSlot("code").toString().replace("\"", "");
-					name = address.getFactSlot("name").toString().replace("\"", "");
-					modules.add(new Module.Builder().setCode(code).setName(name).build());
+					modules.add(code);
 				}
 			} catch (Exception e) {
 				System.out.println("Something went wrong!");
