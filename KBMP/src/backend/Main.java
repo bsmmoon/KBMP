@@ -3,8 +3,8 @@ package backend;
 import gui.GuiFrame;
 
 import java.util.ArrayList;
+
 import common.Module;
-import common.FocusArea;
 
 public class Main {
 	public static void main(String[] args) {
@@ -18,6 +18,15 @@ public class Main {
 
 		logic.execute("(watch facts)");
 		logic.execute("(watch focus)");
+		
+		// user preference for maths/communication mod
+		// the alternative:
+//		logic.execute("(assert (goodmath) (commexempted))");
+		logic.execute("(assert (normalmath) (commnotexempted))");
+		// H2 subjects
+		logic.execute("(assert-taken \"H2Math\")");
+		logic.execute("(assert-taken \"H2Physics\")");
+		logic.iterate();
 
 //		logic.iterate();
 //
