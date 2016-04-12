@@ -180,11 +180,15 @@
         )
     )
 
+; ; ---------------
+; ; PREREQ HANDLING
+; ; ---------------
+
 ; ; Modules Available, with single prerequisite met, no limit
 (defrule RANK::mark-available-1-prerequisite-met "mark modules with single prerequisite met as available"
     (declare (salience 5))
     ?module <- (module (code ?code) (prerequisites ?prereq1) (status none) (want ~no))
-    (module (status planned|taken) (code ?prereq1))
+    (module (status planned|taken|equivalenttaken) (code ?prereq1))
     =>
     (printout t "Module " ?code " available as single prereq met" crlf)
     (modify ?module (status available)))
@@ -192,8 +196,8 @@
 ; ; Modules Available, with 2 prerequisites met, no limit
 (defrule RANK::mark-available-2-prerequisites-met "mark modules with single prerequisite met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2) (status none) (want ~no))
-    (module (status planned|taken) (code ?prereq1))
-    (module (status planned|taken) (code ?prereq2))
+    (module (status planned|taken|equivalenttaken) (code ?prereq1))
+    (module (status planned|taken|equivalenttaken) (code ?prereq2))
     =>
     (printout t "Module " ?code " available as 2 prereqs met" crlf)
     (modify ?module (status available)))
@@ -201,9 +205,9 @@
 ; ; Modules Available, with 3 prerequisites met, no limit
 (defrule RANK::mark-available-3-prerequisites-met "mark modules with single prerequisite met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2 ?prereq3) (status none) (want ~no))
-    (module (status planned|taken) (code ?prereq1))
-    (module (status planned|taken) (code ?prereq2))
-    (module (status planned|taken) (code ?prereq3))
+    (module (status planned|taken|equivalenttaken) (code ?prereq1))
+    (module (status planned|taken|equivalenttaken) (code ?prereq2))
+    (module (status planned|taken|equivalenttaken) (code ?prereq3))
     =>
     (printout t "Module " ?code " available as 3 prereqs met" crlf)
     (modify ?module (status available)))
@@ -211,13 +215,67 @@
 ; ; Modules Available, with 4 prerequisites met, no limit
 (defrule RANK::mark-available-4-prerequisites-met "mark modules with single prerequisite met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2 ?prereq3 ?prereq4) (status none) (want ~no))
-    (module (status planned|taken) (code ?prereq1))
-    (module (status planned|taken) (code ?prereq2))
-    (module (status planned|taken) (code ?prereq3))
-    (module (status planned|taken) (code ?prereq4))
+    (module (status planned|taken|equivalenttaken) (code ?prereq1))
+    (module (status planned|taken|equivalenttaken) (code ?prereq2))
+    (module (status planned|taken|equivalenttaken) (code ?prereq3))
+    (module (status planned|taken|equivalenttaken) (code ?prereq4))
     =>
     (printout t "Module " ?code " available as 4 prereqs met" crlf)
     (modify ?module (status available)))
+
+
+; ; -----------------
+; ; EQUIVALENCE FACTS
+; ; -----------------
+
+; ; Equivalence facts
+; ; Read as: If the second entry is taken, the first entry is considered taken
+(deffacts RANK::equivalence-facts
+(equivalence "CS1010" "CG1101")
+(equivalence "CS1010" "CS1010E")
+(equivalence "CS1010" "CS1010FC")
+(equivalence "CS1010" "CS1010S")
+(equivalence "CS1010" "CS1101")
+(equivalence "CS1010" "CS1101C")
+(equivalence "CS1010" "CS1101S")
+(equivalence "CS1010" "CS1010J")
+(equivalence "CS1010" "CG1101")
+(equivalence "CS1010" "CS1010X")
+(equivalence "CS1020" "CG1102")
+(equivalence "CS1020" "CG1103")
+(equivalence "CS1020" "CS1020E")
+(equivalence "CS1020" "CS1102")
+(equivalence "CS1020" "CS1102C")
+(equivalence "CS1020" "CS1102S")
+(equivalence "CS1020" "CS2020")
+(equivalence "CS1231" "MA1100")
+(equivalence "CS2010" "CG1102")
+(equivalence "CS2010" "CS2020")
+(equivalence "CS2103" "CS2103T")
+(equivalence "ST2131" "ST2334")
+(equivalence "MA1301" "H2Math")
+(equivalence "PC1221" "H2Physics")
+(equivalence "PC1222" "H2Physics"))
+
+; ; ---------------------
+; ; EQUIVALENCE IN PREREQ
+; ; ---------------------
+; ; Module marked as equivalenttaken when equivalence met
+(defrule RANK::mark-equivalenttaken-equivalence-met-planned
+    ?equivalenttakenmodule <- (module (code ?code1) (status ?status&~planned&~taken&~equivalenttaken))
+    (module (code ?code2) (status planned))
+    (equivalence ?code1 ?code2)
+    =>
+    (modify ?equivalenttakenmodule (status equivalenttaken))
+    (printout t "Module " ?code1 " equivalent taken due to " ?code1 crlf))
+
+(defrule RANK::mark-equivalenttaken-equivalence-met-taken
+    ?equivalenttakenmodule <- (module (code ?code) (status ?status&~planned&~taken&~equivalenttaken))
+    (taken ?taken)
+    (equivalence ?code ?taken)
+    =>
+    (modify ?equivalenttakenmodule (status equivalenttaken))
+    (printout t "Module " ?code " equivalent taken due to " ?taken crlf))
 
 ; ; ----------------
 ; ; PRECLUSION FACTS
