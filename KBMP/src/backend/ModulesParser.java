@@ -246,8 +246,9 @@ public class ModulesParser {
 
         String moduleCode = rawModule.ModuleCode.trim();
         if (moduleCode.equalsIgnoreCase("CP3106")) {
-            return "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and " +
-                    "CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201or CS3281or CS4201 or CS4203";
+            return "(CS2102 or CS2102S or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203) and (CS2105 or " +
+                    "IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203) and (CS3214 or CS3215 or IS3102 or " +
+                    "IS4102 or CS3201 or CS3281 or CS4201 or CS4203)";
         } else if (moduleCode.equalsIgnoreCase("CS4350")) {
             return "CS3247";
         } else if (moduleCode.equalsIgnoreCase("CS4243")) {
