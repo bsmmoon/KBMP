@@ -245,15 +245,18 @@ public class ModulesParser {
         String rawPrerequisite = rawModule.Prerequisite;
 
         String moduleCode = rawModule.ModuleCode.trim();
-        if (moduleCode.contains("CP3106")) {
-            return "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203";
-        } else if (moduleCode.contains("CS4350")) {
+        if (moduleCode.equalsIgnoreCase("CP3106")) {
+            return "(CS2102 and CS2105 and CS3214) or (CS2102 and CS2105 and CS3215) or (CS2102S and CS2105 and " +
+                    "CS3214) or (CS2102S and CS2105 and CS3215) or IS3102 or IS4102 or CS3201or CS3281or CS4201 or CS4203";
+        } else if (moduleCode.equalsIgnoreCase("CS4350")) {
             return "CS3247";
-        } else if (moduleCode.contains("CS4243")) {
+        } else if (moduleCode.equalsIgnoreCase("CS4243")) {
             return "CS1020 and (MA1101R or MA1506) and (MA1102R or MA1505C or MA1505 or MA1521) and (ST1232 " +
                     "or ST2131 or ST2334)";
-        } else if (moduleCode.contains("CS3242")) {
-            return "CS3241, PC1221, MA1521 and MA1101R";
+        } else if (moduleCode.equalsIgnoreCase("CS3242")) {
+            return "CS3241 and PC1221 and MA1521 and MA1101R";
+        } else if (moduleCode.equalsIgnoreCase("CS2220")) {
+            return "CS1020";
         }
 
 //        System.out.println("\nModule: " + rawModule.ModuleCode);
@@ -579,6 +582,8 @@ public class ModulesParser {
 
         String corequisite = rawModule.Corequisite.trim();
 
+//        System.out.println(rawModule.ModuleCode);
+
         if (rawModule.ModuleCode.contains("CS3281")) {
             return "CS3282";
         } else if (rawModule.ModuleCode.contains("CS3282")) {
@@ -610,12 +615,15 @@ public class ModulesParser {
             return preclusions;
         }
 
+//        System.out.print(rawModule.ModuleCode + " ");
+
         if (rawModule.ModuleCode.contains("MA1301X")) {
             return "MA1301 or MA1301FC";
         }
 
         String rawPreclusion = rawModule.Preclusion.trim();
-//        System.out.println("\nOriginal: " + rawPreclusion);
+//        System.out.println("\nModule: " + rawModule.ModuleCode);
+//        System.out.println("Original: " + rawPreclusion);
 
         if (rawPreclusion.contains(".")) {
             String[] sentences = rawPreclusion.split("\\.");
@@ -632,7 +640,7 @@ public class ModulesParser {
             preclusions = parsePreclusionFromSentence(rawPreclusion);
         }
 
-//        System.out.println("PRECLUSIONS: " + preclusions);
+//        System.out.println(preclusions);
         return preclusions;
     }
 
