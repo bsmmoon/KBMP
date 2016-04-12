@@ -130,7 +130,7 @@
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 1))
     =>
     (printout t "Module " ?code " available." crlf)
-    (printout t "Total available: " (count-available) "Level 1 planned/taken: " (count-level-one) crlf)
+    ; ; (printout t "Total available: " (count-available) "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available))
     )
 
@@ -227,9 +227,9 @@
     (module (code ?code1) (status ?status))
     (test(or (eq ?status planned) (eq ?status taken)))
     (preclusion $?preclusionlist)
-    (test (member$ ?code1 $?preclusionlist))
+    (test (member$ ?code1 ?preclusionlist))
     ?precludedmodule <- (module (code ?code2) (status available))
-    (test (member$ ?code2 $?preclusionlist))
+    (test (member$ ?code2 ?preclusionlist))
     =>
     (modify ?precludedmodule (status not-available))
     (printout t "Module " ?code2 " precluded " crlf))
@@ -246,18 +246,25 @@
 ; ; ASSIGN SCORE
 ; ; -------------
 
-(deffunction RANK::calscore (?level ?want)
-    (if (eq ?want yes) 
+(deffunction RANK::calscore (?level ?want ?primaries ?electives ?code)
+    (bind ?score (- 5 ?level))
+    (if (eq ?want yes)
     then 
-        (return (+ (- 5 ?level) 5))
-    else
-        (return (- 5 ?level))
-    ))
+        (bind ?score (+ 10 ?score)))
+    (if (member$ ?code ?primaries)
+    then
+        (bind ?score (+ 8 ?score)))
+    (if (member$ ?code ?electives)
+    then
+        (bind ?score (+ 3 ?score)))
+    return ?score)
 
 (defrule RANK::assign-score
     ?module <- (module (code ?code) (status available) (level ?level) (want ?want&~no) (score -99))
+    (primaryfocus $?primaries)
+    (electivefocus $?electives)
     =>
-    (bind ?score (calscore ?level ?want))
+    (bind ?score (calscore ?level ?want ?primaries ?electives ?code))
     (modify ?module (score ?score))
     (printout t "Module " ?code " score: " ?score crlf))
 
