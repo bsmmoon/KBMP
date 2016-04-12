@@ -32,7 +32,7 @@ public class ClipsWrapper {
 		
 		ListIterator<FactAddressValue> itr = pv.multifieldValue().listIterator();
 		int len = pv.size();
-		String code, name;
+		String code, name, recommend;
 		int weight;
 		while (len-- > 0 && itr.hasNext()) {
 			FactAddressValue address = itr.next();
@@ -40,7 +40,8 @@ public class ClipsWrapper {
 				if (address.getFactSlot("status").toString().equals("available")) {
 					code = address.getFactSlot("code").toString().replace("\"", "");
 					weight = Integer.parseInt(address.getFactSlot("score").toString());
-					modules.add(new AvailableModule(code, weight));
+					recommend = address.getFactSlot("recommend").toString();
+					modules.add(new AvailableModule(code, weight, recommend));
 				}
 			} catch (Exception e) {
 				System.out.println("Something went wrong! " + e.getMessage());
