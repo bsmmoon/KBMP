@@ -259,14 +259,16 @@ public class SelectionStep extends JPanel implements ItemListener {
     }
 
     private void setAvailableFocusAreas(ArrayList<FocusArea> focusAreas) {
+        isAddingOrRemovingItem = true;
         availableFocusAreas = focusAreas;
-        setQuestion("Disabled temporarily");
-        /*
+
         for (FocusArea fa : focusAreas) {
             dropdownList.addItem(fa.getName());
         }
-        */
+        isAddingOrRemovingItem = false;
+        dropdownList.setSelectedItem(null);
     }
+
     public void insertItem(String item) {
         isAddingOrRemovingItem = true;
 
