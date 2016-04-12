@@ -295,11 +295,11 @@
 (preclusion "CS3283" "CS4201" "CS4202" "CS4203" "CS4204")
 (preclusion "CS3284" "CS4201" "CS4202" "CS4203" "CS4204")
 (preclusion "CS4350" "CS4203" "CS4204")
+(preclusion "MA1301" "H2Math" "MA1301X")
 (preclusion "MA1101R" "EG1401" "EG1402" "MA1101" "MA1311" "MA1506" "MA1508")
-(preclusion "MA1301" "H2Math" "MA1101R" "MA1102R" "MA1301FC" "MA1301X" "MA1505" "MA1506" "MA1507" "MA1508" "MA1521" "MA1311" "MA1312" "MA1421")
 (preclusion "MA1521" "MA1102R" "MA1312" "MA1505" "MA1507" "MA2501")
-(preclusion "PC1221" "H2Physics" "PC1141" "PC1142" "PC1431" "PC1431FC" "PC1431X" "PC1221FC" "PC1221X")
-(preclusion "PC1222" "H2Physics" "PC1143" "PC1144" "PC1432")
+(preclusion "PC1221" "H2Physics" "PC1221X")
+(preclusion "PC1222" "H2Physics" "PC1222X")
 (preclusion "ST2334" "ST2131" "MA2216" "CE2407")
 (preclusion "CS3226" "CP3101B")
 (preclusion "CS3242" "CS4342")
@@ -321,7 +321,7 @@
 (defrule RANK::good-math-preclusion "preclusions for students with good math background"
 (goodmath)
 =>
-(assert (preclusion "CS1101S" "CG1101" "CS1010" "CS1010E" "CS1010FC" "CS1010S" "CS1010X" "CS1101" "CS1101C"))
+(assert (preclusion "CS1101S" "CG1101" "CS1010" "CS1010E" "CS1010FC" "CS1010S" "CS1010X" "CS1101" "CS1101C" "CS1010J" "CS1010R"))
 (assert (preclusion "CS2020" "CG1102" "CG1103" "CS1020" "CS1020E" "CS2010" "CS1102" "CS1102C" "CS1102S")))
 
 (defrule RANK::communication-exemption-preclusion "preclusions for students with communication module exempted"
