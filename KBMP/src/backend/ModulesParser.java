@@ -70,7 +70,7 @@ public class ModulesParser {
 
     private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern whitelist) {
         Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
-        ArrayList<String> blacklist = new ArrayList<>(Arrays.asList("IS4010", "CP5102"));
+        ArrayList<String> blacklist = new ArrayList<>(Arrays.asList("IS4010", "CP5102", "CP3106"));
         while (moduleIterator.hasNext()){
             String currentModuleCode = moduleIterator.next().ModuleCode.trim();
 
@@ -245,11 +245,7 @@ public class ModulesParser {
         String rawPrerequisite = rawModule.Prerequisite;
 
         String moduleCode = rawModule.ModuleCode.trim();
-        if (moduleCode.equalsIgnoreCase("CP3106")) {
-            return "(CS2102 or CS2102S or IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203) and (CS2105 or " +
-                    "IS3102 or IS4102 or CS3201 or CS3281 or CS4201 or CS4203) and (CS3214 or CS3215 or IS3102 or " +
-                    "IS4102 or CS3201 or CS3281 or CS4201 or CS4203)";
-        } else if (moduleCode.equalsIgnoreCase("CS4350")) {
+        if (moduleCode.equalsIgnoreCase("CS4350")) {
             return "CS3247";
         } else if (moduleCode.equalsIgnoreCase("CS4243")) {
             return "CS1020 and (MA1101R or MA1506) and (MA1102R or MA1505C or MA1505 or MA1521) and (ST1232 " +
