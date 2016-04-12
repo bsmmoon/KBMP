@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import common.Exam;
 import common.Lesson;
 import common.Module;
-import javafx.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -314,19 +313,19 @@ public class ModulesParser {
 
             ArrayList<Operator> secondLevelOperators = new ArrayList<>();
             ArrayList<ArrayList<String>> allModuleCodes = new ArrayList<>();
-            for (String token : topLevel.getValue()) {
+            for (String token : topLevel.getSecond()) {
                 Pair<Operator, ArrayList<String>> secondLevel = extractSecondLevel(token);
-                if (!secondLevel.getValue().isEmpty()) {
-                    secondLevelOperators.add(secondLevel.getKey());
-                    allModuleCodes.add(secondLevel.getValue());
+                if (!secondLevel.getSecond().isEmpty()) {
+                    secondLevelOperators.add(secondLevel.getFirst());
+                    allModuleCodes.add(secondLevel.getSecond());
                 }
             }
 
-            prerequisites = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
+            prerequisites = generateDependencyStringWithNesting(topLevel.getFirst(), secondLevelOperators, allModuleCodes);
 //            System.out.println("Processed: " + prerequisites + "\n");
         } else {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPrerequisite);
-            prerequisites = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
+            prerequisites = generateDependencyStringWithoutNesting(modules.getFirst(), modules.getSecond());
 //            System.out.println("Processed: " + prerequisites);
         }
         return prerequisites;
@@ -652,18 +651,18 @@ public class ModulesParser {
 
             ArrayList<Operator> secondLevelOperators = new ArrayList<>();
             ArrayList<ArrayList<String>> allModuleCodes = new ArrayList<>();
-            for (String token : topLevel.getValue()) {
+            for (String token : topLevel.getSecond()) {
                 Pair<Operator, ArrayList<String>> secondLevel = extractSecondLevel(token);
-                if (!secondLevel.getValue().isEmpty()) {
-                    secondLevelOperators.add(secondLevel.getKey());
-                    allModuleCodes.add(secondLevel.getValue());
+                if (!secondLevel.getSecond().isEmpty()) {
+                    secondLevelOperators.add(secondLevel.getFirst());
+                    allModuleCodes.add(secondLevel.getSecond());
                 }
             }
 
-            preclusions = generateDependencyStringWithNesting(topLevel.getKey(), secondLevelOperators, allModuleCodes);
+            preclusions = generateDependencyStringWithNesting(topLevel.getFirst(), secondLevelOperators, allModuleCodes);
         } else {
             Pair<Operator, ArrayList<String>> modules = extractSecondLevel(rawPreclusion);
-            preclusions = generateDependencyStringWithoutNesting(modules.getKey(), modules.getValue());
+            preclusions = generateDependencyStringWithoutNesting(modules.getFirst(), modules.getSecond());
         }
         return preclusions;
     }
