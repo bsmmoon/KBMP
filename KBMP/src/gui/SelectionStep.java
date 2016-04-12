@@ -6,9 +6,11 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 
 import common.AvailableModule;
 import common.FocusArea;
@@ -18,6 +20,7 @@ import common.Module;
 public class SelectionStep extends JPanel implements ItemListener {
     private GuiFrame frame;
     private STEP step;
+    private ArrayList<Module> preplanModules;
     private ArrayList<AvailableModule> availableModules;
     private ArrayList<FocusArea> availableFocusAreas;
     private JLabel question;
@@ -106,18 +109,18 @@ public class SelectionStep extends JPanel implements ItemListener {
                 break;
             case MOD_TAKEN:
                 setQuestion("Please select modules that you have already taken.");
-                setAllModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getPreplanModules());
                 textField.setVisible(false);
                 dropdownList.setVisible(true);
                 selectedScroller.setVisible(true);
                 break;
             case MOD_WANT:
                 setQuestion("Please select modules that you want to take.");
-                setAllModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getPreplanModules());
                 break;
             case MOD_DONT_WANT:
                 setQuestion("Please select modules that you don't want to take.");
-                setAllModules(frame.getModel().getModules());
+                setAllModules(frame.getModel().getPreplanModules());
                 break;
             case FOCUS_AREA:
                 setQuestion("Please select your focus area.");
@@ -127,6 +130,7 @@ public class SelectionStep extends JPanel implements ItemListener {
                 if (!frame.getModel().isDone()) {
                     setQuestion("<html>Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
                     setAvailableModules(frame.getModel().getAvailableModules());
+                    setRecommendation(frame.getModel().getRecommendedModules());
                 } else {
                     question.setVisible(false);
                     dropdownList.setVisible(false);
@@ -145,6 +149,12 @@ public class SelectionStep extends JPanel implements ItemListener {
         revalidate();
     }
 
+    private void setRecommendation(ArrayList<AvailableModule> modules) {
+        for (AvailableModule module : modules) {
+            selected.addItem(module.getModule());
+            dropdownList.removeItem(module.getModule().getCode() + " " + module.getModule().getName() + " (" + module.getScore() + ")");
+        }
+    }
 
     private boolean submit(final GuiFrame frame) {
         boolean isSuccessful = true;
@@ -228,29 +238,57 @@ public class SelectionStep extends JPanel implements ItemListener {
         this.question.setForeground(Color.BLACK);
     }
 
-    private void setAllModules(ArrayList<Module> modules) {
-        for (Module module : modules) {
-            insertItem(module.getCode() + " " + module.getName());
+    private void setAllModules(ArrayList<Module> preplanModules) {
+        isAddingOrRemovingItem = true;
+        this.preplanModules = preplanModules;
+        for (Module module : preplanModules) {
+            dropdownList.addItem(module.getCode() + " " + module.getName());
         }
+        isAddingOrRemovingItem = false;
+        dropdownList.setSelectedItem(null);
     }
 
     private void setAvailableModules(ArrayList<AvailableModule> availableModules) {
+        isAddingOrRemovingItem = true;
         this.availableModules = availableModules;
         for (AvailableModule availableModule : availableModules) {
-            insertItem(availableModule.getModule().getCode() + " " + availableModule.getModule().getName() + " (" + availableModule.getScore() + ")");
+            dropdownList.addItem(availableModule.getModule().getCode() + " " + availableModule.getModule().getName() + " (" + availableModule.getScore() + ")");
         }
+        isAddingOrRemovingItem = false;
+        dropdownList.setSelectedItem(null);
     }
 
     private void setAvailableFocusAreas(ArrayList<FocusArea> focusAreas) {
+        isAddingOrRemovingItem = true;
         availableFocusAreas = focusAreas;
+
         for (FocusArea fa : focusAreas) {
-            insertItem(fa.getName());
+            dropdownList.addItem(fa.getName());
         }
+        isAddingOrRemovingItem = false;
+        dropdownList.setSelectedItem(null);
     }
+
     public void insertItem(String item) {
         isAddingOrRemovingItem = true;
 
-        dropdownList.addItem(item);
+        if (step == STEP.PLANNING) {
+            for (int i=0; i<availableModules.size(); i++) {
+                AvailableModule module = availableModules.get(i);
+                if (module.getCode().compareTo(item) == 0) {
+                    dropdownList.insertItemAt(module.getModule().getCode() + " " + module.getModule().getName() + " (" + module.getScore() + ")",i);
+                    break;
+                }
+            }
+        } else {
+            for (int i=0; i<preplanModules.size(); i++) {
+                Module module = preplanModules.get(i);
+                if (module.getCode().compareTo(item) == 0) {
+                    dropdownList.insertItemAt(module.getCode() + " " + module.getName(), i);
+                    break;
+                }
+            }
+        }
 
         dropdownList.setSelectedItem(null);
         dropdownList.revalidate();
@@ -275,15 +313,29 @@ public class SelectionStep extends JPanel implements ItemListener {
                     }
                 }
             }
-            Module module;
-            for (AvailableModule availableModule : availableModules) {
-                module = availableModule.getModule();
-                String moduleCode = event.getItem().toString().split(" ")[0];
-                if (module.getCode().compareTo(moduleCode) == 0) {
-                    selected.addItem(module);
-                    break;
+
+            if (step == STEP.MOD_TAKEN || step == STEP.MOD_WANT || step == STEP.MOD_DONT_WANT) {
+                for (Module module : preplanModules) {
+                    String moduleCode = event.getItem().toString().split(" ")[0];
+                    if (module.getCode().compareTo(moduleCode) == 0) {
+                        selected.addItem(module);
+                        break;
+                    }
                 }
             }
+
+            if (step == STEP.PLANNING) {
+                Module module;
+                for (AvailableModule availableModule : availableModules) {
+                    module = availableModule.getModule();
+                    String moduleCode = event.getItem().toString().split(" ")[0];
+                    if (module.getCode().compareTo(moduleCode) == 0) {
+                        selected.addItem(module);
+                        break;
+                    }
+                }
+            }
+
             isAddingOrRemovingItem = true;
             dropdownList.removeItem(event.getItem());
             dropdownList.setSelectedItem(null);

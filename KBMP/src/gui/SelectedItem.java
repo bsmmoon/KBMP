@@ -27,7 +27,7 @@ public class SelectedItem extends JPanel {
 	private JButton remove;
 	
 	private String[] semesters = {"optional","2016/2017, Semester 1", "2016/2017, Semester 2"};
-	
+
 	public SelectedItem(final SelectedItemsPanel panel, Module module, boolean hasDate) {
 		isModule = true;
 		this.module = module;
@@ -57,9 +57,6 @@ public class SelectedItem extends JPanel {
 		remove = new JButton(new AbstractAction("x"){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (isModule) {
-					label.setText(module.getCode() + " " + module.getName());
-				}
 				item.setVisible(false);
 				panel.removeItem(item);
 				validate();
@@ -101,6 +98,10 @@ public class SelectedItem extends JPanel {
 	
 	@Override
 	public String toString() {
-		return label.getText();
+		if (isModule) {
+			return module.getCode();
+		} else {
+			return focusArea.getName();
+		}
 	}
 }

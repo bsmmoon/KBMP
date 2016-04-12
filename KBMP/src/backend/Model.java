@@ -14,6 +14,7 @@ public class Model {
 	private ClipsWrapper clips;
 	private ArrayList<FocusArea> focusAreas;
 	private ArrayList<FocusArea> selectedFocusAreas;
+	private ArrayList<Module> preplanModules;
 	private ArrayList<Module> modules;
 	private ArrayList<AvailableModule> availableModules;
 	private ModulePlan plan;
@@ -35,6 +36,7 @@ public class Model {
 	public ModulePlan getModulePlan() { return plan; }
 	public ArrayList<AvailableModule> getRecommendedModules() { return new ArrayList<>(availableModules.subList(0, 5)); }
 	public ArrayList<AvailableModule> getAvailableModules() { return availableModules; }
+	public ArrayList<Module> getPreplanModules() { return preplanModules; }
 	public ArrayList<Module> getModules() { return modules; }
 	public int getSemester() { return semester; }
 	public boolean isDone() {
@@ -43,16 +45,39 @@ public class Model {
 
 	public void setModules(ArrayList<Module> modules) {
 		this.modules = modules;
+		this.preplanModules = modules;
 		this.modules.sort((a,b) -> a.getCode().compareTo(b.getCode()));
 		addPlaceHolderModules();
-		pruneNonFocusHighLevelModules();
 	}
 
-	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) { this.focusAreas = focusAreas; }
+	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) {
+		this.focusAreas = focusAreas;
+
+		ArrayList<String> modulesInFocusAreas = new ArrayList<>();
+		for (FocusArea focus : focusAreas) {
+			for (String primary : focus.getPrimaries()) modulesInFocusAreas.add(primary);
+			for (String elective : focus.getElectives()) modulesInFocusAreas.add(elective);
+			for (String elective : focus.getUnrestrictedElectives()) modulesInFocusAreas.add(elective);
+		}
+		clips.saveModulesInFocusAreas(modulesInFocusAreas);
+	}
 
 	public void setSelectedFocusAreas(ArrayList<FocusArea> selectedFocusAreas) {
 		this.selectedFocusAreas = selectedFocusAreas;
 		selectedFocusAreas.forEach((selectedFocusArea) -> execute("(assert-focus-on \"" + selectedFocusArea.getName() + "\")"));
+
+		String primaryfocus = "(assert-primaryfocus";
+		String electivefocus = "(assert-electivefocus";
+		for (FocusArea focus : selectedFocusAreas) {
+			for (String primary : focus.getPrimaries()) primaryfocus += " \"" + primary + "\"";
+			for (String elective : focus.getElectives()) electivefocus += " \"" + elective + "\"";
+			for (String elective : focus.getUnrestrictedElectives()) electivefocus += " \"" + elective + "\"";
+		}
+		primaryfocus += ")";
+		electivefocus += ")";
+
+		clips.execute(primaryfocus);
+		clips.execute(electivefocus);
 	}
 
 	public void setNumberOfSemesterLeft(int numberOfSemesterLeft) {
@@ -80,7 +105,6 @@ public class Model {
 	public void assertDontWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-dontwant \"" + module.getCode() + "\")")); }
 
 	public void selectModules(ArrayList<Module> modules) {
-
 		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
 		updatePlan(modules);
 		incrementSemester();
@@ -132,12 +156,6 @@ public class Model {
 			this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
 			this.modules.add(new Module.Builder().setCode("GEM0123").setName("General Education Module " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
 			this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
-		}
-	}
-
-	private void pruneNonFocusHighLevelModules() {
-		for (Module module : modules) {
-
 		}
 	}
 }
