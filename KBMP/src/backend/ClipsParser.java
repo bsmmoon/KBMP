@@ -28,6 +28,7 @@ public class ClipsParser {
 				break;
 			}
 		}
+		out += "(semester " + module.getSemesters() + ")";
 
 		ArrayList<String> prereqCombinations = parsePrereq(module.getPrerequisites());
 		if (prereqCombinations.size() > 0) {
