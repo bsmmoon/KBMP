@@ -189,6 +189,7 @@
     (declare (salience 5))
     ?module <- (module (code ?code) (prerequisites ?prereq1) (status none) (want ~no))
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
+    (not (exists (module (status available) (code ?code))))
     =>
     (printout t "Module " ?code " available as single prereq met" crlf)
     (modify ?module (status available)))
@@ -198,6 +199,7 @@
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2) (status none) (want ~no))
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
+    (not (exists (module (status available) (code ?code))))
     =>
     (printout t "Module " ?code " available as 2 prereqs met" crlf)
     (modify ?module (status available)))
@@ -208,6 +210,7 @@
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
     (module (status planned|taken|equivalenttaken) (code ?prereq3))
+    (not (exists (module (status available) (code ?code))))
     =>
     (printout t "Module " ?code " available as 3 prereqs met" crlf)
     (modify ?module (status available)))
@@ -219,6 +222,7 @@
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
     (module (status planned|taken|equivalenttaken) (code ?prereq3))
     (module (status planned|taken|equivalenttaken) (code ?prereq4))
+    (not (exists (module (status available) (code ?code))))
     =>
     (printout t "Module " ?code " available as 4 prereqs met" crlf)
     (modify ?module (status available)))
