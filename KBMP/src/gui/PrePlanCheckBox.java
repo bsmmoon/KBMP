@@ -11,13 +11,19 @@ import java.util.ArrayList;
  */
 public class PrePlanCheckBox extends JPanel {
     private PreRequisitePanel panel;
-
+    private INFO infoType;
     private JLabel text;
     private JCheckBox checkBox;
     private JComboBox<String> dropdownList;
 
-    public PrePlanCheckBox(final PreRequisitePanel panel, String text, ArrayList<String> semesters) {
+    enum INFO {
+        H2_MATHS,H2_PHYSICS,SIP,ATAP,NOC_SEM,NOC_YEAR
+    }
+
+    public PrePlanCheckBox(final PreRequisitePanel panel, INFO infoType, String text, ArrayList<String> semesters) {
         this.panel = panel;
+        this.infoType = infoType;
+
         setBackground(Color.WHITE);
 
         setAlignmentX(LEFT_ALIGNMENT);
@@ -59,5 +65,9 @@ public class PrePlanCheckBox extends JPanel {
 
     public String getSemesterSelected() {
         return dropdownList.getSelectedItem().toString();
+    }
+
+    public INFO getInfoType() {
+        return infoType;
     }
 }
