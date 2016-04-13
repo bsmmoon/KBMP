@@ -29,9 +29,8 @@ public class Main {
 		// H2 subjects
 		logic.assertH2Maths();
 		logic.assertH2Physics();
+		logic.execute("(assert (softwareprojectnormal))");
 		logic.iterate();
-
-//		logic.execute("(facts)");
 
 //		logic.iterate();
 //

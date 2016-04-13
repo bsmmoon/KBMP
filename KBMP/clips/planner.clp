@@ -315,6 +315,8 @@
 (preclusion "PC1222X" "PC1222" "PC1143" "PC1144" "PC1432" "PC1432X"))
 
 ; ; Situational preclusions as rules to allow user preference
+
+; ; Math background
 (defrule RANK::normal-math-preclusion "preclusions for students with normal math background"
 (normalmath)
 =>
@@ -328,6 +330,7 @@
 (assert (preclusion "CS1101S" "CG1101" "CS1010" "CS1010E" "CS1010FC" "CS1010S" "CS1010X" "CS1101" "CS1101C" "CS1010J" "CS1010R"))
 (assert (preclusion "CS2020" "CG1102" "CG1103" "CS1020" "CS1020E" "CS2010" "CS1102" "CS1102C" "CS1102S")))
 
+; ; Communication module exemption
 (defrule RANK::communication-exemption-preclusion "preclusions for students with communication module exempted"
 (commexempted)
 =>
@@ -337,6 +340,27 @@
 (commnotexempted)
 =>
 (assert (preclusion "CS2103T" "CS2103")))
+
+; ; Software project preference
+(defrule RANK::software-normal-preclusion "preclusions for students with normal software project"
+(softwareprojectnormal)
+=>
+(assert (preclusion "CS3201" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3283" "CS3284")))
+
+(defrule RANK::software-thematic-preclusion "preclusions for students with thematic software project"
+(softwareprojectthematic)
+=>
+(assert (preclusion "CS3281" "CS3201" "CS3202" "CS3283" "CS3284")))
+
+(defrule RANK::software-media-preclusion "preclusions for students with media software project"
+(softwareprojectmedia)
+=>
+(assert (preclusion "CS3283" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")))
+
+(defrule RANK::software-modern-preclusion "preclusions for students with modern software project"
+(softwareprojectmodern)
+=>
+(assert (preclusion "CS3216" "CS3283" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")))
 
 ; ; -------------------------
 ; ; PRECLUSION RECOMMENDATION
@@ -353,13 +377,14 @@
     (printout t "Module " ?code " recommended based on preclusion list" crlf))
 
 ; ; Set module recommend field to no if it is not the default choice for a preclusion list
+; ; Also reduce score to negative to prevent user from seeing them on top
 (defrule RANK::set-recommendation-no
     ?module <- (module (code ?code) (recommend NONE) (status available))
     (preclusion $?preclusionlist)
     (test (member$ ?code ?preclusionlist))
     (test (neq ?code (nth$ 1 ?preclusionlist)))
     =>
-    (modify ?module (recommend no))
+    (modify ?module (recommend no) (score -90))
     (printout t "Module " ?code " NOT recommended based on preclusion list" crlf))
 
 
