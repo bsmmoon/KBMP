@@ -17,7 +17,7 @@ import common.FocusArea;
 import common.Module;
 
 @SuppressWarnings("serial")
-public class SelectionStep extends JPanel implements ItemListener {
+public class SelectionStep extends JPanel {
     private GuiFrame frame;
     private STEP step;
     private ArrayList<Module> preplanModules;
@@ -86,10 +86,59 @@ public class SelectionStep extends JPanel implements ItemListener {
         dropdownList = new JComboBox<String>();
         dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
         dropdownList.setMaximumSize(new Dimension(300, 20));
-        dropdownList.addItemListener(this);
+        //dropdownList.addItemListener(this);
         dropdownList.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
         dropdownList.setVisible(false);
+        dropdownList.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (isAddingOrRemovingItem == true) {
+                    return;
+                }
 
+                if (e.getStateChange() == ItemEvent.SELECTED ) {
+                    if (step == STEP.FOCUS_AREA) {
+                        String focusArea = e.getItem().toString();
+                        for (FocusArea item : availableFocusAreas) {
+                            if(item.getName().compareTo(focusArea) == 0) {
+                                selected.addItem(item);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (step == STEP.MOD_TAKEN || step == STEP.MOD_WANT || step == STEP.MOD_DONT_WANT) {
+                        for (Module module : preplanModules) {
+                            String moduleCode = e.getItem().toString().split(" ")[0];
+                            if (module.getCode().compareTo(moduleCode) == 0) {
+                                selected.addItem(module,true);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (step == STEP.PLANNING) {
+                        Module module;
+                        for (AvailableModule availableModule : availableModules) {
+                            module = availableModule.getModule();
+                            String moduleCode = e.getItem().toString().split(" ")[0];
+                            if (module.getCode().compareTo(moduleCode) == 0) {
+                                selected.addItem(module,true);
+                                break;
+                            }
+                        }
+                    }
+
+                    isAddingOrRemovingItem = true;
+                    dropdownList.removeItem(e.getItem());
+                    dropdownList.setSelectedItem(null);
+                    isAddingOrRemovingItem = false;
+                    dropdownList.revalidate();
+                }
+
+                selectedScroller.revalidate();
+            }
+        });
         add(question);
         add(textField);
         add(dropdownList);
@@ -303,7 +352,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 
         isAddingOrRemovingItem = false;
     }
-
+/*
     @Override
     public void itemStateChanged(ItemEvent event) {
         if (isAddingOrRemovingItem == true) {
@@ -351,5 +400,13 @@ public class SelectionStep extends JPanel implements ItemListener {
         }
 
         selectedScroller.revalidate();
+    }
+*/
+    private void addLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setAlignmentX(LEFT_ALIGNMENT);
+        add(label);
+        setPreferredSize(getLayout().preferredLayoutSize(this));
+        validate();
     }
 }
