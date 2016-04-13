@@ -16,7 +16,8 @@ public class ClipsParser {
 		out = "(assert (module " +
 				"(code \"" + module.getCode() +"\")" +
 				"(name \"" + module.getName() +"\")" +
-				"(MC " + module.getCredits() + ")";
+				"(MC " + module.getCredits() + ")" +
+				"(classification " + module.getType() + ")";
 		String code = module.getCode();
 		for (int i = 0; i < code.length(); i++) {
 			int c = code.charAt(i);
