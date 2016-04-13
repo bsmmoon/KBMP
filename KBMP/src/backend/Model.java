@@ -86,13 +86,14 @@ public class Model {
 		primaryfocus += ")";
 		electivefocus += ")";
 
-		clips.execute(primaryfocus);
-		clips.execute(electivefocus);
+		execute(primaryfocus);
+		execute(electivefocus);
 	}
 
 	public void setStartingSemester(int semester) {
 		this.semester = semester;
 		this.plan.setSemesters(totalSemesters, semester);
+		execute("(assert (semester (number 1)))");
 	}
 
 	public void execute(String command) {
@@ -118,6 +119,7 @@ public class Model {
 
 	public void selectModules(ArrayList<Module> modules) {
 		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
+		execute("(increment-semester)");
 		updatePlan(modules);
 		incrementSemester();
 	}

@@ -53,6 +53,9 @@
     (multislot unrestricted-electives (type STRING))
     (slot status (type SYMBOL) (default none)))
 
+(deftemplate semester
+    (slot number (type INTEGER)))
+
 ; ; Sample modules
 ; ; (deffacts sample-modules
 ; ;     (module (code "CS1101S") (name "Programming Methodology") (MC 5) (prerequisites ""))
@@ -93,6 +96,10 @@
 (deffunction count-available ()
     (length$ (find-all-facts ((?f module)) (eq ?f:status available))))
 
+(deffunction increment-semester ()
+    (do-for-fact ((?x semester))
+        (assert (semester (number (+ ?x:number 1))))
+        (retract ?x)))
 
 ; ; MODULES
 (defmodule RANK (import MAIN ?ALL))
