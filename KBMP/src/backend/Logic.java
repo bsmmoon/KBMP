@@ -72,4 +72,22 @@ public class Logic {
 	public void assertH2Maths() { model.assertTaken("H2Math"); }
 
 	public void assertH2Physics() { model.assertTaken("H2Physics"); }
+
+	public void assertSIP() { model.assertSymbolFact("SIP"); }
+
+	public void asertATAP(int semester) { model.assertSymbolFact("ATAP" + semester); }
+
+	public void assertNOC1Sem(int semester) { model.assertSymbolFact("NOCSem" + semester); }
+
+	public void assertNOC1Year(int semester) { model.assertSymbolFact("NOCYear " + semester + (semester + 1)); }
+
+	public void assertCS3201() { model.assertSymbolFact("softwareprojectnormal"); }
+
+	public void assertCS3216() { model.assertSymbolFact("softwareprojectthematic"); }
+
+	public void assertCS3281() { model.assertSymbolFact("softwareprojectmedia"); }
+
+	public void assertCS3283() { model.assertSymbolFact("softwareprojectmodern"); }
+
+
 }
