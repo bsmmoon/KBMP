@@ -67,7 +67,7 @@ public class PreRequisitePanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Please enter a number between 1 and 10.");
             }
 
-            frame.getLogic().setNumberOfSemesterLeft(number);
+            frame.getLogic().setNumberOfSemesterLeft(number); // change this with setStartTime(int year, int semester)
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(frame, numSemesterLeft.getText() + " is not a valid number.");
         }

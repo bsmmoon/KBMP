@@ -18,13 +18,13 @@ public class Model {
 	private ArrayList<Module> modules;
 	private ArrayList<AvailableModule> availableModules;
 	private ModulePlan plan;
-	private int numberOfSemesterLeft;
+	private int totalSemesters;
 	private int semester;
 
 	public Model() {
 		this.clips = new ClipsWrapper();
 		this.plan = new ModulePlan();
-		this.semester = 1;
+		this.totalSemesters = 8;
 		this.focusAreas = new ArrayList<>();
 		this.selectedFocusAreas = new ArrayList<>();
 		this.modules = new ArrayList<>();
@@ -50,7 +50,7 @@ public class Model {
 	public ArrayList<Module> getModules() { return modules; }
 	public int getSemester() { return semester; }
 	public boolean isDone() {
-		return semester > numberOfSemesterLeft;
+		return semester > totalSemesters;
 	}
 
 	public void setModules(ArrayList<Module> modules) {
@@ -90,9 +90,9 @@ public class Model {
 		clips.execute(electivefocus);
 	}
 
-	public void setNumberOfSemesterLeft(int numberOfSemesterLeft) {
-		this.numberOfSemesterLeft = numberOfSemesterLeft;
-		this.plan.setSemesters(numberOfSemesterLeft);
+	public void setStartingSemester(int semester) {
+		this.semester = semester;
+		this.plan.setSemesters(totalSemesters - semester + 1);
 	}
 
 	public void execute(String command) {
