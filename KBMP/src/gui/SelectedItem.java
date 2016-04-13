@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import common.FocusArea;
 import common.Module;
+import common.Semester;
 
 public class SelectedItem extends JPanel {
 	boolean isEditable = true;
@@ -49,6 +50,14 @@ public class SelectedItem extends JPanel {
 
 		init(panel);
 	}
+
+	public SelectedItem(final SelectedItemsPanel panel, Semester semester) {
+		isModule = true;
+		this.isEditable = false;
+		this.label = new JLabel(semester.getSummary());
+		init(panel);
+	}
+
 	public void init(final SelectedItemsPanel panel) {
 		item = this;
 		this.panel = panel;

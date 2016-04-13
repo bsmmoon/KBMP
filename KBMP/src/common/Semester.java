@@ -34,8 +34,9 @@ public class Semester {
     }
 
     public String getSummary() {
-        String out = "";
-        out += "[";
+        String out = "<html>";
+        out += "Summary";
+        out += "<br>Workloads: [";
         Float[] workloads = getWorkloads();
         for (int i = 0; i < workloads.length; i++) {
             out += workloads[i];

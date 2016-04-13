@@ -6,6 +6,7 @@ import java.util.Stack;
 
 import common.FocusArea;
 import common.Module;
+import common.Semester;
 
 import javax.swing.*;
 
@@ -58,6 +59,12 @@ public class SelectedItemsPanel extends JPanel {
 
 		validate();
 	}
+
+	public void addItem(Semester semester) {
+		SelectedItem item = new SelectedItem(this, semester);
+		addItem(item);
+	}
+
 	public void removeItem(SelectedItem item) {
 		selectedItems.remove(item);
 		removedItems.push(item);
