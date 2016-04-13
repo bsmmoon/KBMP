@@ -25,6 +25,15 @@ import java.util.regex.Pattern;
 public class ModulesParser {
     private static String ERROR_MESSAGE_MODULES_NOT_READABLE = "Path to module database is not readable";
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
+    private static String ERROR_MESSAGE_BLACKLIST_NOT_READABLE = "Path to blacklisted modules database is not readable";
+    private static String ERROR_MESSAGE_FOUNDATION_LIST_NOT_READABLE = "Path to foundation modules database is not " +
+            "readable";
+    private static String ERROR_MESSAGE_OTHER_REQUIRED_LIST_NOT_READABLE = "Path to other required modules database " +
+            "is not readable";
+    private static String WHITELIST_FILE_LOCATION = "data/Modules_Whitelist.txt";
+    private static String BLACKLIST_FILE_LOCATION = "data/Modules_Blacklist.txt";
+    private static String FOUNDATION_MODULES_FILE_LOCATION = "data/Foundation_Modules.txt";
+    private static String OTHER_REQUIRED_MODULES_FILE_LOCATION = "data/Other_Required_Modules.txt";
     private enum PatternTypes {ANY_ONE_MODULE_GREEDY, ANY_ONE_MODULE_EXACT, ANY_TWO_MODULES,
         SENTENCE_FRAGMENT_CONTAINING_MODULES}
     private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
@@ -50,6 +59,7 @@ public class ModulesParser {
         ArrayList<NusmodsModule> relevantRawModules = filterByModuleCode(allRawModules, getRelevantPatternsFromWhitelist());
 //        System.out.println(relevantRawModules.size() + " modules selected.");
         Hashtable<String, Module> modules = parseModules(relevantRawModules);
+        modules = applyTypes(modules);
         modules.putAll(existingModules);
 
         // reset instance-specific data.
@@ -57,6 +67,59 @@ public class ModulesParser {
         ModulesParser.currentSemester = null;
 
         return modules;
+    }
+
+    private static Hashtable<String, Module> applyTypes(Hashtable<String, Module> modules) throws IOException {
+        ArrayList<String> foundationModules;
+        ArrayList<String> otherRequiredModules;
+        try {
+            foundationModules = getFoundationModules(Paths.get(ModulesParser.FOUNDATION_MODULES_FILE_LOCATION));
+        } catch (IOException ioe) {
+            throw new IOException(ERROR_MESSAGE_FOUNDATION_LIST_NOT_READABLE);
+        }
+
+        try {
+            otherRequiredModules = getOtherRequiredModules(Paths.get(ModulesParser
+                    .OTHER_REQUIRED_MODULES_FILE_LOCATION));
+        } catch (IOException ioe) {
+            throw new IOException(ERROR_MESSAGE_OTHER_REQUIRED_LIST_NOT_READABLE);
+        }
+
+        for (String foundationModule : foundationModules) {
+            Module module = modules.get(foundationModule);
+            if (module == null) {
+                continue;
+            }
+            module.setType(Module.Type.FOUNDATION);
+        }
+
+        for (String otherRequiredModule : otherRequiredModules) {
+            Module module = modules.get(otherRequiredModule);
+            if (module == null) {
+                continue;
+            }
+            module.setType(Module.Type.OTHER_REQUIRED);
+        }
+
+        for (Module module : modules.values()){
+            if (module.getType() == null) {
+                if (module.getCode().startsWith("CS")) {
+                    module.setType(Module.Type.BREADTH_AND_DEPTH);
+                } else {
+                    module.setType(Module.Type.OTHER);
+                }
+            }
+        }
+
+        return modules;
+    }
+
+    private static ArrayList<String> getFoundationModules(Path pathToFile) throws IOException {
+        return new ArrayList<>(Files.readAllLines(pathToFile));
+    }
+
+    private static ArrayList<String> getOtherRequiredModules(Path pathToFile) throws IOException {
+        return new ArrayList<>(Files.readAllLines(pathToFile));
     }
 
     private static ArrayList<NusmodsModule> getRawModules(Path pathToFile) throws IOException {
@@ -68,9 +131,19 @@ public class ModulesParser {
         return rawModules;
     }
 
-    private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern whitelist) {
+    private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern
+            whitelist) throws IOException {
         Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
-        ArrayList<String> blacklist = new ArrayList<>(Arrays.asList("IS4010", "CP5102", "CP3106"));
+
+        ArrayList<String> blacklist;
+        try {
+            Path pathToBlacklist = Paths.get(ModulesParser.BLACKLIST_FILE_LOCATION);
+            blacklist = new ArrayList<>(Files
+                    .readAllLines(pathToBlacklist));
+        } catch (IOException ioe) {
+            throw new IOException(ModulesParser.ERROR_MESSAGE_BLACKLIST_NOT_READABLE);
+        }
+
         while (moduleIterator.hasNext()){
             String currentModuleCode = moduleIterator.next().ModuleCode.trim();
 
@@ -96,7 +169,7 @@ public class ModulesParser {
     }
 
     private static Pattern getRelevantPatternsFromWhitelist() throws IOException {
-        Path pathToWhitelistFile = Paths.get("data/Modules_Whitelist.txt");
+        Path pathToWhitelistFile = Paths.get(ModulesParser.WHITELIST_FILE_LOCATION);
         if (!Files.isReadable(pathToWhitelistFile)) throw new IOException(ERROR_MESSAGE_WHITELIST_NOT_READABLE);
 
         ArrayList<String> patterns = new ArrayList<>();

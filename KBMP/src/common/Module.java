@@ -12,6 +12,7 @@ import java.util.Hashtable;
 public class Module implements Serializable {
 	public enum WorkloadTypes {LECTURE, TUTORIAL, LABORATORY, CONTINUOUS_ASSESSMENT, PREPARATORY_WORK}
 	public enum Semester {ONE, TWO, BOTH}
+	public enum Type {FOUNDATION, BREADTH_AND_DEPTH, OTHER_REQUIRED, OTHER}
 
 	private String code;
 	private String name;
@@ -27,6 +28,7 @@ public class Module implements Serializable {
 	private ArrayList<String> types;
 	private Semester semesters;
 	private boolean taken = false;
+	private Type type;
 
 	public static class Builder {
 		private String code;
@@ -100,11 +102,6 @@ public class Module implements Serializable {
 			this.exam = exam;
 			return this;
 		}
-
-		public Builder setTypes(ArrayList<String> types) {
-			this.types = types;
-			return this;
-		}
 	}
 
 	public static Builder builder(){
@@ -123,7 +120,6 @@ public class Module implements Serializable {
 		this.preclusions = builder.preclusions;
 		this.timetable = builder.timetable;
 		this.exam = builder.exam;
-		this.types = builder.types;
 	}
 
 	public Module(String code, String name){
@@ -197,5 +193,13 @@ public class Module implements Serializable {
 
 	public boolean isTaken() {
 		return taken;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public Type getType() {
+		return type;
 	}
 }

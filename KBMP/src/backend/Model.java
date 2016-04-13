@@ -110,6 +110,8 @@ public class Model {
 
 	public void assertTaken(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-taken \"" + module.getCode() + "\")")); }
 
+	public void assertTaken(String module) { execute("(assert-taken \"" + module + "\")"); }
+
 	public void assertWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-want \"" + module.getCode() + "\")")); }
 
 	public void assertDontWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-dontwant \"" + module.getCode() + "\")")); }
@@ -119,6 +121,8 @@ public class Model {
 		updatePlan(modules);
 		incrementSemester();
 	}
+
+	public void assertSymbolFact(String fact) { execute("(assert (" + fact + "))"); }
 
 	public void iterate() {
 		execute("(focus SELECT RANK)");
