@@ -30,6 +30,7 @@ public class Main {
 		logic.assertH2Maths();
 		logic.assertH2Physics();
 		logic.execute("(assert (softwareprojectnormal))");
+//		logic.execute("(assert (softwareprojectthematic))");
 		logic.iterate();
 
 //		logic.iterate();

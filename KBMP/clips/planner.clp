@@ -293,11 +293,7 @@
 (preclusion "CS2100R" "CS1104")
 (preclusion "CS2108" "CS3246")
 (preclusion "CS2309" "CS2305S")
-(preclusion "CS3201" "CS3215")
-(preclusion "CS3202" "CS3215")
 (preclusion "CS3219" "CS3213")
-(preclusion "CS3283" "CS4201" "CS4202" "CS4203" "CS4204")
-(preclusion "CS3284" "CS4201" "CS4202" "CS4203" "CS4204")
 (preclusion "CS4350" "CS4203" "CS4204")
 (preclusion "MA1301" "H2Math" "MA1301X")
 (preclusion "MA1101R" "EG1401" "EG1402" "MA1101" "MA1311" "MA1506" "MA1508")
@@ -342,6 +338,11 @@
 (assert (preclusion "CS2103T" "CS2103")))
 
 ; ; Software project preference
+
+; ; All compulsory project modules
+(deffacts RANK::all-projects
+(allprojects "CS2103T" "CS2101" "CS3201" "CS3202" "CS3281" "CS3282" "CS3283" "CS3284"))
+
 (defrule RANK::software-normal-preclusion "preclusions for students with normal software project"
 (softwareprojectnormal)
 =>
@@ -374,7 +375,7 @@
     (test (eq ?code (nth$ 1 ?preclusionlist)))
     =>
     (modify ?module (recommend yes))
-    (printout t "Module " ?code " recommended based on preclusion list" crlf))
+    (printout t "Module " ?code " recommended based on preclusion list " ?preclusionlist crlf))
 
 ; ; Set module recommend field to no if it is not the default choice for a preclusion list
 ; ; Also reduce score to negative to prevent user from seeing them on top
@@ -425,7 +426,7 @@
 ; ; ASSIGN SCORE
 ; ; -------------
 
-(deffunction RANK::calscore (?level ?want ?primaries ?electives ?code ?prefix ?MC ?classification)
+(deffunction RANK::calscore (?level ?want ?primaries ?electives ?code ?prefix ?MC ?classification ?allprojects)
     ; ; Default score inverse to module level
     (bind ?score (- 5 ?level))
     ; ; Add score for wanted modules
@@ -454,6 +455,11 @@
     then
         (bind ?score (+ 5 ?score)))
 
+    ; ; Add score for project modules, make sure they have highest priority
+    (if (member$ ?code ?allprojects)
+    then
+        (bind ?score (+ 50 ?score)))
+
     ; ; Reduce score for CS research-based 1MC modules
     (if (and (eq ?prefix "CS") (eq ?MC 1))
     then
@@ -464,8 +470,9 @@
     ?module <- (module (code ?code) (status available) (classification $?classification) (level ?level) (prefix ?prefix) (MC ?MC) (want ?want&~no) (score -99))
     (primaryfocus $?primaries)
     (electivefocus $?electives)
+    (allprojects $?allprojects)
     =>
-    (bind ?score (calscore ?level ?want ?primaries ?electives ?code ?prefix ?MC ?classification))
+    (bind ?score (calscore ?level ?want ?primaries ?electives ?code ?prefix ?MC ?classification ?allprojects))
     (modify ?module (score ?score))
     (printout t "Module " ?code " score: " ?score crlf))
 
