@@ -55,7 +55,7 @@
     (multislot unrestricted-electives (type STRING))
     (slot status (type SYMBOL) (default none)))
 
-(deftemplate semester
+(deftemplate current-semester
     (slot number (type INTEGER)))
 
 ; ; Sample modules
@@ -99,8 +99,8 @@
     (length$ (find-all-facts ((?f module)) (eq ?f:status available))))
 
 (deffunction increment-semester ()
-    (do-for-fact ((?x semester))
-        (assert (semester (number (+ ?x:number 1))))
+    (do-for-fact ((?x current-semester))
+        (assert (current-semester (number (+ ?x:number 1))))
         (retract ?x)))
 
 ; ; MODULES
