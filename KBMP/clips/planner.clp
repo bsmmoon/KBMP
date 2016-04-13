@@ -400,7 +400,7 @@
 ; ; ASSIGN SCORE
 ; ; -------------
 
-(deffunction RANK::calscore (?level ?want ?primaries ?electives ?code ?prefix ?MC)
+(deffunction RANK::calscore (?level ?want ?primaries ?electives ?code ?prefix ?MC ?classification)
     ; ; Default score inverse to module level
     (bind ?score (- 5 ?level))
     ; ; Add score for wanted modules
@@ -415,6 +415,20 @@
     (if (member$ ?code ?electives)
     then
         (bind ?score (+ 3 ?score)))
+
+    ; ; Add score for classification-FOUNDATION modules
+    (if (member$ FOUNDATION ?classification)
+    then
+        (bind ?score (+ 5 ?score)))
+    ; ; Add score for classification-BREADTH_AND_DEPTH modules
+    (if (member$ BREADTH_AND_DEPTH ?classification)
+    then
+        (bind ?score (+ 3 ?score)))
+    ; ; Add score for classification-OTHER_REQUIRED modules
+    (if (member$ OTHER_REQUIRED ?classification)
+    then
+        (bind ?score (+ 5 ?score)))
+
     ; ; Reduce score for CS research-based 1MC modules
     (if (and (eq ?prefix "CS") (eq ?MC 1))
     then
@@ -422,11 +436,11 @@
     return ?score)
 
 (defrule RANK::assign-score
-    ?module <- (module (code ?code) (status available) (level ?level) (prefix ?prefix) (MC ?MC) (want ?want&~no) (score -99))
+    ?module <- (module (code ?code) (status available) (classification $?classification) (level ?level) (prefix ?prefix) (MC ?MC) (want ?want&~no) (score -99))
     (primaryfocus $?primaries)
     (electivefocus $?electives)
     =>
-    (bind ?score (calscore ?level ?want ?primaries ?electives ?code ?prefix ?MC))
+    (bind ?score (calscore ?level ?want ?primaries ?electives ?code ?prefix ?MC ?classification))
     (modify ?module (score ?score))
     (printout t "Module " ?code " score: " ?score crlf))
 
