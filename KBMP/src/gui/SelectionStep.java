@@ -118,7 +118,7 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 if (!frame.getModel().isDone()) {
-                    setQuestion("<html>Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
+                    setQuestion("<html>Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
                     setAvailableModules(frame.getModel().getAvailableModules());
                     setRecommendation(frame.getModel().getRecommendedModules());
                 } else {
@@ -184,7 +184,7 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 ArrayList<Module> modules = getSelectedModules();
-                planned.addLabel("Semester " + frame.getModel().getSemester());
+                planned.addLabel("Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester());
                 for (Module module : modules) {
                     planned.addItem(module,false);
                 }

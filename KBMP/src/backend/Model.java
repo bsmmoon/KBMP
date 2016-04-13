@@ -48,7 +48,8 @@ public class Model {
 	public ArrayList<AvailableModule> getAvailableModules() { return availableModules; }
 	public ArrayList<Module> getPreplanModules() { return preplanModules; }
 	public ArrayList<Module> getModules() { return modules; }
-	public int getSemester() { return semester; }
+	public int getYear() { return semester % 2 == 0 ? Math.floorDiv(semester, 2) : Math.floorDiv(semester, 2) + 1; }
+	public int getSemester() { return semester % 2 == 0 ? 2 : 1; }
 	public boolean isDone() {
 		return semester > totalSemesters;
 	}
