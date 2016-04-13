@@ -379,6 +379,10 @@ public class ModulesParser {
             return "CS3241 and PC1221 and MA1521 and MA1101R";
         } else if (moduleCode.equalsIgnoreCase("CS2220")) {
             return "CS1020";
+        } else if (moduleCode.equalsIgnoreCase("CS3282")) {
+            return "CS2103";
+        } else if (moduleCode.equalsIgnoreCase("CS2101") || moduleCode.equalsIgnoreCase("CS2103T")) {
+            return "CS1020";
         }
 
 //        System.out.println("\nModule: " + rawModule.ModuleCode);
