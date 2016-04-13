@@ -44,7 +44,9 @@
     (slot recommend
         (type SYMBOL)
         (allowed-symbols yes no NONE)
-        (default NONE)))
+        (default NONE))
+    (slot semester
+        (type SYMBOL)))
 
 (deftemplate focus
     (slot name (type STRING))
