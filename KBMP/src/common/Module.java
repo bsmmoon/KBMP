@@ -12,7 +12,9 @@ import java.util.Hashtable;
 public class Module implements Serializable {
 	public enum WorkloadTypes {LECTURE, TUTORIAL, LABORATORY, CONTINUOUS_ASSESSMENT, PREPARATORY_WORK}
 	public enum Semester {ONE, TWO, BOTH}
-	public enum Type {FOUNDATION, BREADTH_AND_DEPTH, OTHER_REQUIRED, OTHER}
+	public enum Type {FOUNDATION, BREADTH_AND_DEPTH, THEMATIC_SYSTEMS_PROJECT, SOFTWARE_ENG_PROJECT,
+		SOFTWARE_ENG_1617_PROJECT, MEDIA_TECH_PROJECT, THREE_MONTHS_INTERNSHIP, SIX_MONTHS_INTERNSHIP,
+		FINAL_YEAR_PROJECT, OTHER_REQUIRED, OTHER}
 
 	private String code;
 	private String name;
@@ -29,6 +31,7 @@ public class Module implements Serializable {
 	private Semester semesters;
 	private boolean taken = false;
 	private Type type;
+	private String pairedWith = "";
 
 	public static class Builder {
 		private String code;
@@ -201,5 +204,13 @@ public class Module implements Serializable {
 
 	public Type getType() {
 		return type;
+	}
+
+	public void setPairedWith(String pairedWith) {
+		this.pairedWith = pairedWith;
+	}
+
+	public String getPairedWith() {
+		return pairedWith;
 	}
 }
