@@ -110,7 +110,7 @@ public class ModulesParser {
                     module.setType(Module.Type.SOFTWARE_ENG_PROJECT);
                 } else if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CS328[12]")) {
                     module.setType(Module.Type.THEMATIC_SYSTEMS_PROJECT);
-                } else if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CS32[17]")) {
+                } else if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CS321[67]")) {
                     module.setType(Module.Type.SOFTWARE_ENG_1617_PROJECT);
                 } else if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CS328[34]")) {
                     module.setType(Module.Type.MEDIA_TECH_PROJECT);
