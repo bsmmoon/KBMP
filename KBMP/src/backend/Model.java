@@ -93,7 +93,7 @@ public class Model {
 	public void setStartingSemester(int semester) {
 		this.semester = semester;
 		this.plan.setSemesters(totalSemesters, semester);
-		execute("(assert (semester (number 1)))");
+		execute("(assert (semester (number " + (semester - 1) + ")))");
 	}
 
 	public void execute(String command) {
