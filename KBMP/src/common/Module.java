@@ -44,7 +44,6 @@ public class Module implements Serializable {
 		private String preclusions;
 		private ArrayList<Lesson> timetable;
 		private Exam exam;
-		private ArrayList<String> types;
 
 		public Module build(){
 			return new Module(this);
