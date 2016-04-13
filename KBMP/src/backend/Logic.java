@@ -60,4 +60,16 @@ public class Logic {
 	public void assertFocus(ArrayList<FocusArea> focusAreas) { model.setSelectedFocusAreas(focusAreas); }
 
 	public void selectModules(ArrayList<Module> modules) { model.selectModules(modules); }
+
+	public void assertGoodMath() { model.assertSymbolFact("goodmath"); }
+
+	public void assertNormalMath() { model.assertSymbolFact("normalmath"); }
+
+	public void assertCommunicationException() { model.assertSymbolFact("commnotexcempted"); }
+
+	public void assertCommunicationNotExcepted() { model.assertSymbolFact("commnotexcempted"); }
+
+	public void assertH2Maths() { model.assertTaken("H2Math"); }
+
+	public void assertH2Physics() { model.assertTaken("H2Physics"); }
 }

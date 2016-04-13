@@ -21,12 +21,17 @@ public class Main {
 		
 		// user preference for maths/communication mod
 		// the alternative:
-		logic.execute("(assert (goodmath) (commexempted))");
+//		logic.execute("(assert (goodmath) (commexempted))");
+		logic.assertGoodMath();
+		logic.assertCommunicationException();
+
 //		logic.execute("(assert (normalmath) (commnotexempted))");
 		// H2 subjects
-		logic.execute("(assert-taken \"H2Math\")");
-		logic.execute("(assert-taken \"H2Physics\")");
+		logic.assertH2Maths();
+		logic.assertH2Physics();
 		logic.iterate();
+
+//		logic.execute("(facts)");
 
 //		logic.iterate();
 //
