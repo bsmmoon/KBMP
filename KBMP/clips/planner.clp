@@ -128,6 +128,16 @@
 ; ; STATUS AVAILABLE
 ; ; ----------------
 
+; ; Modules Available, fake modules from other faculties, without prerequisites, level 0, salience 4, no limit
+(defrule RANK::mark-available-no-prerequisites-level-0 "mark modules without prerequisites as available"
+    (declare (salience 4))
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 0))
+    =>
+    (printout t "Module " ?code " available." crlf)
+    ; ; (printout t "Total available: " (count-available) "Level 1 planned/taken: " (count-level-one) crlf)
+    (modify ?module (status available))
+    )
+
 ; ; Modules Available, without prerequisites, level 1, salience 4, no limit
 (defrule RANK::mark-available-no-prerequisites-level-1 "mark modules without prerequisites as available"
     (declare (salience 4))
