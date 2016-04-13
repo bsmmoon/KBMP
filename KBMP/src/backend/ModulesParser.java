@@ -140,7 +140,7 @@ public class ModulesParser {
             module.setPairedWith("CS2103T");
         }
 
-        Module module = modules.get("CS3201");
+        module = modules.get("CS3201");
         if (module != null) {
             module.setPairedWith("CS3202");
         }
