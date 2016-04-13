@@ -13,6 +13,7 @@ import javax.swing.*;
 import common.AvailableModule;
 import common.FocusArea;
 import common.Module;
+import common.Semester;
 
 @SuppressWarnings("serial")
 public class SelectionStep extends JPanel {
@@ -184,11 +185,14 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 ArrayList<Module> modules = getSelectedModules();
-                planned.addLabel("Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester());
+                planned.addLabel("Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "\n");
                 for (Module module : modules) {
                     planned.addItem(module,false);
                 }
                 frame.getLogic().selectModules(modules);
+                Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester() - 1);
+                SemesterSummaryPanel semesterSummary = new SemesterSummaryPanel(semester);
+                
 
 /*
                 String text = planned.getText();

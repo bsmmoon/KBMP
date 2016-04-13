@@ -50,6 +50,7 @@ public class Model {
 	public ArrayList<Module> getModules() { return modules; }
 	public int getYear() { return semester % 2 == 0 ? Math.floorDiv(semester, 2) : Math.floorDiv(semester, 2) + 1; }
 	public int getSemester() { return semester % 2 == 0 ? 2 : 1; }
+	public int getCumulativeSemester() { return semester; }
 	public boolean isDone() {
 		return semester > totalSemesters;
 	}

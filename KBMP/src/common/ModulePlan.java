@@ -36,5 +36,10 @@ public class ModulePlan {
 		return semesters;
 	}
 
+	public Semester getSemester(int semester) {
+		System.out.println("asldkfjlasdkjflkadsfj seme: " + semester + " - " + startingSemester);
+		return semesters.get(semester - startingSemester);
+	}
+
 	public Float[] getWorkloads(int semester) { return semesters.get(semester - startingSemester).getWorkloads(); }
 }
