@@ -27,7 +27,6 @@ public class Module implements Serializable {
 	private String preclusions;
 	private ArrayList<Lesson> timetable;
 	private Exam exam;
-	private ArrayList<String> types;
 	private Semester semesters;
 	private boolean taken = false;
 	private Type type;
@@ -172,10 +171,6 @@ public class Module implements Serializable {
 
 	public ArrayList<Lesson> getTimetable() {
 		return timetable;
-	}
-
-	public ArrayList<String> getTypes() {
-		return types;
 	}
 
 	public String toString() {
