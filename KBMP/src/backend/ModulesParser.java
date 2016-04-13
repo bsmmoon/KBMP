@@ -59,7 +59,9 @@ public class ModulesParser {
         ArrayList<NusmodsModule> relevantRawModules = filterByModuleCode(allRawModules, getRelevantPatternsFromWhitelist());
 //        System.out.println(relevantRawModules.size() + " modules selected.");
         Hashtable<String, Module> modules = parseModules(relevantRawModules);
-        modules = applyTypes(modules);
+        applyTypes(modules);
+        pairModules(modules);
+
         modules.putAll(existingModules);
 
         // reset instance-specific data.
@@ -69,7 +71,7 @@ public class ModulesParser {
         return modules;
     }
 
-    private static Hashtable<String, Module> applyTypes(Hashtable<String, Module> modules) throws IOException {
+    private static void applyTypes(Hashtable<String, Module> modules) throws IOException {
         ArrayList<String> foundationModules;
         ArrayList<String> otherRequiredModules;
         try {
@@ -103,15 +105,36 @@ public class ModulesParser {
 
         for (Module module : modules.values()){
             if (module.getType() == null) {
-                if (module.getCode().startsWith("CS")) {
+                String moduleCode = module.getCode();
+                if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CS320[12]")) {
+                    module.setType(Module.Type.SOFTWARE_ENG_PROJECT);
+                } else if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CS328[12]")) {
+                    module.setType(Module.Type.THEMATIC_SYSTEMS_PROJECT);
+                } else if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CS32[17]")) {
+                    module.setType(Module.Type.SOFTWARE_ENG_1617_PROJECT);
+                } else if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CS328[34]")) {
+                    module.setType(Module.Type.MEDIA_TECH_PROJECT);
+                } else if (moduleCode.matches(CASE_INSENSITIVE_FLAG + "CP320[02]")) {
+                    module.setType(Module.Type.THREE_MONTHS_INTERNSHIP);
+                } else if (moduleCode.equalsIgnoreCase("CP3880")) {
+                    module.setType(Module.Type.SIX_MONTHS_INTERNSHIP);
+                } else if (moduleCode.equalsIgnoreCase("CP4101")) {
+                    module.setType(Module.Type.FINAL_YEAR_PROJECT);
+                } else if (moduleCode.startsWith("CS")) {
                     module.setType(Module.Type.BREADTH_AND_DEPTH);
                 } else {
                     module.setType(Module.Type.OTHER);
                 }
             }
         }
+    }
 
-        return modules;
+    private static void pairModules(Hashtable<String, Module> modules) {
+//        gmodules.get("CS3201").setPairedWith("CS3202");
+//        modules.get("CS3202").setPairedWith("CS3201");
+
+//        modules.get("CS3281").setPairedWith("CS3282");
+//        modules.get("CS3282").setPairedWith("CS3281");
     }
 
     private static ArrayList<String> getFoundationModules(Path pathToFile) throws IOException {
@@ -264,6 +287,7 @@ public class ModulesParser {
 
         Module newModule = moduleBuilder.build();
         newModule.setSemesters(ModulesParser.currentSemester);
+
         return newModule;
     }
 
