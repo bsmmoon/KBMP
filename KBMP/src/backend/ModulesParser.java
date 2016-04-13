@@ -130,11 +130,25 @@ public class ModulesParser {
     }
 
     private static void pairModules(Hashtable<String, Module> modules) {
-//        gmodules.get("CS3201").setPairedWith("CS3202");
-//        modules.get("CS3202").setPairedWith("CS3201");
+        Module module = modules.get("CS3201");
+        if (module != null) {
+            module.setPairedWith("CS3202");
+        }
 
-//        modules.get("CS3281").setPairedWith("CS3282");
-//        modules.get("CS3282").setPairedWith("CS3281");
+        module = modules.get("CS3202");
+        if (module != null) {
+            module.setPairedWith("CS3201");
+        }
+
+        module = modules.get("CS3281");
+        if (module != null) {
+            module.setPairedWith("CS3282");
+        }
+
+        module = modules.get("CS3282");
+        if (module != null) {
+            module.setPairedWith("CS3281");
+        }
     }
 
     private static ArrayList<String> getFoundationModules(Path pathToFile) throws IOException {
