@@ -1,15 +1,15 @@
-preclusion normal:
+preclusion normal normal:
 (preclusion "CS1010" "CG1101" "CS1010E" "CS1010FC" "CS1010S" "CS1101" "CS1101C" "CS1101S" "CS1010J" "CS1010R" "CS1010X")
 (preclusion "CS1020" "CG1102" "CG1103" "CS1020E" "CS1102" "CS1102C" "CS1102S" "CS2020")
 (preclusion "CS2010" "CG1102" "CS1102" "CS1102C" "CS1102S" "CS2020" "CS2010R")
 
 preclusion good math:
 (preclusion "CS1101S" "CG1101" "CS1010" "CS1010E" "CS1010FC" "CS1010S" "CS1010X" "CS1101" "CS1101C")
-(preclusion CS2020 CG1102 CG1103 CS1020 CS1020E CS2010 CS1102 CS1102C CS1102S)
+(preclusion "CS2020" "CG1102" "CG1103" "CS1020" "CS1020E" "CS2010" "CS1102" "CS1102C" "CS1102S")
 
 
 preclusion CS2101 exempted:
-(preclusion "CS2103" "CS2101")
+(preclusion "CS2103" "CS2101" "CS2103T")
 
 preclusion CS2101 not exempted:
 (preclusion "CS2103T" "CS2103")
@@ -21,7 +21,7 @@ standard:
 (preclusion "CS2100" "CS1104")
 (preclusion "CS2100R" "CS1104")
 (preclusion "CS2108" "CS3246")
-(preclusion CS2309 CS2305S)
+(preclusion "CS2309" "CS2305S")
 (preclusion "CS3201" "CS3215")
 (preclusion "CS3202" "CS3215")
 (preclusion "CS3219" "CS3213")
@@ -29,7 +29,8 @@ standard:
 (preclusion "CS3284" "CS4201" "CS4202" "CS4203" "CS4204")
 (preclusion "CS4350" "CS4203" "CS4204")
 (preclusion "MA1101R" "EG1401" "EG1402" "MA1101" "MA1311" "MA1506" "MA1508")
-(preclusion "MA1301" "H2Math" "MA1101R" "MA1102R" "MA1301FC" "MA1301X" "MA1505" "MA1506" "MA1507" "MA1508" "MA1521" "MA1311" "MA1312" "MA1421")
+(preclusion "MA1301" "H2Math")
+(preclusion "MA1101R" "MA1102R" "MA1301FC" "MA1301X" "MA1505" "MA1506" "MA1507" "MA1508" "MA1521" "MA1311" "MA1312" "MA1421")
 (preclusion "MA1521" "MA1102R" "MA1312" "MA1505" "MA1507" "MA2501")
 (preclusion "PC1221" "H2Physics" "PC1141" "PC1142" "PC1431" "PC1431FC" "PC1431X" "PC1221FC" "PC1221X")
 (preclusion "PC1222" "H2Physics" "PC1143" "PC1144" "PC1432")

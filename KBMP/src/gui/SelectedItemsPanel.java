@@ -6,19 +6,20 @@ import java.util.Stack;
 
 import common.FocusArea;
 import common.Module;
-import javax.swing.JPanel;
+
+import javax.swing.*;
 
 public class SelectedItemsPanel extends JPanel {
+	private boolean isEditable;
 	private SelectionStep selectionStep;
-	private boolean hasDate;
 	private ArrayList<SelectedItem> selectedItems;
 	private Stack<SelectedItem> removedItems;
 	
-	public SelectedItemsPanel(final SelectionStep selectionStep, final GuiFrame frame, boolean hasDate) {
+	public SelectedItemsPanel(final SelectionStep selectionStep, final GuiFrame frame) {
 		this.selectionStep = selectionStep;
 		selectedItems = new ArrayList<SelectedItem>();
 		removedItems = new Stack<SelectedItem> ();
-		this.hasDate = hasDate;
+		this.isEditable = isEditable;
 		setLayout(new WrapLayout(WrapLayout.LEFT));
 		//setOpaque(false);
 	}
@@ -27,17 +28,24 @@ public class SelectedItemsPanel extends JPanel {
 		return selectedItems;
 	}
 
-	public void addItem(Module module) {
-		SelectedItem item = new SelectedItem(this,module,hasDate);
+	public void addItem(Module module,boolean isEditable) {
+		SelectedItem item = new SelectedItem(this,module,isEditable);
 		addItem(item);
 	}
 
+	public void addLabel(String text) {
+		JLabel label = new JLabel(text);
+		label.setAlignmentX(LEFT_ALIGNMENT);
+		add(label);
+		setPreferredSize(getLayout().preferredLayoutSize(this));
+		validate();
+	}
 	public void addItem(FocusArea focusArea) {
-		SelectedItem item = new SelectedItem(this,focusArea,hasDate);
+		SelectedItem item = new SelectedItem(this,focusArea);
 		addItem(item);
 	}
 
-	private void addItem(SelectedItem item) {
+	public void addItem(SelectedItem item) {
 		while (!removedItems.isEmpty()) {
 			SelectedItem toBeRemoved = removedItems.pop();
 			remove(toBeRemoved);

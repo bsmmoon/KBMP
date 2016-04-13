@@ -34,7 +34,17 @@ public class Model {
 	public ArrayList<FocusArea> getAllFocusAreas() { return focusAreas; }
 	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
 	public ModulePlan getModulePlan() { return plan; }
-	public ArrayList<AvailableModule> getRecommendedModules() { return new ArrayList<>(availableModules.subList(0, 5)); }
+	public ArrayList<AvailableModule> getRecommendedModules() {
+		ArrayList<AvailableModule> result = new ArrayList<>();
+		int count = 5;
+		for (AvailableModule availableModule : availableModules) {
+			if (availableModule.isNotRecommended()) continue;
+			result.add(availableModule);
+			count--;
+			if (count == 0) break;
+		}
+		return result;
+	}
 	public ArrayList<AvailableModule> getAvailableModules() { return availableModules; }
 	public ArrayList<Module> getPreplanModules() { return preplanModules; }
 	public ArrayList<Module> getModules() { return modules; }
