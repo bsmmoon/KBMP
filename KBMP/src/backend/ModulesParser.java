@@ -246,6 +246,10 @@ public class ModulesParser {
         moduleBuilder.setCode(rawModule.ModuleCode.trim()).setName(rawModule.ModuleTitle.trim()).setCredits(rawModule
                 .ModuleCredit).setDepartment(rawModule.Department.trim());
 
+        if (rawModule.ModuleDescription != null) {
+            moduleBuilder.setDescription(rawModule.ModuleDescription.trim());
+        }
+
         moduleBuilder.setWorkload(parseWorkload(rawModule));
 
         // if no prerequisites/corequisites/preclusions, empty string.
