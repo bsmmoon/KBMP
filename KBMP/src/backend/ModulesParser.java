@@ -130,6 +130,16 @@ public class ModulesParser {
     }
 
     private static void pairModules(Hashtable<String, Module> modules) {
+        Module module = modules.get("CS2103T");
+        if (module != null) {
+            module.setPairedWith("CS2101");
+        }
+
+        module = modules.get("CS2101");
+        if (module != null) {
+            module.setPairedWith("CS2103T");
+        }
+
         Module module = modules.get("CS3201");
         if (module != null) {
             module.setPairedWith("CS3202");
