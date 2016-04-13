@@ -49,9 +49,7 @@ public class Logic {
 	
 	public void execute(String command) { model.execute(command); }
 
-	public void setStartTime(int year, int semester) { model.setStartingSemester(year * 2 + semester); }
-
-	public void setNumberOfSemesterLeft(int semester) {  }
+	public void setStartTime(int year, int semester) { model.setStartingSemester((year - 1) * 2 + semester); }
 
 	public void assertTaken(ArrayList<Module> modules) { model.assertTaken(modules); }
 

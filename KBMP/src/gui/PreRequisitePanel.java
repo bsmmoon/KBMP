@@ -11,7 +11,8 @@ import java.util.Arrays;
  */
 public class PreRequisitePanel extends JPanel {
     private GuiFrame frame;
-    private JTextField numSemesterLeft;
+    private JTextField yearField;
+    private JTextField semesterField;
     private ArrayList<PrePlanCheckBox> checkBoxes;
 
     public PreRequisitePanel(final GuiFrame frame) {
@@ -21,8 +22,9 @@ public class PreRequisitePanel extends JPanel {
         setAlignmentX(Component.LEFT_ALIGNMENT);
         setBackground(Color.WHITE);
 
-        addLabel("Please enter the number of semester left:");
-        numSemesterLeft = addTextField("8");
+        addLabel("Please enter the year and semester you wish to start planning:");
+        yearField = addTextField("1");
+        semesterField = addTextField("1");
 
         checkBoxes = new ArrayList<PrePlanCheckBox>();
 
@@ -62,14 +64,18 @@ public class PreRequisitePanel extends JPanel {
 
     public void submit() {
         try {
-            int number = Integer.parseInt(numSemesterLeft.getText());
-            if (number < 1 || number > 10) {
-                JOptionPane.showMessageDialog(this, "Please enter a number between 1 and 10.");
+            int semester = Integer.parseInt(semesterField.getText());
+            if (semester < 1 || semester > 2) {
+                JOptionPane.showMessageDialog(this, "Please enter 1 or 2.");
+            }
+            int year = Integer.parseInt(yearField.getText());
+            if (year < 1 || year > 4) {
+                JOptionPane.showMessageDialog(this, "Please enter between 1 to 4.");
             }
 
-            frame.getLogic().setNumberOfSemesterLeft(number); // change this with setStartTime(int year, int semester)
+            frame.getLogic().setStartTime(year, semester); // change this with setStartTime(int year, int semester)
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(frame, numSemesterLeft.getText() + " is not a valid number.");
+            JOptionPane.showMessageDialog(frame, " Start time is not valid.");
         }
 
         for (PrePlanCheckBox checkBox : checkBoxes) {
