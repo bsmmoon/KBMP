@@ -17,6 +17,7 @@ import common.FocusArea;
 import common.Module;
 
 public class SelectedItem extends JPanel {
+	boolean isEditable = true;
 	private boolean isModule;
 	private Module module;
 	private FocusArea focusArea;
@@ -28,8 +29,9 @@ public class SelectedItem extends JPanel {
 	
 	private String[] semesters = {"optional","2016/2017, Semester 1", "2016/2017, Semester 2"};
 
-	public SelectedItem(final SelectedItemsPanel panel, Module module, boolean hasDate) {
+	public SelectedItem(final SelectedItemsPanel panel, Module module, boolean isEditable) {
 		isModule = true;
+		this.isEditable = isEditable;
 		this.module = module;
 		String module_info = "<html>" + module.getCode() + " " + module.getName() +
 				"<br>Credit: " + module.getCredits() +
@@ -40,7 +42,7 @@ public class SelectedItem extends JPanel {
 		init(panel);
 	}
 
-	public SelectedItem(final SelectedItemsPanel panel, FocusArea focusArea, boolean hasDate) {
+	public SelectedItem(final SelectedItemsPanel panel, FocusArea focusArea) {
 		isModule = false;
 		this.focusArea = focusArea;
 		label = new JLabel(focusArea.getName());
@@ -53,22 +55,22 @@ public class SelectedItem extends JPanel {
 		this.setOpaque(false);
 
 		add(label);
+		if (isEditable) {
+			remove = new JButton(new AbstractAction("x") {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					item.setVisible(false);
+					panel.removeItem(item);
+					validate();
+				}
+			});
+			remove.setOpaque(false);
+			remove.setContentAreaFilled(false);
+			remove.setBorderPainted(false);
+			remove.setMargin(new Insets(0,0,0,0));
 
-		remove = new JButton(new AbstractAction("x"){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				item.setVisible(false);
-				panel.removeItem(item);
-				validate();
-			}
-		});
-
-		remove.setOpaque(false);
-		remove.setContentAreaFilled(false);
-		remove.setBorderPainted(false);
-		remove.setMargin(new Insets(0,0,0,0));
-
-		add(remove);
+			add(remove);
+		}
 		setPreferredSize(getPreferredSize());
 	}
 
@@ -80,10 +82,18 @@ public class SelectedItem extends JPanel {
 		return focusArea;
 	}
 
+	public void disableRemoveButton() {
+		remove.setVisible(false);
+		revalidate();
+	}
+
 	public void paint(Graphics g) {
 		Point pos = label.getLocation();
 		pos.x -= 5;
-		int width = label.getWidth() + remove.getWidth() + 12;
+		int width = label.getWidth() + 12 ;
+		if (isEditable) {
+			width += remove.getWidth();
+		}
 		int height = label.getHeight();
 		if (semester != null) {
 			width += semester.getWidth() + 5;

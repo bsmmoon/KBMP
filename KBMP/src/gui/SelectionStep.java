@@ -30,8 +30,8 @@ public class SelectionStep extends JPanel implements ItemListener {
     private JComboBox<String> dropdownList;
     private boolean isAddingOrRemovingItem = false;
     private SelectedItemsPanel selected;
-    private int semester;
-    private JTextArea planned;
+    //private JTextArea planned;
+    private SelectedItemsPanel planned;
     private JButton next;
 
     private final SelectionStep.STEP[] STEPS = SelectionStep.STEP.values();
@@ -69,14 +69,14 @@ public class SelectionStep extends JPanel implements ItemListener {
         textField.setAlignmentX(Component.LEFT_ALIGNMENT);
         textField.setVisible(false);
 
-        selected = new SelectedItemsPanel(this, frame, hasDate);
+        selected = new SelectedItemsPanel(this, frame);
         selected.setAlignmentX(LEFT_ALIGNMENT);
 
         selectedScroller = new JScrollPane(selected, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         selectedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
         selectedScroller.setVisible(false);
 
-        planned = new JTextArea();
+        planned = new SelectedItemsPanel(this, frame);
         planned.setAlignmentX(LEFT_ALIGNMENT);
 
         plannedScroller = new JScrollPane(planned, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -151,7 +151,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 
     private void setRecommendation(ArrayList<AvailableModule> modules) {
         for (AvailableModule module : modules) {
-            selected.addItem(module.getModule());
+            selected.addItem(module.getModule(),true);
             dropdownList.removeItem(module.getModule().getCode() + " " + module.getModule().getName() + " (" + module.getScore() + ")");
         }
     }
@@ -191,7 +191,13 @@ public class SelectionStep extends JPanel implements ItemListener {
                 break;
             case PLANNING:
                 ArrayList<Module> modules = getSelectedModules();
+                planned.addLabel("Semester " + frame.getModel().getSemester());
+                for (Module module : modules) {
+                    planned.addItem(module,false);
+                }
                 frame.getLogic().selectModules(modules);
+
+/*
                 String text = planned.getText();
                 text += "Semester " + (frame.getModel().getSemester() - 1) + "\n";
                 for (Module module : modules) {
@@ -199,6 +205,7 @@ public class SelectionStep extends JPanel implements ItemListener {
                 }
                 text+= "-------------------\n";
                 planned.setText(text);
+                */
                 break;
         }
         selected.clearAllItems();
@@ -318,7 +325,7 @@ public class SelectionStep extends JPanel implements ItemListener {
                 for (Module module : preplanModules) {
                     String moduleCode = event.getItem().toString().split(" ")[0];
                     if (module.getCode().compareTo(moduleCode) == 0) {
-                        selected.addItem(module);
+                        selected.addItem(module,true);
                         break;
                     }
                 }
@@ -330,7 +337,7 @@ public class SelectionStep extends JPanel implements ItemListener {
                     module = availableModule.getModule();
                     String moduleCode = event.getItem().toString().split(" ")[0];
                     if (module.getCode().compareTo(moduleCode) == 0) {
-                        selected.addItem(module);
+                        selected.addItem(module,true);
                         break;
                     }
                 }
