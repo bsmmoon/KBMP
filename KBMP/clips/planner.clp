@@ -450,7 +450,7 @@
     ; ; Add score for focus area elective modules
     (if (member$ ?code ?electives)
     then
-        (bind ?score (+ 3 ?score)))
+        (bind ?score (+ 2 ?score)))
 
     ; ; Add score for classification-FOUNDATION modules
     (if (member$ FOUNDATION ?classification)
@@ -459,7 +459,7 @@
     ; ; Add score for classification-BREADTH_AND_DEPTH modules
     (if (member$ BREADTH_AND_DEPTH ?classification)
     then
-        (bind ?score (+ 3 ?score)))
+        (bind ?score (+ 2 ?score)))
     ; ; Add score for classification-OTHER_REQUIRED modules
     (if (member$ OTHER_REQUIRED ?classification)
     then
