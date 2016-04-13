@@ -103,6 +103,13 @@
         (assert (current-semester (number (+ ?x:number 1))))
         (retract ?x)))
 
+(deffunction parity$ (?x)
+    (if (= (mod ?x 2) 0)
+        then
+            (return TWO)
+        else
+            (return ONE)))
+
 ; ; MODULES
 (defmodule RANK (import MAIN ?ALL))
 (defmodule SELECT (import MAIN ?ALL))
@@ -198,6 +205,36 @@
         ; ; (printout t "Total available reached max " (count-available) crlf)
         )
     )
+
+(defrule RANK::mark-available-next-sem "mark modules that is available but not offered this sem as available-next-sem"
+    (declare (salience 0))
+    ?module <- (module (status available) (semester ?sem) (code ?code))
+    (current-semester (number ?current-sem))
+    =>
+    (if (eq ?sem BOTH)
+        then
+            ; ; do nothing
+        else
+            (if (eq ?sem (parity$ (+ 1 ?current-sem)))
+                then
+                    ; ; do nothing
+                else
+                    (printout t "Mark " ?code " as available-next-sem." crlf)
+                    (modify ?module (status available-next-sem)))))
+
+(defrule RANK::toggle-available-next-sem "toggle modules marked as available-next-sem in last semester"
+    (declare (salience 0))
+    ?module <- (module (status available-next-sem) (semester ?sem) (code ?code))
+    (current-semester (number ?current-sem))
+    =>
+    (if (eq ?sem (parity$ (+ 1 ?current-sem)))
+        then
+            (printout t "Module " ?code " available." crlf)
+            (modify ?module (status available))))
+
+
+
+
 
 ; ; ---------------
 ; ; PREREQ HANDLING
