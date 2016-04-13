@@ -25,6 +25,9 @@ import java.util.regex.Pattern;
 public class ModulesParser {
     private static String ERROR_MESSAGE_MODULES_NOT_READABLE = "Path to module database is not readable";
     private static String ERROR_MESSAGE_WHITELIST_NOT_READABLE = "Path to whitelisted modules database is not readable";
+    private static String ERROR_MESSAGE_BLACKLIST_NOT_READABLE = "Path to blacklisted modules database is not readable";
+    private static String WHITELIST_FILE_LOCATION = "data/Modules_Whitelist.txt";
+    private static String BLACKLIST_FILE_LOCATION = "data/Modules_Blacklist.txt";
     private enum PatternTypes {ANY_ONE_MODULE_GREEDY, ANY_ONE_MODULE_EXACT, ANY_TWO_MODULES,
         SENTENCE_FRAGMENT_CONTAINING_MODULES}
     private static Hashtable<PatternTypes, Pattern> patterns = generatePatterns();
@@ -68,9 +71,19 @@ public class ModulesParser {
         return rawModules;
     }
 
-    private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern whitelist) {
+    private static ArrayList<NusmodsModule> filterByModuleCode(ArrayList<NusmodsModule> rawModules, Pattern
+            whitelist) throws IOException {
         Iterator<NusmodsModule> moduleIterator = rawModules.iterator();
-        ArrayList<String> blacklist = new ArrayList<>(Arrays.asList("IS4010", "CP5102", "CP3106"));
+
+        ArrayList<String> blacklist;
+        try {
+            Path pathToBlacklist = Paths.get(ModulesParser.BLACKLIST_FILE_LOCATION);
+            blacklist = new ArrayList<>(Files
+                    .readAllLines(pathToBlacklist));
+        } catch (IOException ioe) {
+            throw new IOException(ModulesParser.ERROR_MESSAGE_BLACKLIST_NOT_READABLE);
+        }
+
         while (moduleIterator.hasNext()){
             String currentModuleCode = moduleIterator.next().ModuleCode.trim();
 
@@ -96,7 +109,7 @@ public class ModulesParser {
     }
 
     private static Pattern getRelevantPatternsFromWhitelist() throws IOException {
-        Path pathToWhitelistFile = Paths.get("data/Modules_Whitelist.txt");
+        Path pathToWhitelistFile = Paths.get(ModulesParser.WHITELIST_FILE_LOCATION);
         if (!Files.isReadable(pathToWhitelistFile)) throw new IOException(ERROR_MESSAGE_WHITELIST_NOT_READABLE);
 
         ArrayList<String> patterns = new ArrayList<>();
