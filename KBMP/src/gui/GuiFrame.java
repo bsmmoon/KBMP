@@ -49,7 +49,7 @@ public class GuiFrame extends JFrame {
 		getContentPane().setBackground(Color.WHITE);
 
 		SelectionStep step = new SelectionStep(this,false);
-		step.setStep(SelectionStep.STEP.NUM_SEM_LEFT);
+		step.setStep(SelectionStep.STEP.PRE_PLAN);
 		step.init();
 		add(step);
 	}

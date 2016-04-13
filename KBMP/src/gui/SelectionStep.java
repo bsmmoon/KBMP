@@ -6,27 +6,25 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.text.DefaultCaret;
 
 import common.AvailableModule;
 import common.FocusArea;
 import common.Module;
 
 @SuppressWarnings("serial")
-public class SelectionStep extends JPanel implements ItemListener {
+public class SelectionStep extends JPanel {
     private GuiFrame frame;
     private STEP step;
+    private PreRequisitePanel preplanInfo;
     private ArrayList<Module> preplanModules;
     private ArrayList<AvailableModule> availableModules;
     private ArrayList<FocusArea> availableFocusAreas;
     private JLabel question;
     private JScrollPane selectedScroller;
     private JScrollPane plannedScroller;
-    private JTextField textField;
     private JComboBox<String> dropdownList;
     private boolean isAddingOrRemovingItem = false;
     private SelectedItemsPanel selected;
@@ -37,7 +35,7 @@ public class SelectionStep extends JPanel implements ItemListener {
     private final SelectionStep.STEP[] STEPS = SelectionStep.STEP.values();
 
     enum STEP {
-        NUM_SEM_LEFT, MOD_TAKEN, MOD_WANT, MOD_DONT_WANT, FOCUS_AREA, PLANNING, DONE
+        PRE_PLAN, MOD_TAKEN, MOD_WANT, MOD_DONT_WANT, FOCUS_AREA, PLANNING, DONE
     }
 
     public SelectionStep(final GuiFrame frame, boolean hasDate) {
@@ -64,10 +62,9 @@ public class SelectionStep extends JPanel implements ItemListener {
         setLocation(20, 20);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
-        textField = new JTextField(20);
-        textField.setMaximumSize(new Dimension(50, 20));
-        textField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        textField.setVisible(false);
+        preplanInfo = new PreRequisitePanel(frame);
+        preplanInfo.setAlignmentX(LEFT_ALIGNMENT);
+        preplanInfo.setVisible(false);
 
         selected = new SelectedItemsPanel(this, frame);
         selected.setAlignmentX(LEFT_ALIGNMENT);
@@ -83,15 +80,10 @@ public class SelectionStep extends JPanel implements ItemListener {
         plannedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
         plannedScroller.setVisible(false);
 
-        dropdownList = new JComboBox<String>();
-        dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
-        dropdownList.setMaximumSize(new Dimension(300, 20));
-        dropdownList.addItemListener(this);
-        dropdownList.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
-        dropdownList.setVisible(false);
+        setupDropdownList();
 
         add(question);
-        add(textField);
+        add(preplanInfo);
         add(dropdownList);
         add(selectedScroller);
         add(plannedScroller);
@@ -99,18 +91,16 @@ public class SelectionStep extends JPanel implements ItemListener {
     }
 
     public void init() {
-        textField.setText("");
         dropdownList.removeAllItems();
 
         switch (step) {
-            case NUM_SEM_LEFT:
-                setQuestion("How many semesters have you left?");
-                textField.setVisible(true);
+            case PRE_PLAN:
+                preplanInfo.setVisible(true);
                 break;
             case MOD_TAKEN:
+                preplanInfo.setVisible(false);
                 setQuestion("Please select modules that you have already taken.");
                 setAllModules(frame.getModel().getPreplanModules());
-                textField.setVisible(false);
                 dropdownList.setVisible(true);
                 selectedScroller.setVisible(true);
                 break;
@@ -159,7 +149,9 @@ public class SelectionStep extends JPanel implements ItemListener {
     private boolean submit(final GuiFrame frame) {
         boolean isSuccessful = true;
         switch (step) {
-            case NUM_SEM_LEFT:
+            case PRE_PLAN:
+                preplanInfo.submit();
+                /*
                 try {
                     int number = Integer.parseInt(textField.getText());
                     if (number < 1 || number > 10) {
@@ -176,6 +168,7 @@ public class SelectionStep extends JPanel implements ItemListener {
 
                     return isSuccessful;
                 }
+                */
                 break;
             case MOD_TAKEN:
                 frame.getLogic().assertTaken(getSelectedModules());
@@ -303,53 +296,70 @@ public class SelectionStep extends JPanel implements ItemListener {
 
         isAddingOrRemovingItem = false;
     }
-
-    @Override
-    public void itemStateChanged(ItemEvent event) {
-        if (isAddingOrRemovingItem == true) {
-            return;
-        }
-
-        if (event.getStateChange() == ItemEvent.SELECTED ) {
-            if (step == STEP.FOCUS_AREA) {
-                String focusArea = event.getItem().toString();
-                for (FocusArea item : availableFocusAreas) {
-                    if(item.getName().compareTo(focusArea) == 0) {
-                        selected.addItem(item);
-                        break;
-                    }
+    private void setupDropdownList() {
+        dropdownList = new JComboBox<String>();
+        dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
+        dropdownList.setMaximumSize(new Dimension(300, 20));
+        //dropdownList.addItemListener(this);
+        dropdownList.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
+        dropdownList.setVisible(false);
+        dropdownList.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (isAddingOrRemovingItem == true) {
+                    return;
                 }
-            }
 
-            if (step == STEP.MOD_TAKEN || step == STEP.MOD_WANT || step == STEP.MOD_DONT_WANT) {
-                for (Module module : preplanModules) {
-                    String moduleCode = event.getItem().toString().split(" ")[0];
-                    if (module.getCode().compareTo(moduleCode) == 0) {
-                        selected.addItem(module,true);
-                        break;
+                if (e.getStateChange() == ItemEvent.SELECTED ) {
+                    if (step == STEP.FOCUS_AREA) {
+                        String focusArea = e.getItem().toString();
+                        for (FocusArea item : availableFocusAreas) {
+                            if(item.getName().compareTo(focusArea) == 0) {
+                                selected.addItem(item);
+                                break;
+                            }
+                        }
                     }
-                }
-            }
 
-            if (step == STEP.PLANNING) {
-                Module module;
-                for (AvailableModule availableModule : availableModules) {
-                    module = availableModule.getModule();
-                    String moduleCode = event.getItem().toString().split(" ")[0];
-                    if (module.getCode().compareTo(moduleCode) == 0) {
-                        selected.addItem(module,true);
-                        break;
+                    if (step == STEP.MOD_TAKEN || step == STEP.MOD_WANT || step == STEP.MOD_DONT_WANT) {
+                        for (Module module : preplanModules) {
+                            String moduleCode = e.getItem().toString().split(" ")[0];
+                            if (module.getCode().compareTo(moduleCode) == 0) {
+                                selected.addItem(module,true);
+                                break;
+                            }
+                        }
                     }
+
+                    if (step == STEP.PLANNING) {
+                        Module module;
+                        for (AvailableModule availableModule : availableModules) {
+                            module = availableModule.getModule();
+                            String moduleCode = e.getItem().toString().split(" ")[0];
+                            if (module.getCode().compareTo(moduleCode) == 0) {
+                                selected.addItem(module,true);
+                                break;
+                            }
+                        }
+                    }
+
+                    isAddingOrRemovingItem = true;
+                    dropdownList.removeItem(e.getItem());
+                    dropdownList.setSelectedItem(null);
+                    isAddingOrRemovingItem = false;
+                    dropdownList.revalidate();
                 }
+
+                selectedScroller.revalidate();
             }
+        });
+    }
 
-            isAddingOrRemovingItem = true;
-            dropdownList.removeItem(event.getItem());
-            dropdownList.setSelectedItem(null);
-            isAddingOrRemovingItem = false;
-            dropdownList.revalidate();
-        }
-
-        selectedScroller.revalidate();
+    private void addLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setAlignmentX(LEFT_ALIGNMENT);
+        add(label);
+        setPreferredSize(getLayout().preferredLayoutSize(this));
+        validate();
     }
 }
