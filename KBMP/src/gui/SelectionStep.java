@@ -41,9 +41,6 @@ public class SelectionStep extends JPanel {
     }
 
     public SelectionStep(final GuiFrame frame, boolean hasDate) {
-        setAlignmentX(Component.LEFT_ALIGNMENT);
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
         setBackground(Color.WHITE);
 
         this.frame = frame;
@@ -61,22 +58,22 @@ public class SelectionStep extends JPanel {
             }
         });
 
-        setLocation(20, 20);
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        next.setAlignmentX(LEFT_ALIGNMENT);
 
         preplanInfo = new PrePlanPanel(frame);
-        preplanInfo.setAlignmentX(LEFT_ALIGNMENT);
+        //preplanInfo.setAlignmentX(LEFT_ALIGNMENT);
 
         preplanScroller = new JScrollPane(preplanInfo, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         preplanScroller.getViewport().setPreferredSize(new Dimension(200, 200));
-
+        preplanScroller.setAlignmentX(LEFT_ALIGNMENT);
 
         selected = new SelectedItemsPanel(this, frame);
-        selected.setAlignmentX(LEFT_ALIGNMENT);
+        //selected.setAlignmentX(LEFT_ALIGNMENT);
 
         selectedScroller = new JScrollPane(selected, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         selectedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
         selectedScroller.setVisible(false);
+        selectedScroller.setAlignmentX(LEFT_ALIGNMENT);
 
         planned = new SelectedItemsPanel(this, frame);
         planned.setAlignmentX(LEFT_ALIGNMENT);
@@ -84,6 +81,7 @@ public class SelectionStep extends JPanel {
         plannedScroller = new JScrollPane(planned, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         plannedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
         plannedScroller.setVisible(false);
+        plannedScroller.setAlignmentX(LEFT_ALIGNMENT);
 
         setupDropdownList();
 
@@ -93,6 +91,10 @@ public class SelectionStep extends JPanel {
         add(selectedScroller);
         add(plannedScroller);
         add(next);
+
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
     public void init() {
@@ -189,14 +191,19 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 ArrayList<Module> modules = getSelectedModules();
-                planned.addLabel("Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "\n");
-                for (Module module : modules) {
-                    planned.addItem(module,false);
-                }
                 frame.getLogic().selectModules(modules);
-                Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester() - 1);
-                planned.addItem(semester);
-
+                Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester());
+                if (semester.getCredits() < 16) {
+                    JOptionPane.showMessageDialog(this,"The total credits are less than 16 MC!");
+                    isSuccessful = false;
+                } else {
+                    frame.getLogic().confirmSemester();
+                    planned.addLabel(semester.getName());
+                    for (Module module : modules) {
+                        planned.addItem(module,false);
+                    }
+                    planned.addItem(semester);
+                }
 /*
                 String text = planned.getText();
                 text += "Semester " + (frame.getModel().getSemester() - 1) + "\n";
@@ -208,10 +215,13 @@ public class SelectionStep extends JPanel {
                 */
                 break;
         }
-        selected.clearAllItems();
-        revalidate();
-        frame.getLogic().iterate();
-        init();
+
+        if (isSuccessful) {
+            selected.clearAllItems();
+            revalidate();
+            frame.getLogic().iterate();
+            init();
+        }
 
         return isSuccessful;
     }

@@ -7,6 +7,9 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -34,11 +37,20 @@ public class SelectedItem extends JPanel {
 		isModule = true;
 		this.isEditable = isEditable;
 		this.module = module;
+
+		Iterator<Map.Entry<Module.WorkloadTypes,Float>> workload = module.getWorkload().entrySet().iterator();
+		String workloadSummary = "";
+		String workloadInfo = "Workload: ";
+		while (workload.hasNext()) {
+			Map.Entry<Module.WorkloadTypes,Float> entry = workload.next();
+			workloadSummary += entry.getValue() + " ";
+			workloadInfo += entry.getKey() + " ";
+		}
+
 		String module_info = "<html>" + module.getCode() + " " + module.getName() +
-				"<br>Credit: " + module.getCredits() +
-				"<br>Workload: " + module.getWorkload();
+				"<br>" + module.getCredits() + "MC " + workloadSummary;
 		label = new JLabel(module_info);
-		//label.setToolTipText("hello");
+		label.setToolTipText(workloadInfo);
 
 		init(panel);
 	}

@@ -7,8 +7,10 @@ import java.util.ArrayList;
  */
 public class Semester {
     private ArrayList<Module> modules;
+    int semester;
 
-    public Semester() {
+    public Semester(int semester) {
+        this.semester = semester;
         modules = new ArrayList<>();
     }
 
@@ -33,6 +35,21 @@ public class Semester {
         return result;
     }
 
+    public int getCredits() {
+        int total = 0;
+
+        for (Module module : modules) {
+            total += module.getCredits();
+        }
+
+        return total;
+    }
+
+    public String getName() {
+        // later handle special semester name here as well
+        return "Year " + getYear() + " Semester " + getSemester() + "\n";
+    }
+
     public String getSummary() {
         String out = "<html>";
         out += "Summary";
@@ -45,4 +62,7 @@ public class Semester {
         out += "]";
         return out;
     }
+
+    private int getYear() { return semester % 2 == 0 ? Math.floorDiv(semester, 2) : Math.floorDiv(semester, 2) + 1; }
+    private int getSemester() { return semester % 2 == 0 ? 2 : 1; }
 }

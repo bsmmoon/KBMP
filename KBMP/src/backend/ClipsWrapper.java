@@ -18,6 +18,7 @@ public class ClipsWrapper {
 	
 	private static final String GET_ALL_AVAIABLE_MODULE = "(find-all-facts ((?f module)) TRUE)";
 	private static final String GET_ALL_FOCUS_AREA = "(find-all-facts ((?f focus)) TRUE)";
+	private static final String GET_CURRENT_SEMESTER = "(find-fact ((?f current-semester)) TRUE)";
 	
 	public ClipsWrapper() {
 		this.initialised = false;
@@ -49,6 +50,25 @@ public class ClipsWrapper {
 		}
 		
 		return modules;
+	}
+
+	public int getCurrentSemester() {
+		int currentSemester = -1;
+		MultifieldValue pv = (MultifieldValue) clips.eval(GET_CURRENT_SEMESTER);
+
+		ListIterator<FactAddressValue> itr = pv.multifieldValue().listIterator();
+		int len = pv.size();
+		while (len-- > 0 && itr.hasNext()) {
+			FactAddressValue address = itr.next();
+			try {
+				currentSemester = Integer.parseInt(address.getFactSlot("number").toString());
+				break;
+			} catch (Exception e) {
+				System.out.println("Something went wrong! " + e.getMessage());
+			}
+		}
+		System.out.println("CURRENT SEMESTER: " + currentSemester);
+		return currentSemester;
 	}
 
 	public void printFactsOnConsole() { clips.eval("(facts)"); }
