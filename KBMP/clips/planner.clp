@@ -230,7 +230,7 @@
     =>
     (if (eq ?sem (parity$ (+ 1 ?current-sem)))
         then
-            (printout t "Module " ?code " available." crlf)
+            (printout t "Module " ?code " available again from available-next-sem." crlf)
             (modify ?module (status available))))
 
 
