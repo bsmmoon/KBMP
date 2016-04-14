@@ -40,5 +40,5 @@ public class ModulePlan {
 
 	public Float[] getWorkloads(int semester) { return semesters.get(semester - startingSemester).getWorkloads(); }
 
-	public int getSemesterMC(int semester) { return semesters.get(semester - startingSemester).getMC(); }
+	public int getSemesterCredits(int semester) { return semesters.get(semester - startingSemester).getCredits(); }
 }

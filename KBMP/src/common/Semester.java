@@ -33,8 +33,14 @@ public class Semester {
         return result;
     }
 
-    public int getMC() {
-        return 0;
+    public int getCredits() {
+        int total = 0;
+
+        for (Module module : modules) {
+            total += module.getCredits();
+        }
+
+        return total;
     }
 
     public String getSummary() {
