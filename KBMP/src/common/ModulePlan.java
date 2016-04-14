@@ -19,12 +19,12 @@ public class ModulePlan {
 	public void setSemesters(int totalSemesters, int startingSemester) {
 		this.startingSemester = startingSemester;
 		for (int i = 0; i < totalSemesters - startingSemester + 1; i++) {
-			semesters.add(new Semester());
+			semesters.add(new Semester(i + startingSemester));
 		}
 	}
 
 	public void addNewModules(ArrayList<Module> modules, int semester) {
-		semesters.set(semester - startingSemester, new Semester());
+		semesters.set(semester - startingSemester, new Semester(semester));
 		modules.forEach((module) -> addNewModule(module, semester));
 	}
 

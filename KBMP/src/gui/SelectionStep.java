@@ -198,7 +198,7 @@ public class SelectionStep extends JPanel {
                     isSuccessful = false;
                 } else {
                     frame.getLogic().confirmSemester();
-                    planned.addLabel("Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "\n");
+                    planned.addLabel(semester.getName());
                     for (Module module : modules) {
                         planned.addItem(module,false);
                     }
