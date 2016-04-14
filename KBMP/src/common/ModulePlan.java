@@ -22,24 +22,23 @@ public class ModulePlan {
 			semesters.add(new Semester());
 		}
 	}
-	
-	/**
-	 * 
-	 * @param module
-	 * @param semester start from 1
-	 */
-	public void addNewModule(Module module, int semester) {
+
+	public void addNewModules(ArrayList<Module> modules, int semester) {
+		semesters.set(semester - startingSemester, new Semester());
+		modules.forEach((module) -> addNewModule(module, semester));
+	}
+
+	private void addNewModule(Module module, int semester) {
 		semesters.get(semester - startingSemester).addModule(module);
 	}
-	
+
 	public ArrayList<Semester> getSemesters() {
 		return semesters;
 	}
 
-	public Semester getSemester(int semester) {
-		System.out.println("asldkfjlasdkjflkadsfj seme: " + semester + " - " + startingSemester);
-		return semesters.get(semester - startingSemester);
-	}
+	public Semester getSemester(int semester) { return semesters.get(semester - startingSemester); }
 
 	public Float[] getWorkloads(int semester) { return semesters.get(semester - startingSemester).getWorkloads(); }
+
+	public int getSemesterMC(int semester) { return semesters.get(semester - startingSemester).getMC(); }
 }

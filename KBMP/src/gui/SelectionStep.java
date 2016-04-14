@@ -196,7 +196,10 @@ public class SelectionStep extends JPanel {
                     planned.addItem(module,false);
                 }
                 frame.getLogic().selectModules(modules);
-                Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester() - 1);
+                Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester());
+                // check here
+                frame.getLogic().confirmSemester();
+
                 planned.addItem(semester);
 
 /*

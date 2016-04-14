@@ -2,6 +2,7 @@ package backend;/*
  * Facet
  */
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -95,7 +96,7 @@ public class Model {
 	public void setStartingSemester(int semester) {
 		this.semester = semester;
 		this.plan.setSemesters(totalSemesters, semester);
-		execute("(assert (current-semester (number " + (semester - 1) + ")))");
+		execute("(assert (current-semester (number " + semester + ")))");
 	}
 
 	public void execute(String command) {
@@ -119,11 +120,13 @@ public class Model {
 
 	public void assertDontWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-dontwant \"" + module.getCode() + "\")")); }
 
-	public void selectModules(ArrayList<Module> modules) {
+	public void selectModules(ArrayList<Module> modules) { updatePlan(modules); }
+
+	public void updateModulesInClips() {
+		ArrayList<Module> modules = plan.getSemester(semester).getModules();
 		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
 		execute("(increment-semester)");
-		updatePlan(modules);
-		incrementSemester();
+		updateSemester();
 	}
 
 	public void assertSymbolFact(String fact) { execute("(assert (" + fact + "))"); }
@@ -145,7 +148,7 @@ public class Model {
 	}
 
 	private void updatePlan(ArrayList<Module> modules) {
-		modules.forEach((module) -> plan.addNewModule(module, semester));
+		plan.addNewModules(modules, semester);
 		Float[] workloads = plan.getWorkloads(semester);
 		for (Float workload : workloads) {
 			System.out.print(workload + " ");
@@ -153,7 +156,7 @@ public class Model {
 		System.out.println();
 	}
 
-	private void incrementSemester() { semester++; }
+	private void updateSemester() { semester = clips.getCurrentSemester(); }
 
 	private Module findModuleByCode(String code) {
 		for (Module module : modules) {
