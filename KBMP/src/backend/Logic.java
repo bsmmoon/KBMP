@@ -2,6 +2,7 @@ package backend;
 
 import java.util.ArrayList;
 
+import common.AvailableModule;
 import common.FocusArea;
 import common.Module;
 
@@ -44,6 +45,10 @@ public class Logic {
 
 		iterate();
 	}
+
+	public boolean isSkipSemester() { return model.isSkipSemester(); }
+
+	public ArrayList<AvailableModule> getSkipModules() { return model.getSkipModules(); }
 
 	public void iterate() { model.iterate(); }
 	

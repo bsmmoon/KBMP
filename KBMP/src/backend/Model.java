@@ -2,14 +2,10 @@ package backend;/*
  * Facet
  */
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import common.AvailableModule;
-import common.FocusArea;
-import common.Module;
-import common.ModulePlan;
+import common.*;
 
 public class Model {
 	private ClipsWrapper clips;
@@ -22,6 +18,8 @@ public class Model {
 	private int totalSemesters;
 	private int semester;
 
+	Hashtable<Module.WorkloadTypes, Float> STANDARD_WORKLOADS;
+
 	public Model() {
 		this.clips = new ClipsWrapper();
 		this.plan = new ModulePlan();
@@ -30,11 +28,17 @@ public class Model {
 		this.selectedFocusAreas = new ArrayList<>();
 		this.modules = new ArrayList<>();
 		this.availableModules = new ArrayList<>();
+
+		STANDARD_WORKLOADS = new Hashtable<>();
+		for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
+			STANDARD_WORKLOADS.put(type, 2.0f);
+		}
 	}
 
 	public ArrayList<FocusArea> getAllFocusAreas() { return focusAreas; }
 	public ArrayList<FocusArea> getSelectedFocusAreas() { return selectedFocusAreas; }
 	public ModulePlan getModulePlan() { return plan; }
+
 	public ArrayList<AvailableModule> getRecommendedModules() {
 		ArrayList<AvailableModule> result = new ArrayList<>();
 		int count = 5;
@@ -46,6 +50,7 @@ public class Model {
 		}
 		return result;
 	}
+
 	public ArrayList<AvailableModule> getAvailableModules() { return availableModules; }
 	public ArrayList<Module> getPreplanModules() { return preplanModules; }
 	public ArrayList<Module> getModules() { return modules; }
@@ -112,6 +117,31 @@ public class Model {
 		clips.run();
 	}
 
+	public boolean isSkipSemester() {
+		ArrayList<String> moduleCodes = new ArrayList<>();
+		ArrayList<Module> modules = new ArrayList<>();
+		if (clips.isSkipSemester(semester, moduleCodes)) {
+			moduleCodes.forEach((code) -> modules.add(new Module.Builder().setCode(code).setName("").setCredits(4).setWorkload(STANDARD_WORKLOADS).build()));
+			plan.addNewModules(modules, semester);
+			return true;
+		}
+		return false;
+	}
+
+	public ArrayList<AvailableModule> getSkipModules() {
+		Semester sem = plan.getSemester(semester);
+
+		ArrayList<AvailableModule> availableModules = new ArrayList<>();
+		AvailableModule availableModule;
+		for (Module module : sem.getModules()) {
+			availableModule = new AvailableModule(module.getCode(), 0, "");
+			availableModule.setModule(module);
+			availableModules.add(availableModule);
+		}
+
+		return availableModules;
+	}
+
 	public void assertTaken(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-taken \"" + module.getCode() + "\")")); }
 
 	public void assertTaken(String module) { execute("(assert-taken \"" + module + "\")"); }
@@ -167,22 +197,18 @@ public class Model {
 
 
 	private void addPlaceHolderModules() {
-		Hashtable<Module.WorkloadTypes, Float> standardWorkloads = new Hashtable<>();
 		Module.Semester sem = Module.Semester.values()[2];
-		for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
-			standardWorkloads.put(type, 2.0f);
-		}
 
-		this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
 
-		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM Arts").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM Science").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM Arts").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM Science").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
 
-		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth 1").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth 2").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth 1").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth 2").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
 
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 1").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 2").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 3").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 1").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 2").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 3").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
 	}
 }
