@@ -34,7 +34,7 @@ public class PrePlanPanel extends JPanel {
         }
         startingSem.setSelectedItem(semesters.get(0));
         startingSem.setAlignmentX(LEFT_ALIGNMENT);
-        startingSem.setMaximumSize(new Dimension(160,20));
+        startingSem.setMaximumSize(startingSem.getPreferredSize());
         add(startingSem);
         //yearField = addTextField("1");
         //semesterField = addTextField("1");
