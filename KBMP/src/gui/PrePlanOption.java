@@ -1,10 +1,16 @@
 package gui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 /**
  * Created by Ruofan on 13/4/2016.
@@ -51,7 +57,7 @@ public class PrePlanOption extends JPanel {
                 this.dropdownList.addItem(sem);
             }
             dropdownList.setMaximumSize(dropdownList.getPreferredSize());
-            dropdownList.setVisible(false);
+//            dropdownList.setVisible(false);
             add(dropdownList);
 
             checkBox.addItemListener(new ItemListener() {

@@ -1,9 +1,17 @@
 package gui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 /**
@@ -21,6 +29,13 @@ public class PrePlanPanel extends JPanel {
                 {"Year 1 Semester 1", "Year 1 Semester 2", "Year 2 Semester 1", "Year 2 Semester 2",
                         "Year 3 Semester 1","Year 3 Semester 2","Year 4 Semester 1","Year 4 Semester 2"}));
 
+        ArrayList<String> semestersYear2Onwards = new ArrayList<String>(Arrays.asList(new String[]
+                {"Year 2 Semester 1", "Year 2 Semester 2",
+                        "Year 3 Semester 1","Year 3 Semester 2","Year 4 Semester 1","Year 4 Semester 2"}));
+        
+        ArrayList<String> semestersYear3Onwards = new ArrayList<String>(Arrays.asList(new String[]
+                {"Year 3 Semester 1","Year 3 Semester 2","Year 4 Semester 1","Year 4 Semester 2"}));
+        
         this.frame = frame;
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -34,7 +49,7 @@ public class PrePlanPanel extends JPanel {
         }
         startingSem.setSelectedItem(semesters.get(0));
         startingSem.setAlignmentX(LEFT_ALIGNMENT);
-        startingSem.setMaximumSize(new Dimension(160,20));
+        startingSem.setMaximumSize(startingSem.getPreferredSize());
         add(startingSem);
         //yearField = addTextField("1");
         //semesterField = addTextField("1");
@@ -65,9 +80,9 @@ public class PrePlanPanel extends JPanel {
 
         addLabel("Do you intend to take the following programs?");
         checkBoxes.add(addOption(PrePlanOption.INFO.SIP,"Student Internship Program (SIP)",null,false));
-        checkBoxes.add(addOption(PrePlanOption.INFO.ATAP,"Advanced Technology Attachment Programme (ATAP)",semesters,false));
-        checkBoxes.add(addOption(PrePlanOption.INFO.NOC_SEM,"1-semester NUS Overseas College (NOC)",semesters,false));
-        checkBoxes.add(addOption(PrePlanOption.INFO.NOC_YEAR,"1-year NUS Overseas College (NOC)",semesters,false));
+        checkBoxes.add(addOption(PrePlanOption.INFO.ATAP,"Advanced Technology Attachment Programme (ATAP)",semestersYear3Onwards,false));
+        checkBoxes.add(addOption(PrePlanOption.INFO.NOC_SEM,"6-month NUS Overseas College (NOC)",semestersYear2Onwards,false));
+        checkBoxes.add(addOption(PrePlanOption.INFO.NOC_YEAR,"1-year NUS Overseas College (NOC) starting from",semestersYear2Onwards,false));
     }
 
     private void addLabel(String text) {

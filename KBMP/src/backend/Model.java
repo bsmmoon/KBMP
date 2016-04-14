@@ -179,8 +179,8 @@ public class Model {
 
 	private void updatePlan(ArrayList<Module> modules) {
 		plan.addNewModules(modules, semester);
-		Float[] workloads = plan.getWorkloads(semester);
-		for (Float workload : workloads) {
+		int[] workloads = plan.getWorkloads(semester);
+		for (int workload : workloads) {
 			System.out.print(workload + " ");
 		}
 		System.out.println();
