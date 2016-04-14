@@ -139,7 +139,7 @@ public class SelectionStep extends JPanel {
         }
 
         question.setVisible(true);
-
+        dropdownList.setMaximumSize(dropdownList.getPreferredSize());
         frame.revalidate();
         revalidate();
     }

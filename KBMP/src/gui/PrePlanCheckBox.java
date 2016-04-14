@@ -41,7 +41,7 @@ public class PrePlanCheckBox extends JPanel {
             for (String sem : semesters) {
                 this.dropdownList.addItem(sem);
             }
-            dropdownList.setMaximumSize(new Dimension(50, 20));
+            dropdownList.setMaximumSize(dropdownList.getPreferredSize());
             dropdownList.setVisible(false);
             add(dropdownList);
 
