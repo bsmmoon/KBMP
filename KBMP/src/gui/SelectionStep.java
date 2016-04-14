@@ -199,14 +199,8 @@ public class SelectionStep extends JPanel {
             case PLANNING:
                 if (frame.getLogic().isSkipSemester()) {
                     Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester());
+                    planned.addSemester(semester);
                     frame.getLogic().confirmSemester();
-
-                    ArrayList<Module> modules = semester.getModules();
-                    planned.addLabel(semester.getName());
-                    for (Module module : modules) {
-                        planned.addItem(module,false);
-                    }
-                    planned.addItem(semester);
                     break;
                 }
 
