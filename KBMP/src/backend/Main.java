@@ -22,15 +22,15 @@ public class Main {
 		// user preference for maths/communication mod
 		// the alternative:
 //		logic.execute("(assert (goodmath) (commexempted))");
-		logic.assertGoodMath();
-		logic.assertCommunicationExcemption();
+//		logic.assertGoodMath();
+//		logic.assertCommunicationExemption();
 
-		logic.execute("(assert (normalmath) (commnotexempted))");
+//		logic.execute("(assert (normalmath) (commnotexempted))");
 		// H2 subjects
 
 //		logic.assertH2Maths();
 //		logic.assertH2Physics();
-		logic.assertCS3201();
+//		logic.assertCS3201();
 //		logic.assertCS3281();
 //		logic.iterate();
 

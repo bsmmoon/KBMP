@@ -65,9 +65,9 @@ public class Logic {
 
 	public void assertNormalMath() { model.assertSymbolFact("normalmath"); }
 
-	public void assertCommunicationExcemption() { model.assertSymbolFact("commnotexcempted"); }
+	public void assertCommunicationExemption() { model.assertSymbolFact("commexempted"); }
 
-	public void assertCommunicationNotExcempted() { model.assertSymbolFact("commnotexcempted"); }
+	public void assertCommunicationNotExempted() { model.assertSymbolFact("commnotexempted"); }
 
 	public void assertH2Maths() { model.assertTaken("H2Math"); }
 

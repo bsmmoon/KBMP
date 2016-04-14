@@ -105,8 +105,8 @@ public class PreRequisitePanel extends JPanel {
                     else {frame.getLogic().assertNormalMath(); }
                     break;
                 case COMMUNICATION_EXEMPT:
-                    if (checkBox.isChecked()) {frame.getLogic().assertCommunicationExcemption(); }
-                    else {frame.getLogic().assertCommunicationNotExcempted(); }
+                    if (checkBox.isChecked()) {frame.getLogic().assertCommunicationExemption(); }
+                    else {frame.getLogic().assertCommunicationNotExempted(); }
                     break;
                 case CS3201:
                     if (checkBox.isChecked()) {frame.getLogic().assertCS3201(); }
