@@ -44,6 +44,7 @@ public class Module implements Serializable {
 		private String preclusions;
 		private ArrayList<Lesson> timetable;
 		private Exam exam;
+		private Semester semesters;
 
 		public Module build(){
 			return new Module(this);
@@ -103,6 +104,11 @@ public class Module implements Serializable {
 			this.exam = exam;
 			return this;
 		}
+
+		public Builder setSemesters(Semester semesters) {
+			this.semesters = semesters;
+			return this;
+		}
 	}
 
 	public static Builder builder(){
@@ -121,6 +127,7 @@ public class Module implements Serializable {
 		this.preclusions = builder.preclusions;
 		this.timetable = builder.timetable;
 		this.exam = builder.exam;
+		this.semesters = builder.semesters;
 	}
 
 	public Module(String code, String name){
