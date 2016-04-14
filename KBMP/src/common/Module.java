@@ -183,6 +183,10 @@ public class Module implements Serializable {
 		return "[" + this.code + ", " + this.name + "]";
 	}
 
+   public String getTooltip() {
+        return this.type.toString();
+    }
+	
 	public void setSemesters(Semester semesters) {
 		this.semesters = semesters;
 	}
