@@ -8,7 +8,15 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import common.AvailableModule;
 import common.FocusArea;
@@ -198,9 +206,11 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 if (frame.getLogic().isSkipSemester()) {
+                    ArrayList<Module> modules = getSelectedModules();
+                    frame.getLogic().selectModules(modules);
                     Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester());
-                    planned.addSemester(semester);
                     frame.getLogic().confirmSemester();
+                    planned.addSemester(semester);
                     break;
                 }
 
