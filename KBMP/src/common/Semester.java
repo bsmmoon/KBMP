@@ -20,8 +20,8 @@ public class Semester {
 
     public ArrayList<Module> getModules() { return modules; }
 
-    public Float[] getWorkloads() {
-        Float[] result = new Float[]{0f, 0f, 0f, 0f, 0f};
+    public int[] getWorkloads() {
+        int[] result = new int[]{0, 0, 0, 0, 0};
 
         int index;
         for (Module module : modules) {
@@ -54,7 +54,7 @@ public class Semester {
         String out = "<html>";
         out += "Summary";
         out += "<br>Workloads: [";
-        Float[] workloads = getWorkloads();
+        int[] workloads = getWorkloads();
         for (int i = 0; i < workloads.length; i++) {
             out += workloads[i];
             if (i < workloads.length - 1) out += ", ";
