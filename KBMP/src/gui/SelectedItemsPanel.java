@@ -37,6 +37,11 @@ public class SelectedItemsPanel extends JPanel {
 		addItem(item);
 	}
 
+	public void addSemester(Semester sem) {
+		add(new SemesterItem(sem));
+		validate();
+	}
+
 	public void addLabel(String text) {
 		JLabel label = new JLabel(text);
 		label.setAlignmentX(LEFT_ALIGNMENT);

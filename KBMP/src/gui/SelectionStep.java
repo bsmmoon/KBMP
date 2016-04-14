@@ -129,7 +129,7 @@ public class SelectionStep extends JPanel {
                     setAvailableModules(frame.getModel().getAvailableModules());
                     setRecommendation(frame.getModel().getRecommendedModules());
                 } else {
-                    question.setVisible(false);
+                    question.setText("Complete Plan");
                     dropdownList.setVisible(false);
                     selectedScroller.setVisible(false);
                     next.setVisible(false);
@@ -140,7 +140,7 @@ public class SelectionStep extends JPanel {
                 System.out.println("Step " + step.name() + " doesn't exist.");
         }
 
-        question.setVisible(true);
+        //question.setVisible(true);
         dropdownList.setMaximumSize(dropdownList.getPreferredSize());
         frame.revalidate();
         revalidate();
@@ -198,11 +198,12 @@ public class SelectionStep extends JPanel {
                     isSuccessful = false;
                 } else {
                     frame.getLogic().confirmSemester();
-                    planned.addLabel(semester.getName());
-                    for (Module module : modules) {
-                        planned.addItem(module,false);
-                    }
-                    planned.addItem(semester);
+                    //planned.addLabel(semester.getName());
+                    //for (Module module : modules) {
+                    //    planned.addItem(module,false);
+                   // }
+                    //planned.addItem(semester);
+                    planned.addSemester(semester);
                 }
 /*
                 String text = planned.getText();
