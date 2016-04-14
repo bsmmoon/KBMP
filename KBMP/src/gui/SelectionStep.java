@@ -20,7 +20,7 @@ public class SelectionStep extends JPanel {
     private GuiFrame frame;
     private STEP step;
     private JScrollPane preplanScroller;
-    private PreRequisitePanel preplanInfo;
+    private PrePlanPanel preplanInfo;
     private ArrayList<Module> preplanModules;
     private ArrayList<AvailableModule> availableModules;
     private ArrayList<FocusArea> availableFocusAreas;
@@ -64,7 +64,7 @@ public class SelectionStep extends JPanel {
         setLocation(20, 20);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
-        preplanInfo = new PreRequisitePanel(frame);
+        preplanInfo = new PrePlanPanel(frame);
         preplanInfo.setAlignmentX(LEFT_ALIGNMENT);
 
         preplanScroller = new JScrollPane(preplanInfo, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

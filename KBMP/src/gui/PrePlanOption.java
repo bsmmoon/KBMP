@@ -9,32 +9,41 @@ import java.util.ArrayList;
 /**
  * Created by Ruofan on 13/4/2016.
  */
-public class PrePlanCheckBox extends JPanel {
-    private PreRequisitePanel panel;
+public class PrePlanOption extends JPanel {
+    boolean isRadio;
+    private PrePlanPanel panel;
     private INFO infoType;
     private JLabel text;
     private JCheckBox checkBox;
+    private JRadioButton radioButton;
     private JComboBox<String> dropdownList;
 
     enum INFO {
         H2_MATHS,H2_PHYSICS,GOOD_MATHS,COMMUNICATION_EXEMPT,CS3201,CS3216,CS3281,CS3283,SIP,ATAP,NOC_SEM,NOC_YEAR
     }
 
-    public PrePlanCheckBox(final PreRequisitePanel panel, INFO infoType, String text, ArrayList<String> semesters) {
+    public PrePlanOption(final PrePlanPanel panel, INFO infoType, String text, ArrayList<String> semesters, boolean isRadio) {
+        this.isRadio = isRadio;
         this.panel = panel;
         this.infoType = infoType;
 
         setBackground(Color.WHITE);
 
         setAlignmentX(LEFT_ALIGNMENT);
-        checkBox = new JCheckBox();
-        checkBox.setBackground(Color.WHITE);
-        checkBox.setAlignmentX(LEFT_ALIGNMENT);
+        if (isRadio) {
+            radioButton = new JRadioButton(text);
+            radioButton.setBackground(Color.WHITE);
+            radioButton.setAlignmentX(LEFT_ALIGNMENT);
+            add(radioButton);
+        } else {
+            checkBox = new JCheckBox(text);
+            checkBox.setBackground(Color.WHITE);
+            checkBox.setAlignmentX(LEFT_ALIGNMENT);
+            add(checkBox);
+        }
+        //this.text = new JLabel(text);
 
-        this.text = new JLabel(text);
-
-        add(checkBox);
-        add(this.text);
+        //add(this.text);
 
         if (semesters != null) {
             dropdownList = new JComboBox<String>();
@@ -59,8 +68,18 @@ public class PrePlanCheckBox extends JPanel {
         setMaximumSize(getPreferredSize());
     }
 
-    public boolean isChecked() {
-        return checkBox.isSelected();
+    public boolean isSelected() {
+        if (isRadio) {
+            return radioButton.isSelected();
+        } else {
+            return checkBox.isSelected();
+        }
+    }
+
+    public void setRadioSelected() { radioButton.setSelected(true);}
+
+    public void setButtonGroup(ButtonGroup group) {
+        group.add(radioButton);
     }
 
     public int getSemesterSelected() {
