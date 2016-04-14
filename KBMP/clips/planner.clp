@@ -59,6 +59,13 @@
 (deftemplate current-semester
     (slot number (type INTEGER)))
 
+(deftemplate skip-semester
+    (slot number 
+        (type INTEGER))
+    (slot module 
+        (type STRING)
+        (default "")))
+
 ; ; Sample modules
 ; ; (deffacts sample-modules
 ; ;     (module (code "CS1101S") (name "Programming Methodology") (MC 5) (prerequisites ""))
@@ -428,7 +435,21 @@
 (ATAP ?semester)
 =>
 (assert (planned "CP3880"))
-(assert (semester-skip ?semester)))
+(assert (skip-semester (number ?semester) (module "CP3880"))))
+
+(defrule RANK::noc-6-month-planned
+(NOCSem ?semester)
+=>
+(assert (planned "TR3202"))
+(assert (skip-semester (number ?semester) (module "TR3202"))))
+
+(defrule RANK::noc-1-year-planned
+(NOCYear ?semester1 ?semester2)
+=>
+(assert (planned "TR3202"))
+(assert (planned "XX3000"))
+(assert (skip-semester (number ?semester1) (module "TR3202")))
+(assert (skip-semester (number ?semester2) (module "XX3000"))))
 
 ; ; -------------------------
 ; ; PRECLUSION RECOMMENDATION

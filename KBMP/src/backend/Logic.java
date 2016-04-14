@@ -79,7 +79,7 @@ public class Logic {
 
 	public void assertNOC1Sem(int semester) { model.assertSymbolFact("NOCSem " + semester); }
 
-	public void assertNOC1Year(int semester) { model.assertSymbolFact("NOCYear " + semester + (semester + 1)); }
+	public void assertNOC1Year(int semester) { model.assertSymbolFact("NOCYear " + semester + " " + (semester + 1)); }
 
 	public void assertCS3201() { model.assertSymbolFact("softwareprojectnormal"); }
 
