@@ -21,8 +21,9 @@ public class SelectedItemsPanel extends JPanel {
 		selectedItems = new ArrayList<SelectedItem>();
 		removedItems = new Stack<SelectedItem> ();
 		this.isEditable = isEditable;
-		//setLayout(new WrapLayout(WrapLayout.LEFT));
-		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+		setLayout(new WrapLayout(WrapLayout.LEFT));
+		//setLayout(new BorderLayout());
+		//setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		//setAlignmentX(LEFT_ALIGNMENT);
 		//setOpaque(false);
 	}
@@ -39,6 +40,7 @@ public class SelectedItemsPanel extends JPanel {
 	public void addLabel(String text) {
 		JLabel label = new JLabel(text);
 		label.setAlignmentX(LEFT_ALIGNMENT);
+		label.setPreferredSize(new Dimension(getParent().getWidth()-20,20));
 		add(label);
 		setPreferredSize(getLayout().preferredLayoutSize(this));
 		validate();
