@@ -42,8 +42,8 @@ public class PrePlanPanel extends JPanel {
         checkBoxes = new ArrayList<PrePlanOption>();
 
         addLabel("Have you passed the following subjects?");
-        checkBoxes.add(addOption(PrePlanOption.INFO.H2_MATHS,"O Level H2 Maths or equivalent",null,false));
-        checkBoxes.add(addOption(PrePlanOption.INFO.H2_PHYSICS,"O Level H2 Physics or equivalent",null,false));
+        checkBoxes.add(addOption(PrePlanOption.INFO.H2_MATHS,"A Level H2 Maths or equivalent",null,false));
+        checkBoxes.add(addOption(PrePlanOption.INFO.H2_PHYSICS,"A Level H2 Physics or equivalent",null,false));
 
         addLabel("Do you have a strong background in the following subjects?");
         checkBoxes.add(addOption(PrePlanOption.INFO.GOOD_MATHS,"Mathematics",null,false));
