@@ -115,6 +115,13 @@
 (defmodule RANK (import MAIN ?ALL))
 (defmodule SELECT (import MAIN ?ALL))
 
+; ; FACTS
+
+; ; All compulsory project modules
+(deffacts RANK::all-projects
+(allprojects "CS2103T" "CS2101" "CS3201" "CS3202" "CS3281" "CS3282" "CS3283" "CS3284"))
+
+
 ; ; RULES
 
 ; ; RANK
@@ -141,12 +148,16 @@
     (printout t "Marking module " ?code1 " as unwanted" crlf)
     (modify ?module (want no) (score -99)))
 
+; ; ---------------------
+; ; MARK STATUS AVAILABLE
+; ; ---------------------
+
 ; ; ----------------
-; ; STATUS AVAILABLE
+; ; NO PREREQUISITES
 ; ; ----------------
 
 ; ; Modules Available, fake modules from other faculties, without prerequisites, level 0, salience 4, no limit
-(defrule RANK::mark-available-no-prerequisites-level-0 "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-0 "mark level 0 modules without prerequisites as available"
     (declare (salience 4))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 0))
     =>
@@ -156,7 +167,7 @@
     )
 
 ; ; Modules Available, without prerequisites, level 1, salience 4, no limit
-(defrule RANK::mark-available-no-prerequisites-level-1 "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-1 "mark level 1 modules without prerequisites as available"
     (declare (salience 4))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 1))
     =>
@@ -166,7 +177,7 @@
     )
 
 ; ; Modules Available, without prerequisites, level 2, salience 3, check total limit of 15
-(defrule RANK::mark-available-no-prerequisites-level-2 "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-2 "mark level 2 modules without prerequisites as available"
     (declare (salience 3))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 2))
     =>
@@ -180,7 +191,7 @@
     )
 
 ; ; Modules Available, without prerequisites, level 3, salience 2, check total limit of 15
-(defrule RANK::mark-available-no-prerequisites-level-3 "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-3 "mark level 3 modules without prerequisites as available"
     (declare (salience 2))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 3))
     =>
@@ -194,7 +205,7 @@
     )
 
 ; ; Modules Available, without prerequisites, level 3 above, salience 0, limit total to 15
-(defrule RANK::mark-available-no-prerequisites-level-3-higher "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-3-higher "mark level 3 above modules without prerequisites as available"
     (declare (salience 0))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level ?level&:(> ?level 3)))
     =>
@@ -233,10 +244,6 @@
             (printout t "Module " ?code " available again from available-next-sem." crlf)
             (modify ?module (status available))))
 
-
-
-
-
 ; ; ---------------
 ; ; PREREQ HANDLING
 ; ; ---------------
@@ -252,7 +259,7 @@
     (modify ?module (status available)))
 
 ; ; Modules Available, with 2 prerequisites met, no limit
-(defrule RANK::mark-available-2-prerequisites-met "mark modules with single prerequisite met as available"
+(defrule RANK::mark-available-2-prerequisites-met "mark modules with 2 prerequisites met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2) (status none) (want ~no))
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
@@ -262,7 +269,7 @@
     (modify ?module (status available)))
 
 ; ; Modules Available, with 3 prerequisites met, no limit
-(defrule RANK::mark-available-3-prerequisites-met "mark modules with single prerequisite met as available"
+(defrule RANK::mark-available-3-prerequisites-met "mark modules with 3 prerequisites met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2 ?prereq3) (status none) (want ~no))
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
@@ -273,7 +280,7 @@
     (modify ?module (status available)))
 
 ; ; Modules Available, with 4 prerequisites met, no limit
-(defrule RANK::mark-available-4-prerequisites-met "mark modules with single prerequisite met as available"
+(defrule RANK::mark-available-4-prerequisites-met "mark modules with 4 prerequisites met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2 ?prereq3 ?prereq4) (status none) (want ~no))
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
@@ -369,7 +376,7 @@
 
 ; ; Situational preclusions as rules to allow user preference
 
-; ; Math background
+; ; Math background, with first element as the default choice for module recommendation
 (defrule RANK::normal-math-preclusion "preclusions for students with normal math background"
 (normalmath)
 =>
@@ -383,7 +390,7 @@
 (assert (preclusion "CS1101S" "CG1101" "CS1010" "CS1010E" "CS1010FC" "CS1010S" "CS1010X" "CS1101" "CS1101C" "CS1010J" "CS1010R"))
 (assert (preclusion "CS2020" "CG1102" "CG1103" "CS1020" "CS1020E" "CS2010" "CS1102" "CS1102C" "CS1102S")))
 
-; ; Communication module exemption
+; ; Communication module exemption, with first element as the default choice for module recommendation
 (defrule RANK::communication-exemption-preclusion "preclusions for students with communication module exempted"
 (commexempted)
 =>
@@ -394,11 +401,7 @@
 =>
 (assert (preclusion "CS2103T" "CS2103")))
 
-; ; Software project preference
-
-; ; All compulsory project modules
-(deffacts RANK::all-projects
-(allprojects "CS2103T" "CS2101" "CS3201" "CS3202" "CS3281" "CS3282" "CS3283" "CS3284"))
+; ; Software project preference, with first element as the default choice for module recommendation
 
 (defrule RANK::software-normal-preclusion "preclusions for students with normal software project"
 (softwareprojectnormal)
