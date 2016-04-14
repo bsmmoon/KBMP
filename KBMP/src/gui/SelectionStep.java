@@ -19,6 +19,7 @@ import common.Semester;
 public class SelectionStep extends JPanel {
     private GuiFrame frame;
     private STEP step;
+    private JScrollPane preplanScroller;
     private PreRequisitePanel preplanInfo;
     private ArrayList<Module> preplanModules;
     private ArrayList<AvailableModule> availableModules;
@@ -65,7 +66,10 @@ public class SelectionStep extends JPanel {
 
         preplanInfo = new PreRequisitePanel(frame);
         preplanInfo.setAlignmentX(LEFT_ALIGNMENT);
-        preplanInfo.setVisible(false);
+
+        preplanScroller = new JScrollPane(preplanInfo, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        preplanScroller.getViewport().setPreferredSize(new Dimension(200, 200));
+
 
         selected = new SelectedItemsPanel(this, frame);
         selected.setAlignmentX(LEFT_ALIGNMENT);
@@ -84,7 +88,7 @@ public class SelectionStep extends JPanel {
         setupDropdownList();
 
         add(question);
-        add(preplanInfo);
+        add(preplanScroller);
         add(dropdownList);
         add(selectedScroller);
         add(plannedScroller);
@@ -96,10 +100,10 @@ public class SelectionStep extends JPanel {
 
         switch (step) {
             case PRE_PLAN:
-                preplanInfo.setVisible(true);
+
                 break;
             case MOD_TAKEN:
-                preplanInfo.setVisible(false);
+                preplanScroller.setVisible(false);
                 setQuestion("Please select modules that you have already taken.");
                 setAllModules(frame.getModel().getPreplanModules());
                 dropdownList.setVisible(true);
