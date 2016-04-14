@@ -191,17 +191,19 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 ArrayList<Module> modules = getSelectedModules();
-                planned.addLabel("Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "\n");
-                for (Module module : modules) {
-                    planned.addItem(module,false);
-                }
                 frame.getLogic().selectModules(modules);
                 Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester());
-                // check here
-                frame.getLogic().confirmSemester();
-
-                planned.addItem(semester);
-
+                if (semester.getCredits() < 16) {
+                    JOptionPane.showMessageDialog(this,"The total credits are less than 16 MC!");
+                    isSuccessful = false;
+                } else {
+                    frame.getLogic().confirmSemester();
+                    planned.addLabel("Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "\n");
+                    for (Module module : modules) {
+                        planned.addItem(module,false);
+                    }
+                    planned.addItem(semester);
+                }
 /*
                 String text = planned.getText();
                 text += "Semester " + (frame.getModel().getSemester() - 1) + "\n";
@@ -213,10 +215,13 @@ public class SelectionStep extends JPanel {
                 */
                 break;
         }
-        selected.clearAllItems();
-        revalidate();
-        frame.getLogic().iterate();
-        init();
+
+        if (isSuccessful) {
+            selected.clearAllItems();
+            revalidate();
+            frame.getLogic().iterate();
+            init();
+        }
 
         return isSuccessful;
     }
