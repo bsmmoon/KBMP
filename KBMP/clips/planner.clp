@@ -59,17 +59,12 @@
 (deftemplate current-semester
     (slot number (type INTEGER)))
 
-; ; Sample modules
-; ; (deffacts sample-modules
-; ;     (module (code "CS1101S") (name "Programming Methodology") (MC 5) (prerequisites ""))
-; ;     (module (code "CS1010") (name "Programming Methodology") (MC 4) (prerequisites ""))
-; ;     (module (code "CS1231") (name "Discrete Structures") (MC 4) (prerequisites ""))
-; ;     (module (code "CS1020") (name "Data Structures and Algorithms I") (MC 4) (prerequisites "CS1010"))
-; ;     (module (code "CS2010") (name "Data Structures and Algorithms II") (MC 4) (prerequisites "CS1020"))
-; ;     (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1010"))
-; ;     (module (code "CS2020") (name "Data Structures and Algorithms Accelerated") (MC 6) (prerequisites "CS1101S"))
-; ;     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1010"))
-; ;     (module (code "CS2100") (name "Computer Organisation") (MC 4) (prerequisites "CS1101S")))
+(deftemplate skip-semester
+    (slot number 
+        (type INTEGER))
+    (slot module 
+        (type STRING)
+        (default "")))
 
 ; ; FUNCTIONS
 (deffunction assert-taken (?x)
@@ -103,13 +98,6 @@
     (do-for-fact ((?x current-semester))
         (assert (current-semester (number (+ ?x:number 1))))
         (retract ?x)))
-
-(deffunction parity$ (?x)
-    (if (= (mod ?x 2) 0)
-        then
-            (return TWO)
-        else
-            (return ONE)))
 
 ; ; MODULES
 (defmodule RANK (import MAIN ?ALL))
@@ -214,31 +202,33 @@
         )
     )
 
-(defrule RANK::mark-available-next-sem "mark modules that is available but not offered this sem as available-next-sem"
-    (declare (salience 0))
-    ?module <- (module (status available) (semester ?sem) (code ?code))
-    (current-semester (number ?current-sem))
+(defrule RANK::mark-available-next-sem-1 "mark modules that is available but not offered this sem as available-next-sem"
+    ?module <- (module (status available) (semester ONE) (code ?code))
+    (current-semester (number 2|4|6|8))
     =>
-    (if (eq ?sem BOTH)
-        then
-            ; ; do nothing
-        else
-            (if (eq ?sem (parity$ (+ 1 ?current-sem)))
-                then
-                    ; ; do nothing
-                else
-                    (printout t "Mark " ?code " as available-next-sem." crlf)
-                    (modify ?module (status available-next-sem)))))
+    (printout t "Mark " ?code " as available-next-sem 1." crlf)
+    (modify ?module (status available-next-sem)))
 
-(defrule RANK::toggle-available-next-sem "toggle modules marked as available-next-sem in last semester"
-    (declare (salience 0))
-    ?module <- (module (status available-next-sem) (semester ?sem) (code ?code))
-    (current-semester (number ?current-sem))
+(defrule RANK::mark-available-next-sem-2 "mark modules that is available but not offered this sem as available-next-sem"
+    ?module <- (module (status available) (semester TWO) (code ?code))
+    (current-semester (number 1|3|5|7))
     =>
-    (if (eq ?sem (parity$ (+ 1 ?current-sem)))
-        then
-            (printout t "Module " ?code " available again from available-next-sem." crlf)
-            (modify ?module (status available))))
+    (printout t "Mark " ?code " as available-next-sem 2." crlf)
+    (modify ?module (status available-next-sem)))
+
+(defrule RANK::mark-available-this-sem-1 "toggle modules marked as available-next-sem to available"
+    ?module <- (module (status available-next-sem) (semester ONE) (code ?code))
+    (current-semester (number 1|3|5|7))
+    =>
+    (printout t "Module " ?code " available again from available-next-sem." crlf)
+    (modify ?module (status available)))
+
+(defrule RANK::mark-available-this-sem-2 "toggle modules marked as available-next-sem to available"
+    ?module <- (module (status available-next-sem) (semester TWO) (code ?code))
+    (current-semester (number 2|4|6|8))
+    =>
+    (printout t "Module " ?code " available again from available-next-sem." crlf)
+    (modify ?module (status available)))
 
 ; ; HANDLING MODULES WITH PREREQS
 
@@ -428,7 +418,21 @@
 (ATAP ?semester)
 =>
 (assert (planned "CP3880"))
-(assert (semester-skip ?semester)))
+(assert (skip-semester (number ?semester) (module "CP3880"))))
+
+(defrule RANK::noc-6-month-planned
+(NOCSem ?semester)
+=>
+(assert (planned "TR3202"))
+(assert (skip-semester (number ?semester) (module "TR3202"))))
+
+(defrule RANK::noc-1-year-planned
+(NOCYear ?semester1 ?semester2)
+=>
+(assert (planned "TR3202"))
+(assert (planned "XX3000"))
+(assert (skip-semester (number ?semester1) (module "TR3202")))
+(assert (skip-semester (number ?semester2) (module "XX3000"))))
 
 ; ; -------------------------
 ; ; PRECLUSION RECOMMENDATION
