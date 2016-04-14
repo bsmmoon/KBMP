@@ -61,6 +61,8 @@ public class Logic {
 
 	public void selectModules(ArrayList<Module> modules) { model.selectModules(modules); }
 
+	public void confirmSemester() { model.updateModulesInClips(); }
+
 	public void assertGoodMath() { model.assertSymbolFact("goodmath"); }
 
 	public void assertNormalMath() { model.assertSymbolFact("normalmath"); }

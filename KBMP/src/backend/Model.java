@@ -2,6 +2,7 @@ package backend;/*
  * Facet
  */
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -119,10 +120,12 @@ public class Model {
 
 	public void assertDontWant(ArrayList<Module> modules) { modules.forEach((module) -> execute("(assert-dontwant \"" + module.getCode() + "\")")); }
 
-	public void selectModules(ArrayList<Module> modules) {
+	public void selectModules(ArrayList<Module> modules) { updatePlan(modules); }
+
+	public void updateModulesInClips() {
+		ArrayList<Module> modules = plan.getSemester(semester).getModules();
 		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
 		execute("(increment-semester)");
-		updatePlan(modules);
 		updateSemester();
 	}
 
