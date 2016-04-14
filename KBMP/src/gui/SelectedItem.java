@@ -1,15 +1,13 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -40,7 +38,7 @@ public class SelectedItem extends JPanel {
 
 		Iterator<Map.Entry<Module.WorkloadTypes,Float>> workload = module.getWorkload().entrySet().iterator();
 		String workloadSummary = "";
-		String workloadInfo = "Workload: ";
+		String workloadInfo = module.getTooltip() + "<br>Workload: ";
 		while (workload.hasNext()) {
 			Map.Entry<Module.WorkloadTypes,Float> entry = workload.next();
 			workloadSummary += entry.getValue() + " ";

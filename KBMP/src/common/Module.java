@@ -184,7 +184,8 @@ public class Module implements Serializable {
 	}
 
    public String getTooltip() {
-        return this.type.toString();
+       
+        return this.type == null?"<html>" + "no type":"<html>" + this.type.toString();
     }
 	
 	public void setSemesters(Semester semesters) {
