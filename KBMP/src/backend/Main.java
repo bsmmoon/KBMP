@@ -52,7 +52,7 @@ public class Main {
 //
 //		logic.iterate();
 //
-//		logic.execute("(facts)");
+		logic.execute("(facts)");
 
 		//frame.iterate();
 	}

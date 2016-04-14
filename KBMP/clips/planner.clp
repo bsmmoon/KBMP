@@ -152,9 +152,7 @@
 ; ; MARK STATUS AVAILABLE
 ; ; ---------------------
 
-; ; ----------------
 ; ; NO PREREQUISITES
-; ; ----------------
 
 ; ; Modules Available, fake modules from other faculties, without prerequisites, level 0, salience 4, no limit
 (defrule RANK::mark-available-no-prerequisites-level-0 "mark level 0 modules without prerequisites as available"
@@ -242,9 +240,7 @@
             (printout t "Module " ?code " available again from available-next-sem." crlf)
             (modify ?module (status available))))
 
-; ; ---------------
-; ; PREREQ HANDLING
-; ; ---------------
+; ; HANDLING MODULES WITH PREREQS
 
 ; ; Modules Available, with single prerequisite met, no limit
 (defrule RANK::mark-available-1-prerequisite-met "mark modules with single prerequisite met as available"
@@ -420,6 +416,19 @@
 (softwareprojectmodern)
 =>
 (assert (preclusion "CS3216" "CS3283" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")))
+
+; ; Preferences for industrial experience
+(defrule RANK::sip-planned
+(SIP)
+=>
+(assert (planned "CP3200"))
+(assert (planned "CP3202")))
+
+(defrule RANK::atap-planned
+(ATAP ?semester)
+=>
+(assert (planned "CP3880"))
+(assert (semester-skip ?semester)))
 
 ; ; -------------------------
 ; ; PRECLUSION RECOMMENDATION
