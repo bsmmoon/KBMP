@@ -33,6 +33,10 @@ public class Semester {
         return result;
     }
 
+    public int getMC() {
+        return 0;
+    }
+
     public String getSummary() {
         String out = "<html>";
         out += "Summary";
