@@ -168,12 +168,17 @@ public class Model {
 		for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) {
 			standardWorkloads.put(type, 2.0f);
 		}
-		int num = 5;
-		while (num-- > 1) {
-			this.modules.add(new Module.Builder().setCode("SC0123").setName("Science " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
-			this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
-			this.modules.add(new Module.Builder().setCode("GEM0123").setName("General Education Module " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
-			this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth " + num).setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
-		}
+
+		this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+
+		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM Arts").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM Science").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+
+		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth 1").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth 2").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 1").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 2").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 3").setCredits(4).setWorkload(standardWorkloads).setPrerequisites("").setPreclusions("").build());
 	}
 }
