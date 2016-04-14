@@ -83,11 +83,11 @@ public class Logic {
 
 	public void assertCS3201() { model.assertSymbolFact("softwareprojectnormal"); }
 
-	public void assertCS3216() { model.assertSymbolFact("softwareprojectthematic"); }
+	public void assertCS3216() { model.assertSymbolFact("softwareprojectmodern"); }
 
-	public void assertCS3281() { model.assertSymbolFact("softwareprojectmedia"); }
+	public void assertCS3281() { model.assertSymbolFact("softwareprojectthematic"); }
 
-	public void assertCS3283() { model.assertSymbolFact("softwareprojectmodern"); }
+	public void assertCS3283() { model.assertSymbolFact("softwareprojectmedia"); }
 
 
 }
