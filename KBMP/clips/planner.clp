@@ -93,8 +93,8 @@
 (deffunction assert-electivefocus ($?x)
     (assert (electivefocus $?x)))
 
-(deffunction count-level-one ()
-    (length$ (find-all-facts ((?f module)) (and (eq ?f:level 1) (or (eq ?f:status planned) (eq ?f:status taken))))))
+(deffunction count-planned-and-taken ()
+    (length$ (find-all-facts ((?f module)) (or (eq ?f:status planned) (eq ?f:status taken)))))
 
 (deffunction count-available ()
     (length$ (find-all-facts ((?f module)) (eq ?f:status available))))
@@ -162,7 +162,6 @@
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 0))
     =>
     (printout t "Module " ?code " available." crlf)
-    ; ; (printout t "Total available: " (count-available) "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available))
     )
 
@@ -172,7 +171,6 @@
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 1))
     =>
     (printout t "Module " ?code " available." crlf)
-    ; ; (printout t "Total available: " (count-available) "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available))
     )
 
@@ -543,16 +541,16 @@
     (planned ?code2)
     (test(eq ?code1 ?code2))
     =>
-    (printout t "Marking module " ?code1 " as planned" crlf)
-    (modify ?module (status planned)))
+    (modify ?module (status planned))
+    (printout t "Marked module " ?code1 " as planned" " total planned and taken: " (count-planned-and-taken) crlf))
 
 (defrule SELECT::mark-taken "mark modules that the user have already taken"
     ?module <- (module (status ~taken) (code ?code1))
     (taken ?code2)
     (test(eq ?code1 ?code2))
     =>
-    (printout t "Marking module " ?code1 " as taken" crlf)
-    (modify ?module (status taken)))
+    (modify ?module (status taken))
+    (printout t "Marked module " ?code1 " as taken" " total planned and taken: " (count-planned-and-taken) crlf))
 
 (defrule SELECT::mark-focus "mark focus area that the user plan to take"
     ?focus <- (focus (status none) (name ?name1))
