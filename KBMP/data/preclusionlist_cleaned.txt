@@ -14,6 +14,17 @@ preclusion CS2101 exempted:
 preclusion CS2101 not exempted:
 (preclusion "CS2103T" "CS2103")
 
+preclusion normal software project:
+(preclusion "CS3201" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3283" "CS3284")
+
+preclusion thematic software project:
+(preclusion "CS3281" "CS3201" "CS3202" "CS3283" "CS3284")
+
+preclusion media software project:
+(preclusion "CS3283" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")
+
+preclusion modern software project:
+(preclusion "CS3216" "CS3283" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")
 
 standard:
 (preclusion "CS1231" "MA1100")
@@ -32,8 +43,8 @@ standard:
 (preclusion "MA1301" "H2Math")
 (preclusion "MA1101R" "MA1102R" "MA1301FC" "MA1301X" "MA1505" "MA1506" "MA1507" "MA1508" "MA1521" "MA1311" "MA1312" "MA1421")
 (preclusion "MA1521" "MA1102R" "MA1312" "MA1505" "MA1507" "MA2501")
-(preclusion "PC1221" "H2Physics" "PC1141" "PC1142" "PC1431" "PC1431FC" "PC1431X" "PC1221FC" "PC1221X")
-(preclusion "PC1222" "H2Physics" "PC1143" "PC1144" "PC1432")
+(preclusion "PC1221" "H2Physics")
+(preclusion "PC1222" "H2Physics")
 (preclusion "ST2334" "ST2131" "MA2216" "CE2407")
 (preclusion "CS3226" "CP3101B")
 (preclusion "CS3242" "CS4342")

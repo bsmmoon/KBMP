@@ -49,7 +49,7 @@ public class Logic {
 	
 	public void execute(String command) { model.execute(command); }
 
-	public void setNumberOfSemesterLeft(int semester) { model.setNumberOfSemesterLeft(semester); }
+	public void setStartTime(int year, int semester) { model.setStartingSemester((year - 1) * 2 + semester); }
 
 	public void assertTaken(ArrayList<Module> modules) { model.assertTaken(modules); }
 
@@ -65,11 +65,29 @@ public class Logic {
 
 	public void assertNormalMath() { model.assertSymbolFact("normalmath"); }
 
-	public void assertCommunicationException() { model.assertSymbolFact("commnotexcempted"); }
+	public void assertCommunicationExemption() { model.assertSymbolFact("commexempted"); }
 
-	public void assertCommunicationNotExcepted() { model.assertSymbolFact("commnotexcempted"); }
+	public void assertCommunicationNotExempted() { model.assertSymbolFact("commnotexempted"); }
 
 	public void assertH2Maths() { model.assertTaken("H2Math"); }
 
 	public void assertH2Physics() { model.assertTaken("H2Physics"); }
+
+	public void assertSIP() { model.assertSymbolFact("SIP"); }
+
+	public void asertATAP(int semester) { model.assertSymbolFact("ATAP" + semester); }
+
+	public void assertNOC1Sem(int semester) { model.assertSymbolFact("NOCSem" + semester); }
+
+	public void assertNOC1Year(int semester) { model.assertSymbolFact("NOCYear " + semester + (semester + 1)); }
+
+	public void assertCS3201() { model.assertSymbolFact("softwareprojectnormal"); }
+
+	public void assertCS3216() { model.assertSymbolFact("softwareprojectmodern"); }
+
+	public void assertCS3281() { model.assertSymbolFact("softwareprojectthematic"); }
+
+	public void assertCS3283() { model.assertSymbolFact("softwareprojectmedia"); }
+
+
 }

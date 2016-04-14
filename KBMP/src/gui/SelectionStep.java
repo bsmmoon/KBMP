@@ -13,11 +13,13 @@ import javax.swing.*;
 import common.AvailableModule;
 import common.FocusArea;
 import common.Module;
+import common.Semester;
 
 @SuppressWarnings("serial")
 public class SelectionStep extends JPanel {
     private GuiFrame frame;
     private STEP step;
+    private JScrollPane preplanScroller;
     private PreRequisitePanel preplanInfo;
     private ArrayList<Module> preplanModules;
     private ArrayList<AvailableModule> availableModules;
@@ -64,7 +66,10 @@ public class SelectionStep extends JPanel {
 
         preplanInfo = new PreRequisitePanel(frame);
         preplanInfo.setAlignmentX(LEFT_ALIGNMENT);
-        preplanInfo.setVisible(false);
+
+        preplanScroller = new JScrollPane(preplanInfo, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        preplanScroller.getViewport().setPreferredSize(new Dimension(200, 200));
+
 
         selected = new SelectedItemsPanel(this, frame);
         selected.setAlignmentX(LEFT_ALIGNMENT);
@@ -83,7 +88,7 @@ public class SelectionStep extends JPanel {
         setupDropdownList();
 
         add(question);
-        add(preplanInfo);
+        add(preplanScroller);
         add(dropdownList);
         add(selectedScroller);
         add(plannedScroller);
@@ -95,10 +100,10 @@ public class SelectionStep extends JPanel {
 
         switch (step) {
             case PRE_PLAN:
-                preplanInfo.setVisible(true);
+
                 break;
             case MOD_TAKEN:
-                preplanInfo.setVisible(false);
+                preplanScroller.setVisible(false);
                 setQuestion("Please select modules that you have already taken.");
                 setAllModules(frame.getModel().getPreplanModules());
                 dropdownList.setVisible(true);
@@ -118,7 +123,7 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 if (!frame.getModel().isDone()) {
-                    setQuestion("<html>Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
+                    setQuestion("<html>Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
                     setAvailableModules(frame.getModel().getAvailableModules());
                     setRecommendation(frame.getModel().getRecommendedModules());
                 } else {
@@ -134,7 +139,7 @@ public class SelectionStep extends JPanel {
         }
 
         question.setVisible(true);
-
+        dropdownList.setMaximumSize(dropdownList.getPreferredSize());
         frame.revalidate();
         revalidate();
     }
@@ -184,11 +189,13 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 ArrayList<Module> modules = getSelectedModules();
-                planned.addLabel("Semester " + frame.getModel().getSemester());
+                planned.addLabel("Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "\n");
                 for (Module module : modules) {
                     planned.addItem(module,false);
                 }
                 frame.getLogic().selectModules(modules);
+                Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester() - 1);
+                planned.addItem(semester);
 
 /*
                 String text = planned.getText();

@@ -17,7 +17,7 @@ public class PrePlanCheckBox extends JPanel {
     private JComboBox<String> dropdownList;
 
     enum INFO {
-        H2_MATHS,H2_PHYSICS,SIP,ATAP,NOC_SEM,NOC_YEAR
+        H2_MATHS,H2_PHYSICS,GOOD_MATHS,COMMUNICATION_EXEMPT,CS3201,CS3216,CS3281,CS3283,SIP,ATAP,NOC_SEM,NOC_YEAR
     }
 
     public PrePlanCheckBox(final PreRequisitePanel panel, INFO infoType, String text, ArrayList<String> semesters) {
@@ -41,7 +41,7 @@ public class PrePlanCheckBox extends JPanel {
             for (String sem : semesters) {
                 this.dropdownList.addItem(sem);
             }
-            dropdownList.setMaximumSize(new Dimension(50, 20));
+            dropdownList.setMaximumSize(dropdownList.getPreferredSize());
             dropdownList.setVisible(false);
             add(dropdownList);
 
@@ -63,8 +63,12 @@ public class PrePlanCheckBox extends JPanel {
         return checkBox.isSelected();
     }
 
-    public String getSemesterSelected() {
-        return dropdownList.getSelectedItem().toString();
+    public int getSemesterSelected() {
+        String[] tokens = dropdownList.getSelectedItem().toString().split(" ");
+        int year = Integer.parseInt(tokens[1]) - 1;
+        int sem = Integer.parseInt(tokens[3]);
+
+        return year*2 + sem;
     }
 
     public INFO getInfoType() {

@@ -32,4 +32,17 @@ public class Semester {
         }
         return result;
     }
+
+    public String getSummary() {
+        String out = "<html>";
+        out += "Summary";
+        out += "<br>Workloads: [";
+        Float[] workloads = getWorkloads();
+        for (int i = 0; i < workloads.length; i++) {
+            out += workloads[i];
+            if (i < workloads.length - 1) out += ", ";
+        }
+        out += "]";
+        return out;
+    }
 }

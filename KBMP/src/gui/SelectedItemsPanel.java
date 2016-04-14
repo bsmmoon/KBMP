@@ -6,6 +6,7 @@ import java.util.Stack;
 
 import common.FocusArea;
 import common.Module;
+import common.Semester;
 
 import javax.swing.*;
 
@@ -20,7 +21,9 @@ public class SelectedItemsPanel extends JPanel {
 		selectedItems = new ArrayList<SelectedItem>();
 		removedItems = new Stack<SelectedItem> ();
 		this.isEditable = isEditable;
-		setLayout(new WrapLayout(WrapLayout.LEFT));
+		//setLayout(new WrapLayout(WrapLayout.LEFT));
+		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+		//setAlignmentX(LEFT_ALIGNMENT);
 		//setOpaque(false);
 	}
 
@@ -55,9 +58,16 @@ public class SelectedItemsPanel extends JPanel {
 		item.setAlignmentX(LEFT_ALIGNMENT);
 		add(item);
 		setPreferredSize(getLayout().preferredLayoutSize(this));
+		setAlignmentX(LEFT_ALIGNMENT);
 
 		validate();
 	}
+
+	public void addItem(Semester semester) {
+		SelectedItem item = new SelectedItem(this, semester);
+		addItem(item);
+	}
+
 	public void removeItem(SelectedItem item) {
 		selectedItems.remove(item);
 		removedItems.push(item);

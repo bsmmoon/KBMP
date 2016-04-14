@@ -44,7 +44,10 @@
     (slot recommend
         (type SYMBOL)
         (allowed-symbols yes no NONE)
-        (default NONE)))
+        (default NONE))
+    (slot semester
+        (type SYMBOL)
+        (default BOTH)))
 
 (deftemplate focus
     (slot name (type STRING))
@@ -52,6 +55,9 @@
     (multislot electives (type STRING))
     (multislot unrestricted-electives (type STRING))
     (slot status (type SYMBOL) (default none)))
+
+(deftemplate current-semester
+    (slot number (type INTEGER)))
 
 ; ; Sample modules
 ; ; (deffacts sample-modules
@@ -87,16 +93,34 @@
 (deffunction assert-electivefocus ($?x)
     (assert (electivefocus $?x)))
 
-(deffunction count-level-one ()
-    (length$ (find-all-facts ((?f module)) (and (eq ?f:level 1) (or (eq ?f:status planned) (eq ?f:status taken))))))
+(deffunction count-planned-and-taken ()
+    (length$ (find-all-facts ((?f module)) (or (eq ?f:status planned) (eq ?f:status taken)))))
 
 (deffunction count-available ()
     (length$ (find-all-facts ((?f module)) (eq ?f:status available))))
 
+(deffunction increment-semester ()
+    (do-for-fact ((?x current-semester))
+        (assert (current-semester (number (+ ?x:number 1))))
+        (retract ?x)))
+
+(deffunction parity$ (?x)
+    (if (= (mod ?x 2) 0)
+        then
+            (return TWO)
+        else
+            (return ONE)))
 
 ; ; MODULES
 (defmodule RANK (import MAIN ?ALL))
 (defmodule SELECT (import MAIN ?ALL))
+
+; ; FACTS
+
+; ; All compulsory project modules
+(deffacts RANK::all-projects
+(allprojects "CS2103T" "CS2101" "CS3201" "CS3202" "CS3281" "CS3282" "CS3283" "CS3284"))
+
 
 ; ; RULES
 
@@ -124,22 +148,34 @@
     (printout t "Marking module " ?code1 " as unwanted" crlf)
     (modify ?module (want no) (score -99)))
 
+; ; ---------------------
+; ; MARK STATUS AVAILABLE
+; ; ---------------------
+
 ; ; ----------------
-; ; STATUS AVAILABLE
+; ; NO PREREQUISITES
 ; ; ----------------
 
+; ; Modules Available, fake modules from other faculties, without prerequisites, level 0, salience 4, no limit
+(defrule RANK::mark-available-no-prerequisites-level-0 "mark level 0 modules without prerequisites as available"
+    (declare (salience 4))
+    ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 0))
+    =>
+    (printout t "Module " ?code " available." crlf)
+    (modify ?module (status available))
+    )
+
 ; ; Modules Available, without prerequisites, level 1, salience 4, no limit
-(defrule RANK::mark-available-no-prerequisites-level-1 "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-1 "mark level 1 modules without prerequisites as available"
     (declare (salience 4))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 1))
     =>
     (printout t "Module " ?code " available." crlf)
-    ; ; (printout t "Total available: " (count-available) "Level 1 planned/taken: " (count-level-one) crlf)
     (modify ?module (status available))
     )
 
 ; ; Modules Available, without prerequisites, level 2, salience 3, check total limit of 15
-(defrule RANK::mark-available-no-prerequisites-level-2 "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-2 "mark level 2 modules without prerequisites as available"
     (declare (salience 3))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 2))
     =>
@@ -153,7 +189,7 @@
     )
 
 ; ; Modules Available, without prerequisites, level 3, salience 2, check total limit of 15
-(defrule RANK::mark-available-no-prerequisites-level-3 "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-3 "mark level 3 modules without prerequisites as available"
     (declare (salience 2))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level 3))
     =>
@@ -167,7 +203,7 @@
     )
 
 ; ; Modules Available, without prerequisites, level 3 above, salience 0, limit total to 15
-(defrule RANK::mark-available-no-prerequisites-level-3-higher "mark modules without prerequisites as available"
+(defrule RANK::mark-available-no-prerequisites-level-3-higher "mark level 3 above modules without prerequisites as available"
     (declare (salience 0))
     ?module <- (module (code ?code) (prerequisites "") (status none) (want ~no) (level ?level&:(> ?level 3)))
     =>
@@ -179,6 +215,32 @@
         ; ; (printout t "Total available reached max " (count-available) crlf)
         )
     )
+
+(defrule RANK::mark-available-next-sem "mark modules that is available but not offered this sem as available-next-sem"
+    (declare (salience 0))
+    ?module <- (module (status available) (semester ?sem) (code ?code))
+    (current-semester (number ?current-sem))
+    =>
+    (if (eq ?sem BOTH)
+        then
+            ; ; do nothing
+        else
+            (if (eq ?sem (parity$ (+ 1 ?current-sem)))
+                then
+                    ; ; do nothing
+                else
+                    (printout t "Mark " ?code " as available-next-sem." crlf)
+                    (modify ?module (status available-next-sem)))))
+
+(defrule RANK::toggle-available-next-sem "toggle modules marked as available-next-sem in last semester"
+    (declare (salience 0))
+    ?module <- (module (status available-next-sem) (semester ?sem) (code ?code))
+    (current-semester (number ?current-sem))
+    =>
+    (if (eq ?sem (parity$ (+ 1 ?current-sem)))
+        then
+            (printout t "Module " ?code " available again from available-next-sem." crlf)
+            (modify ?module (status available))))
 
 ; ; ---------------
 ; ; PREREQ HANDLING
@@ -195,7 +257,7 @@
     (modify ?module (status available)))
 
 ; ; Modules Available, with 2 prerequisites met, no limit
-(defrule RANK::mark-available-2-prerequisites-met "mark modules with single prerequisite met as available"
+(defrule RANK::mark-available-2-prerequisites-met "mark modules with 2 prerequisites met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2) (status none) (want ~no))
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
@@ -205,7 +267,7 @@
     (modify ?module (status available)))
 
 ; ; Modules Available, with 3 prerequisites met, no limit
-(defrule RANK::mark-available-3-prerequisites-met "mark modules with single prerequisite met as available"
+(defrule RANK::mark-available-3-prerequisites-met "mark modules with 3 prerequisites met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2 ?prereq3) (status none) (want ~no))
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
@@ -216,7 +278,7 @@
     (modify ?module (status available)))
 
 ; ; Modules Available, with 4 prerequisites met, no limit
-(defrule RANK::mark-available-4-prerequisites-met "mark modules with single prerequisite met as available"
+(defrule RANK::mark-available-4-prerequisites-met "mark modules with 4 prerequisites met as available"
     ?module <- (module (code ?code) (prerequisites ?prereq1 ?prereq2 ?prereq3 ?prereq4) (status none) (want ~no))
     (module (status planned|taken|equivalenttaken) (code ?prereq1))
     (module (status planned|taken|equivalenttaken) (code ?prereq2))
@@ -293,11 +355,7 @@
 (preclusion "CS2100R" "CS1104")
 (preclusion "CS2108" "CS3246")
 (preclusion "CS2309" "CS2305S")
-(preclusion "CS3201" "CS3215")
-(preclusion "CS3202" "CS3215")
 (preclusion "CS3219" "CS3213")
-(preclusion "CS3283" "CS4201" "CS4202" "CS4203" "CS4204")
-(preclusion "CS3284" "CS4201" "CS4202" "CS4203" "CS4204")
 (preclusion "CS4350" "CS4203" "CS4204")
 (preclusion "MA1301" "H2Math" "MA1301X")
 (preclusion "MA1101R" "EG1401" "EG1402" "MA1101" "MA1311" "MA1506" "MA1508")
@@ -315,6 +373,8 @@
 (preclusion "PC1222X" "PC1222" "PC1143" "PC1144" "PC1432" "PC1432X"))
 
 ; ; Situational preclusions as rules to allow user preference
+
+; ; Math background, with first element as the default choice for module recommendation
 (defrule RANK::normal-math-preclusion "preclusions for students with normal math background"
 (normalmath)
 =>
@@ -328,6 +388,7 @@
 (assert (preclusion "CS1101S" "CG1101" "CS1010" "CS1010E" "CS1010FC" "CS1010S" "CS1010X" "CS1101" "CS1101C" "CS1010J" "CS1010R"))
 (assert (preclusion "CS2020" "CG1102" "CG1103" "CS1020" "CS1020E" "CS2010" "CS1102" "CS1102C" "CS1102S")))
 
+; ; Communication module exemption, with first element as the default choice for module recommendation
 (defrule RANK::communication-exemption-preclusion "preclusions for students with communication module exempted"
 (commexempted)
 =>
@@ -337,6 +398,28 @@
 (commnotexempted)
 =>
 (assert (preclusion "CS2103T" "CS2103")))
+
+; ; Software project preference, with first element as the default choice for module recommendation
+
+(defrule RANK::software-normal-preclusion "preclusions for students with normal software project"
+(softwareprojectnormal)
+=>
+(assert (preclusion "CS3201" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3283" "CS3284")))
+
+(defrule RANK::software-thematic-preclusion "preclusions for students with thematic software project"
+(softwareprojectthematic)
+=>
+(assert (preclusion "CS3281" "CS3201" "CS3202" "CS3283" "CS3284")))
+
+(defrule RANK::software-media-preclusion "preclusions for students with media software project"
+(softwareprojectmedia)
+=>
+(assert (preclusion "CS3283" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")))
+
+(defrule RANK::software-modern-preclusion "preclusions for students with modern software project"
+(softwareprojectmodern)
+=>
+(assert (preclusion "CS3216" "CS3283" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")))
 
 ; ; -------------------------
 ; ; PRECLUSION RECOMMENDATION
@@ -350,16 +433,17 @@
     (test (eq ?code (nth$ 1 ?preclusionlist)))
     =>
     (modify ?module (recommend yes))
-    (printout t "Module " ?code " recommended based on preclusion list" crlf))
+    (printout t "Module " ?code " recommended based on preclusion list " ?preclusionlist crlf))
 
 ; ; Set module recommend field to no if it is not the default choice for a preclusion list
+; ; Also reduce score to negative to prevent user from seeing them on top
 (defrule RANK::set-recommendation-no
     ?module <- (module (code ?code) (recommend NONE) (status available))
     (preclusion $?preclusionlist)
     (test (member$ ?code ?preclusionlist))
     (test (neq ?code (nth$ 1 ?preclusionlist)))
     =>
-    (modify ?module (recommend no))
+    (modify ?module (recommend no) (score -90))
     (printout t "Module " ?code " NOT recommended based on preclusion list" crlf))
 
 
@@ -400,7 +484,7 @@
 ; ; ASSIGN SCORE
 ; ; -------------
 
-(deffunction RANK::calscore (?level ?want ?primaries ?electives ?code ?prefix ?MC)
+(deffunction RANK::calscore (?level ?want ?primaries ?electives ?code ?prefix ?MC ?classification ?allprojects)
     ; ; Default score inverse to module level
     (bind ?score (- 5 ?level))
     ; ; Add score for wanted modules
@@ -414,7 +498,26 @@
     ; ; Add score for focus area elective modules
     (if (member$ ?code ?electives)
     then
-        (bind ?score (+ 3 ?score)))
+        (bind ?score (+ 2 ?score)))
+
+    ; ; Add score for classification-FOUNDATION modules
+    (if (member$ FOUNDATION ?classification)
+    then
+        (bind ?score (+ 5 ?score)))
+    ; ; Add score for classification-BREADTH_AND_DEPTH modules
+    (if (member$ BREADTH_AND_DEPTH ?classification)
+    then
+        (bind ?score (+ 2 ?score)))
+    ; ; Add score for classification-OTHER_REQUIRED modules
+    (if (member$ OTHER_REQUIRED ?classification)
+    then
+        (bind ?score (+ 5 ?score)))
+
+    ; ; Add score for project modules, make sure they have highest priority
+    (if (member$ ?code ?allprojects)
+    then
+        (bind ?score (+ 50 ?score)))
+
     ; ; Reduce score for CS research-based 1MC modules
     (if (and (eq ?prefix "CS") (eq ?MC 1))
     then
@@ -422,11 +525,12 @@
     return ?score)
 
 (defrule RANK::assign-score
-    ?module <- (module (code ?code) (status available) (level ?level) (prefix ?prefix) (MC ?MC) (want ?want&~no) (score -99))
+    ?module <- (module (code ?code) (status available) (classification $?classification) (level ?level) (prefix ?prefix) (MC ?MC) (want ?want&~no) (score -99))
     (primaryfocus $?primaries)
     (electivefocus $?electives)
+    (allprojects $?allprojects)
     =>
-    (bind ?score (calscore ?level ?want ?primaries ?electives ?code ?prefix ?MC))
+    (bind ?score (calscore ?level ?want ?primaries ?electives ?code ?prefix ?MC ?classification ?allprojects))
     (modify ?module (score ?score))
     (printout t "Module " ?code " score: " ?score crlf))
 
@@ -437,16 +541,16 @@
     (planned ?code2)
     (test(eq ?code1 ?code2))
     =>
-    (printout t "Marking module " ?code1 " as planned" crlf)
-    (modify ?module (status planned)))
+    (modify ?module (status planned))
+    (printout t "Marked module " ?code1 " as planned" " total planned and taken: " (count-planned-and-taken) crlf))
 
 (defrule SELECT::mark-taken "mark modules that the user have already taken"
     ?module <- (module (status ~taken) (code ?code1))
     (taken ?code2)
     (test(eq ?code1 ?code2))
     =>
-    (printout t "Marking module " ?code1 " as taken" crlf)
-    (modify ?module (status taken)))
+    (modify ?module (status taken))
+    (printout t "Marked module " ?code1 " as taken" " total planned and taken: " (count-planned-and-taken) crlf))
 
 (defrule SELECT::mark-focus "mark focus area that the user plan to take"
     ?focus <- (focus (status none) (name ?name1))

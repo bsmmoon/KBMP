@@ -18,13 +18,13 @@ public class Model {
 	private ArrayList<Module> modules;
 	private ArrayList<AvailableModule> availableModules;
 	private ModulePlan plan;
-	private int numberOfSemesterLeft;
+	private int totalSemesters;
 	private int semester;
 
 	public Model() {
 		this.clips = new ClipsWrapper();
 		this.plan = new ModulePlan();
-		this.semester = 1;
+		this.totalSemesters = 8;
 		this.focusAreas = new ArrayList<>();
 		this.selectedFocusAreas = new ArrayList<>();
 		this.modules = new ArrayList<>();
@@ -48,9 +48,11 @@ public class Model {
 	public ArrayList<AvailableModule> getAvailableModules() { return availableModules; }
 	public ArrayList<Module> getPreplanModules() { return preplanModules; }
 	public ArrayList<Module> getModules() { return modules; }
-	public int getSemester() { return semester; }
+	public int getYear() { return semester % 2 == 0 ? Math.floorDiv(semester, 2) : Math.floorDiv(semester, 2) + 1; }
+	public int getSemester() { return semester % 2 == 0 ? 2 : 1; }
+	public int getCumulativeSemester() { return semester; }
 	public boolean isDone() {
-		return semester > numberOfSemesterLeft;
+		return semester > totalSemesters;
 	}
 
 	public void setModules(ArrayList<Module> modules) {
@@ -86,13 +88,14 @@ public class Model {
 		primaryfocus += ")";
 		electivefocus += ")";
 
-		clips.execute(primaryfocus);
-		clips.execute(electivefocus);
+		execute(primaryfocus);
+		execute(electivefocus);
 	}
 
-	public void setNumberOfSemesterLeft(int numberOfSemesterLeft) {
-		this.numberOfSemesterLeft = numberOfSemesterLeft;
-		this.plan.setSemesters(numberOfSemesterLeft);
+	public void setStartingSemester(int semester) {
+		this.semester = semester;
+		this.plan.setSemesters(totalSemesters, semester);
+		execute("(assert (current-semester (number " + (semester - 1) + ")))");
 	}
 
 	public void execute(String command) {
@@ -118,6 +121,7 @@ public class Model {
 
 	public void selectModules(ArrayList<Module> modules) {
 		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
+		execute("(increment-semester)");
 		updatePlan(modules);
 		incrementSemester();
 	}
