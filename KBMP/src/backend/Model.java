@@ -95,7 +95,7 @@ public class Model {
 	public void setStartingSemester(int semester) {
 		this.semester = semester;
 		this.plan.setSemesters(totalSemesters, semester);
-		execute("(assert (current-semester (number " + (semester - 1) + ")))");
+		execute("(assert (current-semester (number " + semester + ")))");
 	}
 
 	public void execute(String command) {
@@ -123,7 +123,7 @@ public class Model {
 		modules.forEach((module) -> execute("(assert-selected \"" + module.getCode() + "\")"));
 		execute("(increment-semester)");
 		updatePlan(modules);
-		incrementSemester();
+		updateSemester();
 	}
 
 	public void assertSymbolFact(String fact) { execute("(assert (" + fact + "))"); }
@@ -153,7 +153,7 @@ public class Model {
 		System.out.println();
 	}
 
-	private void incrementSemester() { semester++; }
+	private void updateSemester() { semester = clips.getCurrentSemester(); }
 
 	private Module findModuleByCode(String code) {
 		for (Module module : modules) {
