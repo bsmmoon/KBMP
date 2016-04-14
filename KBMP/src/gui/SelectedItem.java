@@ -80,7 +80,7 @@ public class SelectedItem extends JPanel {
 
 			add(remove);
 		}
-		setPreferredSize(getPreferredSize());
+		setMaximumSize(getPreferredSize());
 	}
 
 	public Module getModule() {

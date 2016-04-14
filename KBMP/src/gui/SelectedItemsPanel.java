@@ -21,7 +21,9 @@ public class SelectedItemsPanel extends JPanel {
 		selectedItems = new ArrayList<SelectedItem>();
 		removedItems = new Stack<SelectedItem> ();
 		this.isEditable = isEditable;
-		setLayout(new WrapLayout(WrapLayout.LEFT));
+		//setLayout(new WrapLayout(WrapLayout.LEFT));
+		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+		//setAlignmentX(LEFT_ALIGNMENT);
 		//setOpaque(false);
 	}
 
@@ -56,6 +58,7 @@ public class SelectedItemsPanel extends JPanel {
 		item.setAlignmentX(LEFT_ALIGNMENT);
 		add(item);
 		setPreferredSize(getLayout().preferredLayoutSize(this));
+		setAlignmentX(LEFT_ALIGNMENT);
 
 		validate();
 	}
