@@ -19,6 +19,7 @@ public class ClipsWrapper {
 	private static final String GET_ALL_AVAIABLE_MODULE = "(find-all-facts ((?f module)) TRUE)";
 	private static final String GET_ALL_FOCUS_AREA = "(find-all-facts ((?f focus)) TRUE)";
 	private static final String GET_CURRENT_SEMESTER = "(find-fact ((?f current-semester)) TRUE)";
+	private static final String GET_SKIP_SEMESTER = "(find-all-facts ((?f skip-semester)) TRUE)";
 	
 	public ClipsWrapper() {
 		this.initialised = false;
@@ -53,7 +54,7 @@ public class ClipsWrapper {
 	}
 
 	public int getCurrentSemester() {
-		int currentSemester = -1;
+		int currentSemester = -10;
 		MultifieldValue pv = (MultifieldValue) clips.eval(GET_CURRENT_SEMESTER);
 
 		ListIterator<FactAddressValue> itr = pv.multifieldValue().listIterator();
@@ -69,6 +70,25 @@ public class ClipsWrapper {
 		}
 		System.out.println("CURRENT SEMESTER: " + currentSemester);
 		return currentSemester;
+	}
+
+	public boolean isSkipSemester(int semester, ArrayList<String> moduleCodes) {
+		MultifieldValue pv = (MultifieldValue) clips.eval(GET_SKIP_SEMESTER);
+
+		ListIterator<FactAddressValue> itr = pv.multifieldValue().listIterator();
+		int len = pv.size();
+		while (len-- > 0 && itr.hasNext()) {
+			FactAddressValue address = itr.next();
+			try {
+				if (Integer.parseInt(address.getFactSlot("number").toString()) == semester) {
+					moduleCodes.add(address.getFactSlot("module").toString().replace("\"", ""));
+				}
+			} catch (Exception e) {
+				System.out.println("Something went wrong! " + e.getMessage());
+			}
+		}
+
+		return !moduleCodes.isEmpty();
 	}
 
 	public void printFactsOnConsole() { clips.eval("(facts)"); }

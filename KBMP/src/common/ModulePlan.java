@@ -24,6 +24,7 @@ public class ModulePlan {
 	}
 
 	public void addNewModules(ArrayList<Module> modules, int semester) {
+		System.out.println(semester + " VS " + startingSemester);
 		semesters.set(semester - startingSemester, new Semester(semester));
 		modules.forEach((module) -> addNewModule(module, semester));
 	}

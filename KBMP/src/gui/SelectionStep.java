@@ -126,8 +126,15 @@ public class SelectionStep extends JPanel {
             case PLANNING:
                 if (!frame.getModel().isDone()) {
                     setQuestion("<html>Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
-                    setAvailableModules(frame.getModel().getAvailableModules());
-                    setRecommendation(frame.getModel().getRecommendedModules());
+                    if (frame.getLogic().isSkipSemester()) {
+                        ArrayList<AvailableModule> availableModules = frame.getLogic().getSkipModules();
+                        setAvailableModules(availableModules);
+                        setRecommendation(availableModules);
+                    }
+                    else {
+                        setAvailableModules(frame.getModel().getAvailableModules());
+                        setRecommendation(frame.getModel().getRecommendedModules());
+                    }
                 } else {
                     question.setText("Complete Plan");
                     dropdownList.setVisible(false);
@@ -190,6 +197,19 @@ public class SelectionStep extends JPanel {
                 frame.getLogic().assertFocus(getSelectedFocusAreas());
                 break;
             case PLANNING:
+                if (frame.getLogic().isSkipSemester()) {
+                    Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester());
+                    frame.getLogic().confirmSemester();
+
+                    ArrayList<Module> modules = semester.getModules();
+                    planned.addLabel(semester.getName());
+                    for (Module module : modules) {
+                        planned.addItem(module,false);
+                    }
+                    planned.addItem(semester);
+                    break;
+                }
+
                 ArrayList<Module> modules = getSelectedModules();
                 frame.getLogic().selectModules(modules);
                 Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester());
