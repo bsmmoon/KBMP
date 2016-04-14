@@ -82,7 +82,7 @@ public class SelectionStep extends JPanel {
         plannedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
         plannedScroller.setVisible(false);
         plannedScroller.setAlignmentX(LEFT_ALIGNMENT);
-        
+
         setupDropdownList();
 
         add(question);
