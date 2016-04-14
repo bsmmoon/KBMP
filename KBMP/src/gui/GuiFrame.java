@@ -29,8 +29,8 @@ public class GuiFrame extends JFrame {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		setSize(new Dimension(1000,700));
-		setResizable(false);
+		setSize(new Dimension(800,700));
+		//setResizable(false);
 	}
 
 	public void init() {
