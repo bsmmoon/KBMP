@@ -66,7 +66,7 @@ public class PrePlanPanel extends JPanel {
         addLabel("Do you intend to take the following programs?");
         checkBoxes.add(addOption(PrePlanOption.INFO.SIP,"Student Internship Program (SIP)",null,false));
         checkBoxes.add(addOption(PrePlanOption.INFO.ATAP,"Advanced Technology Attachment Programme (ATAP)",semesters,false));
-        checkBoxes.add(addOption(PrePlanOption.INFO.NOC_SEM,"1-semester NUS Overseas College (NOC)",semesters,false));
+        checkBoxes.add(addOption(PrePlanOption.INFO.NOC_SEM,"6-Months NUS Overseas College (NOC)",semesters,false));
         checkBoxes.add(addOption(PrePlanOption.INFO.NOC_YEAR,"1-year NUS Overseas College (NOC)",semesters,false));
     }
 
