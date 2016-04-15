@@ -3,6 +3,7 @@ package backend;/*
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import common.AvailableModule;
@@ -87,6 +88,8 @@ public class Model {
 
 	public void setSelectedFocusAreas(ArrayList<FocusArea> selectedFocusAreas) {
 		this.selectedFocusAreas = selectedFocusAreas;
+		updateModulesWithFocusAreas();
+
 		selectedFocusAreas.forEach((selectedFocusArea) -> execute("(assert-focus-on \"" + selectedFocusArea.getName() + "\")"));
 
 		String primaryfocus = "(assert-primaryfocus";
@@ -101,6 +104,28 @@ public class Model {
 
 		execute(primaryfocus);
 		execute(electivefocus);
+	}
+
+	private void updateModulesWithFocusAreas() {
+		HashMap<String, String> focusAreaModules = new HashMap<>();
+		String primaryString = " Primary";
+		String electiveString = " Elective";
+		for (FocusArea fa : this.selectedFocusAreas) {
+			for (String primary : fa.getPrimaries()) {
+				focusAreaModules.put(primary, fa.getName() + primaryString);
+			}
+
+			for (String elective : fa.getElectives()) {
+				focusAreaModules.put(elective, fa.getName() + electiveString);
+			}
+		}
+
+		for (Module module : this.modules) {
+			String moduleCode = module.getCode();
+			if (focusAreaModules.containsKey(moduleCode)) {
+				module.setFocusArea(focusAreaModules.get(moduleCode));
+			}
+		}
 	}
 
 	public void setStartingSemester(int semester) {
