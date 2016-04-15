@@ -109,7 +109,8 @@ public class SelectedItem extends JPanel {
 	public void paint(Graphics g) {
 		Point pos = label.getLocation();
 		pos.x -= 5;
-		int width = label.getWidth() + 12 ;
+		pos.y -= 5; // margin
+		int width = label.getWidth() + 10;
 		if (isEditable) {
 			width += remove.getWidth();
 		}
@@ -149,6 +150,7 @@ public class SelectedItem extends JPanel {
 			}
 		}
 		g.setColor(color);
+		height = height + 10; // margin
 		g.fillRoundRect(pos.x, pos.y, width, height, 10, 10);
 		
 		super.paint(g);
