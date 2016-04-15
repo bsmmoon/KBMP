@@ -33,6 +33,7 @@ public class SelectionStep extends JPanel {
     private ArrayList<AvailableModule> availableModules;
     private ArrayList<FocusArea> availableFocusAreas;
     private JLabel question;
+    private JLabel legend;
     private JScrollPane selectedScroller;
     private JScrollPane plannedScroller;
     private JComboBox<String> dropdownList;
@@ -54,6 +55,8 @@ public class SelectionStep extends JPanel {
         this.frame = frame;
 
         question = new JLabel();
+        legend = new JLabel("Workload Components : Lecture-Tutorial-Lab-Project/Assignment-Preparation");
+        legend.setVisible(false);
 
         next = new JButton(new AbstractAction("Next") {
             @Override
@@ -97,6 +100,7 @@ public class SelectionStep extends JPanel {
         add(preplanScroller);
         add(dropdownList);
         add(selectedScroller);
+        add(legend);
         add(plannedScroller);
         add(next);
 
@@ -114,6 +118,7 @@ public class SelectionStep extends JPanel {
                 break;
             case MOD_TAKEN:
                 preplanScroller.setVisible(false);
+                legend.setVisible(true);
                 setQuestion("Please select modules that you have already taken.");
                 setAllModules(frame.getModel().getPreplanModules());
                 dropdownList.setVisible(true);
@@ -147,6 +152,7 @@ public class SelectionStep extends JPanel {
                     question.setText("Complete Plan");
                     dropdownList.setVisible(false);
                     selectedScroller.setVisible(false);
+                    legend.setVisible(false);
                     next.setVisible(false);
                 }
                 plannedScroller.setVisible(true);
