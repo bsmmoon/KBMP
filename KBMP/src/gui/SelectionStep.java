@@ -357,7 +357,9 @@ public class SelectionStep extends JPanel {
         dropdownList.setAlignmentX(Component.LEFT_ALIGNMENT);
         dropdownList.setMaximumSize(new Dimension(300, 20));
         //dropdownList.addItemListener(this);
-        dropdownList.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
+        if (System.getProperty("os.name").toLowerCase().indexOf("mac") < 0) {
+            dropdownList.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
+        }
         dropdownList.setVisible(false);
         dropdownList.addItemListener(new ItemListener() {
             @Override
