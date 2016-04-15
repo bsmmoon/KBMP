@@ -1,6 +1,7 @@
 package gui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -8,9 +9,6 @@ import javax.swing.JPanel;
 
 import backend.Logic;
 import backend.Model;
-
-import common.Module;
-import common.ModulePlan;
 
 @SuppressWarnings("serial")
 public class GuiFrame extends JFrame {

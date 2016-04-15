@@ -118,7 +118,6 @@ public class SelectionStep extends JPanel {
                 break;
             case MOD_TAKEN:
                 preplanScroller.setVisible(false);
-                legend.setVisible(true);
                 setQuestion("Please select modules that you have already taken.");
                 setAllModules(frame.getModel().getPreplanModules());
                 dropdownList.setVisible(true);
@@ -138,6 +137,7 @@ public class SelectionStep extends JPanel {
                 break;
             case PLANNING:
                 if (!frame.getModel().isDone()) {
+                    legend.setVisible(true);
                     setQuestion("<html>Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
                     if (frame.getLogic().isSkipSemester()) {
                         ArrayList<AvailableModule> availableModules = frame.getLogic().getSkipModules();
