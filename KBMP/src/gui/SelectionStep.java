@@ -34,6 +34,7 @@ public class SelectionStep extends JPanel {
     private ArrayList<FocusArea> availableFocusAreas;
     private JLabel question;
     private JLabel legend;
+    private JLabel legendColor;
     private JScrollPane selectedScroller;
     private JScrollPane plannedScroller;
     private JComboBox<String> dropdownList;
@@ -55,9 +56,11 @@ public class SelectionStep extends JPanel {
         this.frame = frame;
 
         question = new JLabel();
-        legend = new JLabel("Workload Components : Lecture-Tutorial-Lab-Project/Assignment-Preparation");
+        legend = new JLabel("Workload format: Lecture Tutorial Project Preparation");
         legend.setVisible(false);
-
+        legendColor = new JLabel("Color code: Pink:Foundation, Magenta: Other required, Orange: Software Project, Cyan: Breath and Depth");
+        legendColor.setVisible(false);
+        
         next = new JButton(new AbstractAction("Next") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -101,6 +104,7 @@ public class SelectionStep extends JPanel {
         add(dropdownList);
         add(selectedScroller);
         add(legend);
+        add(legendColor);
         add(plannedScroller);
         add(next);
 
@@ -138,6 +142,7 @@ public class SelectionStep extends JPanel {
             case PLANNING:
                 if (!frame.getModel().isDone()) {
                     legend.setVisible(true);
+                    legendColor.setVisible(true);
                     setQuestion("<html>Year " + frame.getModel().getYear() + " Semester " + frame.getModel().getSemester() + "<br>Select modules for this semester:");
                     if (frame.getLogic().isSkipSemester()) {
                         ArrayList<AvailableModule> availableModules = frame.getLogic().getSkipModules();
@@ -152,7 +157,8 @@ public class SelectionStep extends JPanel {
                     question.setText("Complete Plan");
                     dropdownList.setVisible(false);
                     selectedScroller.setVisible(false);
-                    legend.setVisible(false);
+//                    legend.setVisible(false);
+                    legendColor.setVisible(false);
                     next.setVisible(false);
                 }
                 plannedScroller.setVisible(true);

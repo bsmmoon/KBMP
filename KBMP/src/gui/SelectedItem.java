@@ -41,12 +41,12 @@ public class SelectedItem extends JPanel {
 		String workloadInfo = module.getTooltip();
 		while (workload.hasNext()) {
 			Map.Entry<Module.WorkloadTypes,Float> entry = workload.next();
-			workloadSummary += entry.getValue() + " ";
+			workloadSummary += Math.round(entry.getValue()) + " ";
 			//workloadInfo += entry.getKey() + " ";
 		}
 
 		String module_info = "<html>" + module.getCode() + " " + module.getName() +
-				"<br>" + module.getCredits() + "MC " + workloadSummary;
+				"<br>" + module.getCredits() + "MC Workload: " + workloadSummary;
 		label = new JLabel(module_info);
 		label.setToolTipText(workloadInfo);
 
@@ -127,7 +127,7 @@ public class SelectedItem extends JPanel {
 					color = Color.pink;
 					break;
 				case BREADTH_AND_DEPTH:
-					color = Color.cyan;
+					color = new Color(201, 255, 255); // cyan but less painful to eye
 					break;
 				case SOFTWARE_ENG_1617_PROJECT:
                     color = Color.orange;

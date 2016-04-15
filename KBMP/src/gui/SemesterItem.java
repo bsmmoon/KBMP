@@ -31,7 +31,7 @@ public class SemesterItem extends JPanel {
 			add(moduleCode);
 		}
 		add(new JLabel(sem.getSummary()));
-		setPreferredSize(new Dimension(200,170));
+		setPreferredSize(new Dimension(200,150));
 	}
 
 	public void paint(Graphics g) {
