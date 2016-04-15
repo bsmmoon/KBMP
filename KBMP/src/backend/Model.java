@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import common.AvailableModule;
 import common.FocusArea;
 import common.Module;
+import common.Module.Type;
 import common.ModulePlan;
 import common.Semester;
 
@@ -222,17 +223,17 @@ public class Model {
 	private void addPlaceHolderModules() {
 		Module.Semester sem = Module.Semester.values()[2];
 
-		this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 
-		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
+		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 
-		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
+		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 1").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 2").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 3").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 1").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 2").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 3").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 	}
 
 	private void addSpecialModules() {

@@ -190,7 +190,7 @@ public class Module implements Serializable {
 			if (this.type == null) {
 				tooltip = "<html>" + "no type";
 			} else {
-				String titleCase = this.type.toString();
+				String titleCase = this.type.toString().replace("_", " ");
 				titleCase = titleCase.substring(0, 1) + titleCase.toLowerCase().substring(1);
 				tooltip = "<html>" + titleCase;
 			}
@@ -198,7 +198,7 @@ public class Module implements Serializable {
 		   if (this.type == null) {
 			   tooltip = "<html>" + this.focusArea;
 		   } else {
-			   String titleCase = this.type.toString();
+			   String titleCase = this.type.toString().replace("_", " ");
 			   titleCase = titleCase.substring(0, 1) + titleCase.toLowerCase().substring(1);
 			   tooltip = "<html>" + titleCase + ", " + this.focusArea;
 		   }
@@ -227,6 +227,11 @@ public class Module implements Serializable {
 		this.type = type;
 	}
 
+	public Module editType(Type type) {
+        this.type = type;
+        return this;
+    }
+	
 	public Type getType() {
 		return type;
 	}
