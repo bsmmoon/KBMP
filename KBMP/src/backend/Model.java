@@ -3,11 +3,13 @@ package backend;/*
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import common.AvailableModule;
 import common.FocusArea;
 import common.Module;
+import common.Module.Type;
 import common.ModulePlan;
 import common.Semester;
 
@@ -87,6 +89,8 @@ public class Model {
 
 	public void setSelectedFocusAreas(ArrayList<FocusArea> selectedFocusAreas) {
 		this.selectedFocusAreas = selectedFocusAreas;
+		updateModulesWithFocusAreas();
+
 		selectedFocusAreas.forEach((selectedFocusArea) -> execute("(assert-focus-on \"" + selectedFocusArea.getName() + "\")"));
 
 		String primaryfocus = "(assert-primaryfocus";
@@ -101,6 +105,28 @@ public class Model {
 
 		execute(primaryfocus);
 		execute(electivefocus);
+	}
+
+	private void updateModulesWithFocusAreas() {
+		HashMap<String, String> focusAreaModules = new HashMap<>();
+		String primaryString = " Primary";
+		String electiveString = " Elective";
+		for (FocusArea fa : this.selectedFocusAreas) {
+			for (String primary : fa.getPrimaries()) {
+				focusAreaModules.put(primary, fa.getName() + primaryString);
+			}
+
+			for (String elective : fa.getElectives()) {
+				focusAreaModules.put(elective, fa.getName() + electiveString);
+			}
+		}
+
+		for (Module module : this.modules) {
+			String moduleCode = module.getCode();
+			if (focusAreaModules.containsKey(moduleCode)) {
+				module.setFocusArea(focusAreaModules.get(moduleCode));
+			}
+		}
 	}
 
 	public void setStartingSemester(int semester) {
@@ -197,17 +223,17 @@ public class Model {
 	private void addPlaceHolderModules() {
 		Module.Semester sem = Module.Semester.values()[2];
 
-		this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("SS0123").setName("Singapore Study").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 
-		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
+		this.modules.add(new Module.Builder().setCode("GEM0123").setName("GEM / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 
-		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
+		this.modules.add(new Module.Builder().setCode("BR0123").setName("Breadth / GE").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 1").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 2").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 3").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 1").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 2").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
+		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 3").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 	}
 
 	private void addSpecialModules() {

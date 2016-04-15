@@ -208,7 +208,8 @@ public class SelectionStep extends JPanel {
                 frame.getLogic().assertDontWant(getSelectedModules());
                 break;
             case FOCUS_AREA:
-                frame.getLogic().assertFocus(getSelectedFocusAreas());
+                ArrayList<FocusArea> focusAreas = getSelectedFocusAreas();
+                frame.getLogic().assertFocus(focusAreas);
                 break;
             case PLANNING:
                 if (frame.getLogic().isSkipSemester()) {
