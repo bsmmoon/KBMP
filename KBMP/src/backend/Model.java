@@ -244,6 +244,6 @@ public class Model {
 		for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) workload.put(type, 0.0f);
 		workload.put(Module.WorkloadTypes.values()[3], 15.0f);
 		workload.put(Module.WorkloadTypes.values()[4], 15.0f);
-		this.modules.add(new Module.Builder().setCode("XX3000").setName("NOC Semester 2 placeholder module").setCredits(28).setWorkload(workload).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+		this.modules.add(new Module.Builder().setCode("XX3000").setName("NOC Semester 2 placeholder module").setCredits(28).setWorkload(workload).setPrerequisites("").setPreclusions("").setSemesters(sem).build().editType(Type.OTHER));
 	}
 }
