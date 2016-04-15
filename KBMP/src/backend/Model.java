@@ -69,7 +69,6 @@ public class Model {
 		this.modules = modules;
 		this.preplanModules = modules;
 		this.modules.sort((a,b) -> a.getCode().compareTo(b.getCode()));
-		addSpecialModules();
 		addPlaceHolderModules();
 	}
 
@@ -174,7 +173,6 @@ public class Model {
 		execute("(refresh RANK::mark-available-no-prerequisites-level-3-higher)");
 		execute("(run)");
 		update();
-//		execute("(facts)");
 	}
 
 	private void update() {
@@ -201,19 +199,6 @@ public class Model {
 		return new Module("", "");
 	}
 
-	private void addSpecialModules() {
-		Module.Semester sem = Module.Semester.values()[2];
-
-		Hashtable<Module.WorkloadTypes, Float> workload;
-		workload = new Hashtable<>();
-		workload.put(Module.WorkloadTypes.values()[3], 15.0f);
-		workload.put(Module.WorkloadTypes.values()[4], 15.0f);
-		this.modules.add(new Module.Builder().setCode("TR3202").setName("Start-up Internship Programme").setCredits(12).setWorkload(workload).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-
-		this.modules.add(new Module.Builder().setCode("XX3202").setName("NOC Semester 2 placeholder module").setCredits(28).setWorkload(workload).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
-
-		this.modules.add(new Module.Builder().setCode("CP3380").setName("NOC Semester 2 placeholder module").setCredits(12).setWorkload(workload).setPrerequisites("(IS2101 or CS2101) and (CS2103 or CS2103T)").setPreclusions("EG3601").setSemesters(sem).build());
-	}
 
 	private void addPlaceHolderModules() {
 		Module.Semester sem = Module.Semester.values()[2];
