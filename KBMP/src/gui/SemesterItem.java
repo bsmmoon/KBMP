@@ -29,7 +29,7 @@ public class SemesterItem extends JPanel {
 			add(moduleCode);
 		}
 		add(new JLabel(sem.getSummary()));
-		//setPreferredSize(new Dimension(300,getHeight()));
+		setPreferredSize(new Dimension(200,170));
 	}
 
 	public void paint(Graphics g) {
