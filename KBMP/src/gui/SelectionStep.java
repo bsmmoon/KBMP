@@ -85,7 +85,7 @@ public class SelectionStep extends JPanel {
         //selected.setAlignmentX(LEFT_ALIGNMENT);
 
         selectedScroller = new JScrollPane(selected, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        selectedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
+        selectedScroller.getViewport().setPreferredSize(new Dimension(200, 120));
         selectedScroller.setVisible(false);
         selectedScroller.setAlignmentX(LEFT_ALIGNMENT);
 
@@ -93,7 +93,7 @@ public class SelectionStep extends JPanel {
         planned.setAlignmentX(LEFT_ALIGNMENT);
 
         plannedScroller = new JScrollPane(planned, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        plannedScroller.getViewport().setPreferredSize(new Dimension(200, 200));
+        plannedScroller.getViewport().setPreferredSize(new Dimension(200, 250));
         plannedScroller.setVisible(false);
         plannedScroller.setAlignmentX(LEFT_ALIGNMENT);
 
