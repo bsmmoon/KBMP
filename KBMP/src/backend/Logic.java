@@ -95,6 +95,7 @@ public class Logic {
 	public void assertCS3281() { model.assertSymbolFact("softwareprojectthematic"); }
 
 	public void assertCS3283() { model.assertSymbolFact("softwareprojectmedia"); }
-
-
+	
+	public void assertNOC_Replace() { model.assertSymbolFact("softwareprojectnoc"); }
+	
 }

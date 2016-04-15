@@ -77,7 +77,9 @@ public class PrePlanPanel extends JPanel {
         checkBoxes.get(checkBoxes.size()-1).setButtonGroup(group);
         checkBoxes.add(addOption(PrePlanOption.INFO.CS3283,"Media Technology Project (CS3283 and CS3284)",null,true));
         checkBoxes.get(checkBoxes.size()-1).setButtonGroup(group);
-
+        checkBoxes.add(addOption(PrePlanOption.INFO.NOC_REPLACE,"I intend to use NOC to replace project modules",null,true));
+        checkBoxes.get(checkBoxes.size()-1).setButtonGroup(group);
+        
         addLabel("Do you intend to take the following programs?");
         checkBoxes.add(addOption(PrePlanOption.INFO.SIP,"Student Internship Program (SIP)",null,false));
         checkBoxes.add(addOption(PrePlanOption.INFO.ATAP,"Advanced Technology Attachment Programme (ATAP)",semestersYear3Onwards,false));
@@ -140,6 +142,9 @@ public class PrePlanPanel extends JPanel {
                     break;
                 case CS3283:
                     if (checkBox.isSelected()) {frame.getLogic().assertCS3283(); }
+                    break;
+                case NOC_REPLACE:
+                    if (checkBox.isSelected()) {frame.getLogic().assertNOC_Replace(); }
                     break;
                 case SIP:
                     if (checkBox.isSelected()) {frame.getLogic().assertSIP(); }

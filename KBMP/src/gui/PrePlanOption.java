@@ -25,7 +25,7 @@ public class PrePlanOption extends JPanel {
     private JComboBox<String> dropdownList;
 
     enum INFO {
-        H2_MATHS,H2_PHYSICS,GOOD_MATHS,COMMUNICATION_EXEMPT,CS3201,CS3216,CS3281,CS3283,SIP,ATAP,NOC_SEM,NOC_YEAR
+        H2_MATHS,H2_PHYSICS,GOOD_MATHS,COMMUNICATION_EXEMPT,CS3201,CS3216,CS3281,CS3283,NOC_REPLACE,SIP,ATAP,NOC_SEM,NOC_YEAR
     }
 
     public PrePlanOption(final PrePlanPanel panel, INFO infoType, String text, ArrayList<String> semesters, boolean isRadio) {

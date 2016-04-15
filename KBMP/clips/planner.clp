@@ -405,7 +405,13 @@
 (defrule RANK::software-modern-preclusion "preclusions for students with modern software project"
 (softwareprojectmodern)
 =>
-(assert (preclusion "CS3216" "CS3283" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")))
+(assert (preclusion "CS3216" "CS3283" "CS3284" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")))
+
+
+(defrule RANK::software-noc-preclusion "preclusions for students replacing software project with NOC"
+(softwareprojectnoc)
+=>
+(assert (preclusion "NOC" "CS3283" "CS3284" "CS3281" "CS3282" "CS3281R" "CS3282R" "CS3201" "CS3202")))
 
 ; ; Preferences for industrial experience
 (defrule RANK::sip-planned
