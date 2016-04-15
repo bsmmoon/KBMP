@@ -70,6 +70,7 @@ public class Model {
 		this.preplanModules = modules;
 		this.modules.sort((a,b) -> a.getCode().compareTo(b.getCode()));
 		addPlaceHolderModules();
+		addSpecialModules();
 	}
 
 	public void setAllFocusAreas(ArrayList<FocusArea> focusAreas) {
@@ -125,7 +126,8 @@ public class Model {
 		ArrayList<String> moduleCodes = new ArrayList<>();
 		ArrayList<Module> modules = new ArrayList<>();
 		if (clips.isSkipSemester(semester, moduleCodes)) {
-			moduleCodes.forEach((code) -> modules.add(new Module.Builder().setCode(code).setName("").setCredits(4).setWorkload(STANDARD_WORKLOADS).build()));
+			System.out.println("SEMESTER: " + semester);
+			moduleCodes.forEach((code) -> modules.add(findModuleByCode(code)));
 			plan.addNewModules(modules, semester);
 			return true;
 		}
@@ -214,5 +216,16 @@ public class Model {
 		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 1").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
 		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 2").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
 		this.modules.add(new Module.Builder().setCode("SC0123").setName("Science 3").setCredits(4).setWorkload(STANDARD_WORKLOADS).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
+	}
+
+	private void addSpecialModules() {
+		Module.Semester sem = Module.Semester.values()[2];
+
+		Hashtable<Module.WorkloadTypes, Float> workload;
+		workload = new Hashtable<>();
+		for (Module.WorkloadTypes type : Module.WorkloadTypes.values()) workload.put(type, 0.0f);
+		workload.put(Module.WorkloadTypes.values()[3], 15.0f);
+		workload.put(Module.WorkloadTypes.values()[4], 15.0f);
+		this.modules.add(new Module.Builder().setCode("XX3000").setName("NOC Semester 2 placeholder module").setCredits(28).setWorkload(workload).setPrerequisites("").setPreclusions("").setSemesters(sem).build());
 	}
 }
