@@ -124,11 +124,28 @@ public class SelectedItem extends JPanel {
 		if (isModule) {
 			switch (module.getType()) {
 				case FOUNDATION:
-					color = Color.cyan;
-					break;
-				case BREADTH_AND_DEPTH:
 					color = Color.pink;
 					break;
+				case BREADTH_AND_DEPTH:
+					color = Color.cyan;
+					break;
+				case SOFTWARE_ENG_1617_PROJECT:
+                    color = Color.orange;
+                    break;
+				case THEMATIC_SYSTEMS_PROJECT:
+                    color = Color.orange;
+                    break;
+				case MEDIA_TECH_PROJECT:
+                    color = Color.orange;
+                    break;
+				case SOFTWARE_ENG_PROJECT:
+                    color = Color.orange;
+                    break;
+				case OTHER_REQUIRED:
+                    color = Color.MAGENTA;
+                    break;
+                default:
+                    color = Color.white;
 			}
 		}
 		g.setColor(color);
