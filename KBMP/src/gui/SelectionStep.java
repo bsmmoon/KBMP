@@ -337,6 +337,13 @@ public class SelectionStep extends JPanel {
                     dropdownList.addItem(mod.getModule().getCode() + " " + mod.getModule().getName() + " (" + mod.getScore() + ")");
                 }
             }
+        } else if (step == STEP.FOCUS_AREA) {
+            ArrayList<FocusArea> selectedFA = getSelectedFocusAreas();
+            for (FocusArea fa : availableFocusAreas) {
+                if (!selectedFA.contains(fa)) {
+                    dropdownList.addItem(fa.getName());
+                }
+            }
         } else {
             ArrayList<Module> allModules = frame.getModel().getPreplanModules();
             for (Module mod : preplanModules) {
