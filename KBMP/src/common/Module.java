@@ -31,6 +31,7 @@ public class Module implements Serializable {
 	private boolean taken = false;
 	private Type type;
 	private String pairedWith = "";
+	private String focusArea = "";
 
 	public static class Builder {
 		private String code;
@@ -184,8 +185,26 @@ public class Module implements Serializable {
 	}
 
    public String getTooltip() {
-       
-        return this.type == null?"<html>" + "no type":"<html>" + this.type.toString();
+       String tooltip;
+	   if (this.focusArea.isEmpty()) {
+			if (this.type == null) {
+				tooltip = "<html>" + "no type";
+			} else {
+				String titleCase = this.type.toString();
+				titleCase = titleCase.substring(0, 1) + titleCase.toLowerCase().substring(1);
+				tooltip = "<html>" + titleCase;
+			}
+		} else {
+		   if (this.type == null) {
+			   tooltip = "<html>" + this.focusArea;
+		   } else {
+			   String titleCase = this.type.toString();
+			   titleCase = titleCase.substring(0, 1) + titleCase.toLowerCase().substring(1);
+			   tooltip = "<html>" + titleCase + ", " + this.focusArea;
+		   }
+		}
+
+	   return tooltip;
     }
 	
 	public void setSemesters(Semester semesters) {
@@ -218,5 +237,13 @@ public class Module implements Serializable {
 
 	public String getPairedWith() {
 		return pairedWith;
+	}
+
+	public void setFocusArea(String focusArea) {
+		this.focusArea = focusArea;
+	}
+
+	public String getFocusArea() {
+		return focusArea;
 	}
 }
