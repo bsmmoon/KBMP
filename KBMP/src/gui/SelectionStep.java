@@ -230,8 +230,8 @@ public class SelectionStep extends JPanel {
                 ArrayList<Module> modules = getSelectedModules();
                 frame.getLogic().selectModules(modules);
                 Semester semester = frame.getModel().getModulePlan().getSemester(frame.getModel().getCumulativeSemester());
-                if (semester.getCredits() < 16) {
-                    JOptionPane.showMessageDialog(this,"The total credits are less than 16 MC!");
+                if (semester.getCredits() < 18) {
+                    JOptionPane.showMessageDialog(this,"The total credits are less than 18 MC!");
                     isSuccessful = false;
                 } else {
                     frame.getLogic().confirmSemester();
