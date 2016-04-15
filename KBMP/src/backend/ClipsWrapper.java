@@ -95,7 +95,7 @@ public class ClipsWrapper {
 
 	public void saveModules(ArrayList<Module> modules) {
 		for (Module module : modules) {
-			if (getModuleLevel(module.getCode()) >= 4
+			if (getModuleLevel(module.getCode()) >= 5
 					&& !modulesInFocusAreas.contains(module.getCode())) continue;
 			ArrayList<String> entries = ClipsParser.parseModuleIntoClips(module);
 			entries.forEach((entry) -> clips.eval(entry));
