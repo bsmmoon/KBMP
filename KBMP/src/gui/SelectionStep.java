@@ -320,20 +320,21 @@ public class SelectionStep extends JPanel {
     public void insertItem(String item) {
         isAddingOrRemovingItem = true;
 
+        dropdownList.removeAllItems();
+
+        ArrayList<Module> selectedModules = getSelectedModules();
+
         if (step == STEP.PLANNING) {
-            for (int i=0; i<availableModules.size(); i++) {
-                AvailableModule module = availableModules.get(i);
-                if (module.getCode().compareTo(item) == 0) {
-                    dropdownList.insertItemAt(module.getModule().getCode() + " " + module.getModule().getName() + " (" + module.getScore() + ")",i);
-                    break;
+            for (AvailableModule mod : availableModules) {
+                if (!selectedModules.contains(mod.getModule())) {
+                    dropdownList.addItem(mod.getModule().getCode() + " " + mod.getModule().getName() + " (" + mod.getScore() + ")");
                 }
             }
         } else {
-            for (int i=0; i<preplanModules.size(); i++) {
-                Module module = preplanModules.get(i);
-                if (module.getCode().compareTo(item) == 0) {
-                    dropdownList.insertItemAt(module.getCode() + " " + module.getName(), i);
-                    break;
+            ArrayList<Module> allModules = frame.getModel().getPreplanModules();
+            for (Module mod : preplanModules) {
+                if (!selectedModules.contains(mod)) {
+                    dropdownList.addItem(mod.getCode() + " " +mod.getName());
                 }
             }
         }
