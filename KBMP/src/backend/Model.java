@@ -126,7 +126,6 @@ public class Model {
 		ArrayList<String> moduleCodes = new ArrayList<>();
 		ArrayList<Module> modules = new ArrayList<>();
 		if (clips.isSkipSemester(semester, moduleCodes)) {
-			System.out.println("SEMESTER: " + semester);
 			moduleCodes.forEach((code) -> modules.add(findModuleByCode(code)));
 			plan.addNewModules(modules, semester);
 			return true;
@@ -183,14 +182,7 @@ public class Model {
 		availableModules.forEach((availableModule) -> availableModule.setModule(findModuleByCode(availableModule.getCode())));
 	}
 
-	private void updatePlan(ArrayList<Module> modules) {
-		plan.addNewModules(modules, semester);
-		int[] workloads = plan.getWorkloads(semester);
-		for (int workload : workloads) {
-			System.out.print(workload + " ");
-		}
-		System.out.println();
-	}
+	private void updatePlan(ArrayList<Module> modules) { plan.addNewModules(modules, semester); }
 
 	private void updateSemester() { semester = clips.getCurrentSemester(); }
 
