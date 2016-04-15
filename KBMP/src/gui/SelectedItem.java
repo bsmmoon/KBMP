@@ -38,11 +38,11 @@ public class SelectedItem extends JPanel {
 
 		Iterator<Map.Entry<Module.WorkloadTypes,Float>> workload = module.getWorkload().entrySet().iterator();
 		String workloadSummary = "";
-		String workloadInfo = module.getTooltip() + "<br>Workload: ";
+		String workloadInfo = module.getTooltip();
 		while (workload.hasNext()) {
 			Map.Entry<Module.WorkloadTypes,Float> entry = workload.next();
 			workloadSummary += entry.getValue() + " ";
-			workloadInfo += entry.getKey() + " ";
+			//workloadInfo += entry.getKey() + " ";
 		}
 
 		String module_info = "<html>" + module.getCode() + " " + module.getName() +
