@@ -1,15 +1,16 @@
 package gui;
 
-import common.FocusArea;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import common.Module;
 import common.Semester;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 public class SemesterItem extends JPanel {
 	private JLabel semester;
@@ -25,7 +26,8 @@ public class SemesterItem extends JPanel {
 		ArrayList<Module> modules = sem.getModules();
 		for (Module mod : modules) {
 			JLabel moduleCode = new JLabel(mod.getCode());
-			moduleCode.setToolTipText(mod.getName());
+			moduleCode.setToolTipText("<html>" + mod.getCode() + " " + mod.getName()
+			        + "<br>" + mod.getTooltip());
 			add(moduleCode);
 		}
 		add(new JLabel(sem.getSummary()));
