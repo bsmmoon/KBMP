@@ -119,7 +119,18 @@ public class SelectedItem extends JPanel {
 			height = semester.getHeight();
 			pos.y = semester.getLocation().y;
 		}
-		g.setColor(Color.lightGray);
+
+		Color color = Color.white;
+
+		switch (module.getType()) {
+			case FOUNDATION:
+				color = Color.cyan;
+				break;
+			case BREADTH_AND_DEPTH:
+				color = Color.pink;
+				break;
+		}
+		g.setColor(color);
 		g.fillRoundRect(pos.x, pos.y, width, height, 10, 10);
 		
 		super.paint(g);
